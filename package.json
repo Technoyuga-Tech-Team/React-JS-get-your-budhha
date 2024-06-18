@@ -1,0 +1,49 @@
+{
+  "name": "react-js-get-your-budhha",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "start:dev": "env-cmd -f src/.env.development vite",
+    "start:stage": "env-cmd -f src/.env.staging vite build",
+    "start:prod": "env-cmd -f src/.env.production vite build",
+    "build": "vite build && copy public\\.htaccess dist",
+    "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.5",
+    "@mui/material": "^5.15.20",
+    "@mui/system": "^5.15.20",
+    "@reduxjs/toolkit": "^2.2.5",
+    "axios": "^1.7.2",
+    "bootstrap": "^5.3.3",
+    "dotenv": "^16.4.5",
+    "env-cmd": "^10.1.0",
+    "moment": "^2.30.1",
+    "react": "^18.2.0",
+    "react-bootstrap": "^2.10.2",
+    "react-dom": "^18.3.1",
+    "react-hot-toast": "^2.4.1",
+    "react-icons": "^5.2.1",
+    "react-paginate": "^8.2.0",
+    "react-quill": "^2.0.0",
+    "react-redux": "^9.1.2",
+    "react-router-dom": "^6.23.1",
+    "react-tooltip": "^5.27.0",
+    "redux": "^5.0.1",
+    "sweetalert2": "^11.12.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.66",
+    "@types/react-dom": "^18.2.22",
+    "@vitejs/plugin-react": "^4.2.1",
+    "eslint": "^8.57.0",
+    "eslint-plugin-react": "^7.34.1",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.6",
+    "vite": "^5.2.0"
+  }
+}
