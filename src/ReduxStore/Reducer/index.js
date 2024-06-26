@@ -1,11 +1,9 @@
 // reducers/index.js
 import { combineReducers } from "redux";
 import headerReducer from "./header";
-import getGunReviewApiReducer from "./gunReview";
 
 const rootReducer = combineReducers({
-  headerReducer: headerReducer,
-  gunReviewReducer: getGunReviewApiReducer
+  headerReducer: headerReducer
 });
 
 export default rootReducer;

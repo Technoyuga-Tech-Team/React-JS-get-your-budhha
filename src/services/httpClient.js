@@ -1,8 +1,9 @@
 import axios from "axios";
+const url = import.meta.env.VITE_REACT_API_URL;
 
 export const api_services = axios.create({
   // baseURL: "http://192.168.29.134:3001/api",
-  baseURL: "http://192.168.29.136:5001/api",
+  baseURL: url,
 
 });
 

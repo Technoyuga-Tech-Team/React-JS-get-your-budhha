@@ -1,0 +1,101 @@
+.pass-form-wrapper {
+    width: 50%;
+}
+
+.pass-form-wrapper {
+    padding-top: 40px;
+}
+
+.input-with-icon-label {
+    position: relative;
+}
+
+.input-with-icon-design {
+    position: absolute;
+    right: 15px;
+    top: 2px;
+    bottom: 0;
+    margin: auto;
+    width: 15px;
+    cursor: pointer;
+    z-index: 2;
+}
+
+.noti-main-container-checkbox {
+    border: 1px solid grey;
+    margin: 0px 24px 24px 24px;
+}
+
+.noti-main-container-checkbox-inner {
+    padding: 0px 5px;
+    margin: 5px 0;
+    line-height: 2;
+}
+
+.notification-wrapper-button {
+    display: flex;
+    justify-content: flex-end;
+    padding-right: 20px;
+    margin: 10px 0
+}
+
+.nav-tabs-custom .nav-item .nav-link:after {
+    background: #1F1F1F;
+}
+
+.noti-checkbox-left {
+    width: calc(100% - 260px);
+}
+
+.noti-checkbox-right-inner {
+    padding-right: 9px;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    border: 1px solid #ccc;
+    padding-left: 5px;
+    margin: 0 2px
+}
+
+.input-with-icon-design-right {
+    position: absolute;
+    left: 10px;
+    top: 0px;
+    bottom: 0;
+    margin: auto;
+    width: 15px;
+    cursor: pointer;
+    z-index: 2;
+}
+
+.input-feild-padding {
+    padding-left: 30px;
+}
+
+.noti-checkbox-right {
+    display: flex;
+    width: 260px;
+}
+
+.error-message{
+    color: red;
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+.react-tel-input .form-control {
+    width: 100%;
+}
+
+@media only screen and (max-width: 990px) {
+    .pass-form-wrapper {
+        width: 70%;
+    }
+}
+
+
+@media only screen and (max-width: 770px) {
+    .pass-form-wrapper {
+        width: 90%;
+    }
+}

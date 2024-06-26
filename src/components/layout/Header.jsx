@@ -25,9 +25,9 @@ const Header = () => {
         }
     }
     useEffect(() => {
-        if (_.isEmpty(userData?.useData)) {
+        // if (_.isEmpty(userData?.useData)) {
             getUserProfile()
-        }
+        // }
     }, [])
 
     const onClickVerticalMenu = () => {
@@ -48,18 +48,19 @@ const Header = () => {
                     <div className="navbar-brand-box text-center">
                         <Link className="logo logo-dark" to={"/dashboard"}>
                             <span className="logo-sm">
-                                <img src="/images/favicon.svg" alt="logo-sm-dark" height={40} />
+                                <img src="/images/buddha.png" alt="logo-sm-dark" height={40} />
                             </span>
                             <span className="logo-lg">
-                                <img src="/images/logo-dark.svg" alt="logo-dark" height={40} />
+                                <img src="/images/buddha.png" alt="logo-dark" height={40} />
+                                <b style={{color:'#343a40',fontSize:"19px"}}>Ease</b>
                             </span>
                         </Link>
                         <Link className="logo logo-light" to={"/dashboard"}>
                             <span className="logo-sm">
-                                <img src="/images/logo-sm.png" alt="logo-sm-light" height={22} />
+                                <img src="/images/buddha.png" alt="logo-sm-light" height={22} />
                             </span>
                             <span className="logo-lg">
-                                <img src="/images/logo-light.png" alt="logo-light" height={24} />
+                                <img src="/images/buddha.png" alt="logo-light" height={24} />
                             </span>
                         </Link>
                     </div>
@@ -71,7 +72,7 @@ const Header = () => {
 
                     <div className="dropdown d-inline-block user-dropdown">
                         <button type="button" className="btn header-item waves-effect" id="page-header-user-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <img className="rounded-circle header-profile-user" src={userData?.useData?.profile_pic ? userData?.useData?.profile_pic : "/images/users/dummy-avtar.png"} alt="Header Avatar" />
+                            <img className="rounded-circle header-profile-user" src={userData?.useData?.profilePic ? userData?.useData?.profilePic : "/images/users/dummy-avtar.png"} alt="Header Avatar" />
                             <span className="d-none d-xl-inline-block ms-1">{userData?.useData?.name}</span>
                             <i className="mdi mdi-chevron-down d-none d-xl-inline-block" />
                         </button>
