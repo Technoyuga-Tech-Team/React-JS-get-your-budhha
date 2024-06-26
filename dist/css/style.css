@@ -1,0 +1,56 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+.btn-primary,
+.btn-primary:hover,
+.form-check-input:checked,
+.bg-primary {
+    background-color: #1F1F1F !important;
+    border-color: #1F1F1F;
+}
+
+.card {
+    box-shadow: rgba(17, 12, 46, 0.15) 0px 48px 100px 0px !important;
+}
+
+.password .eye-icon {
+    position: absolute;
+    right: 20px;
+    height: max-content;
+    top: 12px;
+    bottom: 0;
+    margin: auto;
+    width: 15px;
+    cursor: pointer;
+}
+
+.page-content {
+    height: 100vh !important;
+    overflow: scroll;
+}
+
+.vertical-collpsed .vertical-menu #sidebar-menu>ul>li:hover>a {
+    color: #1F1F1F;
+}
+
+.vertical-collpsed .vertical-menu #sidebar-menu>ul>li>a {
+    padding: 15px 1.5rem;
+}
+
+.form-control:focus {
+    border-color: rgba(31, 31, 31, 1);
+}
+
+.btn-primary:focus {
+    -webkit-box-shadow: 0 0 0 .15rem rgba(31, 31, 31, 0.5);
+    box-shadow: 0 0 0 .15rem rgba(31, 31, 31, 0.5);
+    border-color: #1F1F1F
+}
+
+.btn-primary.disabled,
+.btn-primary:disabled {
+    background-color: #1F1F1F;
+    border-color: #1F1F1F;
+}
