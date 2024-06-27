@@ -54,3 +54,56 @@
     background-color: #1F1F1F;
     border-color: #1F1F1F;
 }
+  
+  .wrap-input-18 .search {
+    margin: 20px;
+  }
+  
+  .wrap-input-18 .search > div {
+    display: inline-block;
+    position: relative;
+  }
+  
+  .wrap-input-18 .search > div:after {
+    content: "";
+    background: 
+  rgb(0, 0, 0);
+    width: 4px;
+    height: 15px;
+    position: absolute;
+    top: 28px;
+    right: 0px;
+    transform: rotate(135deg);
+  }
+  
+  .wrap-input-18 .search > div > input {
+    color: 
+  rgb(0, 0, 0);
+    font-size: 16px;
+    background: 
+  transparent;
+    width: 35px;
+    height: 35px;
+    padding: 10px;
+    border: solid 3px 
+  rgb(0, 0, 0);
+    outline: none;
+    border-radius: 35px;
+    transition: width 0.5s;
+  }
+  
+  .wrap-input-18 .search > div > input::placeholder {
+    color: 
+  #000000;
+    opacity: 0;
+    transition: opacity 150ms ease-out;
+  }
+  
+  .wrap-input-18 .search > div > input:focus::placeholder {
+    opacity: 1;
+  }
+  
+  .wrap-input-18 .search > div > input:focus,
+  .wrap-input-18 .search > div > input:not(:placeholder-shown) {
+    width: 250px;
+  }

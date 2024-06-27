@@ -5,6 +5,7 @@ import DashBoard from "./pages/DashboardManagement/Dashboard";
 import Setting from "./pages/Settings/Setting";
 import CMSMangement from "./pages/CMSManagement/cmsManagement";
 import Category from "./pages/CategoryManagement/Category";
+import Mood from "./pages/MoodManagement/Mood";
 import { Toaster } from "react-hot-toast";
 
 const Routing = () => {
@@ -24,6 +25,7 @@ const Routing = () => {
           <Route path="/setting" element={<Setting />} />
           <Route path="/cms-management" element={<CMSMangement />} />
           <Route path="/category" element={<Category />} />
+          <Route path="/mood" element={<Mood />} />
         </Routes>
       }
     </>

@@ -2,6 +2,7 @@ import { NavLink } from "react-router-dom"
 import { BiSolidDashboard } from "react-icons/bi";
 import { IoMdSettings } from "react-icons/io";
 import { MdCategory } from "react-icons/md";
+import { TbMoodPlus } from "react-icons/tb";
 import "./Sidebar.css"
 import { useSelector } from "react-redux";
 // import { userRoleTypeForSuper } from "../../constant/constanant";
@@ -22,12 +23,18 @@ const navBarConst = [
     },
     {
         key: 3,
+        value: "Mood",
+        icon: <TbMoodPlus className="sidebar-icons" />,
+        route: "/mood"
+    },
+    {
+        key: 4,
         value: "CMS",
         icon: <SiDecapcms className="sidebar-icons" />,
         route: "/cms-management"
     },
     {
-        key: 3,
+        key: 5,
         value: "Setting",
         icon: <IoMdSettings className="sidebar-icons" />,
         route: "/setting"
