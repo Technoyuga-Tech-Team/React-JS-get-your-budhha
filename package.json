@@ -4,9 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "env-cmd -f src/.env.development vite",
-    "start:stage": "env-cmd -f src/.env.staging vite build",
-    "start:prod": "env-cmd -f src/.env.production vite build",
+    "dev": "env-cmd -f .env.development vite",
+    "start:stage": "env-cmd -f .env.staging vite build",
+    "start:prod": "env-cmd -f .env.production vite build",
     "build": "vite build && copy public\\.htaccess dist",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"

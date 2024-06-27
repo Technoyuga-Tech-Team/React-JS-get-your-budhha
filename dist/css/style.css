@@ -53,9 +53,6 @@
 .btn-primary:disabled {
     background-color: #1F1F1F;
     border-color: #1F1F1F;
-<<<<<<< HEAD
-}
-=======
 }
   
   .wrap-input-18 .search {
@@ -110,4 +107,3 @@
   .wrap-input-18 .search > div > input:not(:placeholder-shown) {
     width: 250px;
   }
->>>>>>> vrajDev
