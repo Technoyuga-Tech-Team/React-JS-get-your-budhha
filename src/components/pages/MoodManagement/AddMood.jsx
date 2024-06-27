@@ -1,25 +1,22 @@
 import { useEffect, useState } from "react";
 import { RxCross2 } from "react-icons/rx";
 import { displayErrorToast, displaySuccessToast } from "../../../Utills/displayToasts";
-import { managetheme } from "../../../services/theme";
+import { managemood } from "../../../services/mood"
 const PIE_API_URL = import.meta.env.VITE_REACT_IMAGE_URL;
 
-function AddCategory({ closeWrapper, appendDataInAdd, data }) {
+function AddMood({ closeWrapper, appendDataInAdd, data }) {
     console.log(data)
 
     const [formData, setFormData] = useState({
         name: "",
         image: "",
-        logoImage: ""
     })
     const [initialData, setInitialData] = useState({
         name: "",
         image: "",
-        logoImage: ""
     })
     const [submitForm, setSubmitForm] = useState(false)
     const [previewImage, setPreviewImage] = useState(null);
-    const [previewImage2, setPreviewImage2] = useState(null);
     const [loader, setLoader] = useState(false)
     const [errors, setErrors] = useState({})
 
@@ -31,21 +28,16 @@ function AddCategory({ closeWrapper, appendDataInAdd, data }) {
         if (isValidate) {
             if (data?._id) {
                 let imageChanged = initialData.image !== formData.image;
-                let logoChanged = initialData.logoImage !== formData.logoImage;
                 const object = new FormData();
 
                 if (imageChanged) {
                     object.append("image", formData?.image);
                 }
 
-                if (logoChanged) {
-                    object.append("logoImage", formData?.logoImage);
-                }
-
                 try {
                     object.append("name", formData?.name);
-                    object.append("themeId", data._id);
-                    const submit = await managetheme(object)
+                    object.append("moodId", data._id);
+                    const submit = await managemood(object)
                     if (submit?.success) {
                         displaySuccessToast(submit?.message || "Data Updated successfully");
                         closeWrapper(false)
@@ -62,8 +54,7 @@ function AddCategory({ closeWrapper, appendDataInAdd, data }) {
                 const object = new FormData();
                 object.append("image", formData?.image);
                 object.append("name", formData?.name);
-                object.append("logoImage", formData?.logoImage);
-                const submit = await managetheme(object)
+                const submit = await managemood(object)
                 if (submit?.success) {
                     displaySuccessToast(submit?.message || "Data added successfully");
                     closeWrapper(false)
@@ -81,16 +72,13 @@ function AddCategory({ closeWrapper, appendDataInAdd, data }) {
     useEffect(() => {
         if (data._id) {
             setPreviewImage(data?.image)
-            setPreviewImage2(data?.logoImage)
             setFormData({
                 name: data.name,
                 image: data.image,
-                logoImage: data.logoImage
             })
             setInitialData({
                 name: data.name,
                 image: data.image,
-                logoImage: data.logoImage
             })
         }
     }, [data])
@@ -123,18 +111,6 @@ function AddCategory({ closeWrapper, appendDataInAdd, data }) {
             }
         }
 
-        if (!data.logoImage) {
-            newErrors.logoImage = "Logo is required";
-            isValid = false;
-        }
-
-        if (typeof (data.logoImage) === "object") {
-            if (data.logoImage.type.includes("video")) {
-                newErrors.logoImage = "Only image(jpeg) is allowed";
-                isValid = false;
-            }
-        }
-
         setErrors(newErrors);
         return isValid;
     };
@@ -149,29 +125,19 @@ function AddCategory({ closeWrapper, appendDataInAdd, data }) {
         })
     }
 
-    const onClickCrossIcon = (type) => {
-        if (type === "img") {
-            setPreviewImage(null);
-            setFormData({ ...formData, image: "" });
-        } else {
-            setPreviewImage2(null);
-            setFormData({ ...formData, logoImage: "" });
-        }
+    const onClickCrossIcon = () => {
+        setPreviewImage(null);
+        setFormData({ ...formData, image: "" });
     };
 
-    const onClickPhoto = async (e, type) => {
+    const onClickPhoto = async (e) => {
         // console.log(type)
         const file = e.target.files[0];
         const reader = new FileReader();
 
         reader.onloadend = () => {
-            if (type === "img") {
                 setPreviewImage(reader.result);
                 setFormData({ ...formData, image: file });
-            } else {
-                setPreviewImage2(reader.result);
-                setFormData({ ...formData, logoImage: file });
-            }
         };
         reader.readAsDataURL(file);
     };
@@ -188,7 +154,7 @@ function AddCategory({ closeWrapper, appendDataInAdd, data }) {
         <div className="main-wrapper-fixed-position" onClick={() => closeWrapper(false)}>
             <div className="asa-main-wrapper-right" onClick={(e) => e.stopPropagation()}>
                 <RxCross2 className="asa-cross-icon" size={20} onClick={() => closeWrapper(false)} />
-                <div className="asa-header-design">{data?._id ? "Update Theme" : "Add Theme"}</div>
+                <div className="asa-header-design">{data?._id ? "Update Mood" : "Add Mood"}</div>
                 <form
                     className="form-horizontal"
                     style={{ marginTop: "35px" }}
@@ -222,74 +188,6 @@ function AddCategory({ closeWrapper, appendDataInAdd, data }) {
                                 </div>
 
                                 <div className="mb-4">
-                                    {previewImage2 ? (
-                                        <>
-                                            <label
-                                                className="form-label"
-                                                htmlFor="photo"
-                                                style={{ marginBottom: "0px" }}
-                                            >
-                                                Logo
-                                            </label>
-                                            <div className="image-container">
-                                                <img
-                                                    src={previewImage2}
-                                                    alt="Preview"
-                                                    style={{
-                                                        maxWidth: "100%",
-                                                        marginTop: "8px",
-                                                    }}
-                                                />
-                                                <div
-                                                    onClick={() => onClickCrossIcon("logo")}
-                                                    className="cross-icon bg-primary"
-                                                // style={Object.keys(errors).length === 3 ? { marginTop: "135px" } : Object.keys(errors).length === 2 ? { marginTop: "120px" } : Object.keys(errors).length === 1 ? { marginTop: "105px" } : { marginTop: "90px" }}
-                                                >
-                                                    <RxCross2
-                                                        color="#fff"
-                                                        size={20}
-                                                    />
-                                                </div>
-                                                {errors?.logoImage && (
-                                                    <div className="error-message">
-                                                        {errors?.logoImage}
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <input
-                                                accept="image/*"
-                                                id="photo"
-                                                name="photo"
-                                                type="file"
-                                                onChange={(event) =>
-                                                    onClickPhoto(event, "logo")
-                                                }
-                                                style={{ display: "none" }}
-                                            />
-                                            <button
-                                                type="button"
-                                                className="btn btn-primary waves-effect waves-light"
-                                            >
-                                                <label
-                                                    style={{ marginBottom: "0px" }}
-                                                    htmlFor="photo"
-                                                >
-                                                    Upload Logo
-                                                </label>
-                                            </button>
-                                            {errors?.logoImage && (
-                                                <div className="error-message">
-                                                    {errors?.logoImage}
-                                                </div>
-                                            )}
-                                        </>
-                                    )}
-                                </div>
-
-                                <div className="mb-4">
                                     {previewImage ? (
                                         <>
                                             <label
@@ -311,7 +209,6 @@ function AddCategory({ closeWrapper, appendDataInAdd, data }) {
                                                 <div
                                                     onClick={() => onClickCrossIcon("img")}
                                                     className="cross-icon bg-primary"
-                                                // style={Object.keys(errors).length === 3 ? { marginTop: "135px" } : Object.keys(errors).length === 2 ? { marginTop: "120px" } : Object.keys(errors).length === 1 ? { marginTop: "105px" } : { marginTop: "90px" }}
                                                 >
                                                     <RxCross2
                                                         color="#fff"
@@ -333,7 +230,7 @@ function AddCategory({ closeWrapper, appendDataInAdd, data }) {
                                                 name="photo"
                                                 type="file"
                                                 onChange={(event) =>
-                                                    onClickPhoto(event, "img")
+                                                    onClickPhoto(event)
                                                 }
                                                 style={{ display: "none" }}
                                             />
@@ -358,7 +255,7 @@ function AddCategory({ closeWrapper, appendDataInAdd, data }) {
                                 </div>
 
                                 <div className="d-grid mt-4">
-                                    <button className="btn btn-primary" type="submit" disabled={loader}>{loader ? 'Processing..' : data?._id ? 'Update theme' : 'Add theme'}</button>
+                                    <button className="btn btn-primary" type="submit" disabled={loader}>{loader ? 'Processing..' : data?._id ? 'Update Mood' : 'Add Mood'}</button>
                                 </div>
                             </div>
                         </div>
@@ -370,4 +267,4 @@ function AddCategory({ closeWrapper, appendDataInAdd, data }) {
     )
 }
 
-export default AddCategory
+export default AddMood

@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react"
 import Header from "../../layout/Header"
 import Sidebar from "../../layout/Sidebar"
-import AddCategory from "./AddCategory"
-import "./Category.css"
-import { getthemeApi, managetheme } from "../../../services/theme"
+import AddMood from "./AddMood"
+import "./Mood.css"
+import { getmoodApi,managemood } from "../../../services/mood"
 import { displayErrorToast, displaySuccessToast } from "../../../Utills/displayToasts"
 import { TiTick } from "react-icons/ti";
 import { TiTimes } from "react-icons/ti";
@@ -21,21 +21,21 @@ import Swal from "sweetalert2"
 
 const numberPerPage = 10;
 
-function Category() {
+function Mood() {
 
-    const [openCategory, setopenCategory] = useState(false)
+    const [openMood, setopenMood] = useState(false)
     const [loader, setLoader] = useState(true)
-    const [Category, setCategory] = useState([])
+    const [Mood, setMood] = useState([])
     const [totalPage, setTotalPage] = useState(0)
     const [selectedPage, setSelectedPage] = useState(1);
-    const [mainArrayCategory, setMainArrayCategory] = useState({})
+    const [mainArrayMood, setMainArrayMood] = useState({})
     const [imageModal, setImageModal] = useState(false);
     const [url, setUrl] = useState("");
     const [data, setData] = useState({})
     const [searchText, setSearchText] = useState("")
 
-    const onClickAddCategory = (data) => {
-        setopenCategory(data)
+    const onClickAddMood = (data) => {
+        setopenMood(data)
         setData({});
     }
 
@@ -46,14 +46,14 @@ function Category() {
             number: 1,
             size: numberPerPage
         }
-        const data = await getthemeApi(paginateData)
+        const data = await getmoodApi(paginateData)
         if (data?.success) {
-            let paginateData = data?.data?.themes
+            let paginateData = data?.data?.moods
             paginateData?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
             setTotalPage(data?.data?.totalPages)
             const mergeData = { [1]: paginateData }
-            setMainArrayCategory(mergeData)
-            setCategory(paginateData)
+            setMainArrayMood(mergeData)
+            setMood(paginateData)
         }
         else {
             displayErrorToast(data?.message || "something went wrong while fetching data")
@@ -61,20 +61,20 @@ function Category() {
         setLoader(false)
     }
 
-    const getCategoryList2 = async (select) => {
+    const getMoodList2 = async (select) => {
         setLoader(true)
         const paginateData = {
             number: select || selectedPage,
             size: numberPerPage
         }
-        const data = await getthemeApi(paginateData)
+        const data = await getmoodApi(paginateData)
         if (data?.success) {
-            let paginateData = data?.data?.themes;
+            let paginateData = data?.data?.moods;
             paginateData?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
             setTotalPage(data?.data?.totalPages)
-            const mergeData = { ...mainArrayCategory, [select || selectedPage]: paginateData }
-            setMainArrayCategory(mergeData)
-            setCategory(paginateData)
+            const mergeData = { ...mainArrayMood, [select || selectedPage]: paginateData }
+            setMainArrayMood(mergeData)
+            setMood(paginateData)
         }
         else {
             displayErrorToast(data?.message || "something went wrong while fetching data")
@@ -82,22 +82,21 @@ function Category() {
         setLoader(false)
     }
 
-    const getCategoryList = async (select) => {
-        console.log("called")
+    const getMoodList = async (select) => {
         setLoader(true)
-        if (!mainArrayCategory[select || selectedPage]) {
+        if (!mainArrayMood[select || selectedPage]) {
             const paginateData = {
                 number: select || selectedPage,
                 size: numberPerPage
             }
-            const data = await getthemeApi(paginateData)
+            const data = await getmoodApi(paginateData)
             if (data?.success) {
-                let paginateData = data?.data?.themes;
+                let paginateData = data?.data?.moods;
                 paginateData?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                 setTotalPage(data?.data?.totalPages)
-                const mergeData = { ...mainArrayCategory, [select || selectedPage]: paginateData }
-                setMainArrayCategory(mergeData)
-                setCategory(paginateData)
+                const mergeData = { ...mainArrayMood, [select || selectedPage]: paginateData }
+                setMainArrayMood(mergeData)
+                setMood(paginateData)
             }
             else {
                 displayErrorToast(data?.message || "something went wrong while fetching data")
@@ -105,14 +104,14 @@ function Category() {
             setLoader(false)
         }
         else {
-            setCategory(mainArrayCategory[select || selectedPage])
+            setMood(mainArrayMood[select || selectedPage])
         }
         setLoader(false)
     }
 
     useEffect(() => {
         setLoader(true)
-        getCategoryList()
+        getMoodList()
         getUserProfile()
     }, [])
 
@@ -128,19 +127,19 @@ function Category() {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 const object = new FormData();
-                object.append("themeId", data?._id);
-                object.append("deleteTheme", "delete");
+                object.append("moodId", data?._id);
+                object.append("deleteMood", "delete");
 
-                await managetheme(object).then(async (submit) => {
+                await managemood(object).then(async (submit) => {
                     if (submit?.success) {
-                        if (Category.length === 1 && selectedPage > 1) {
+                        if (Mood.length === 1 && selectedPage > 1) {
                             setSelectedPage(selectedPage - 1)
-                            await getCategoryList(selectedPage - 1)
+                            await getMoodList(selectedPage - 1)
 
                         }
                         else {
-                            // await getCategoryList()
-                            await getCategoryList2()
+                            // await getMoodList()
+                            await getMoodList2()
                         }
                         displaySuccessToast("Deleted successfully")
                     }
@@ -155,7 +154,7 @@ function Category() {
     const handlePageClick = async (data) => {
         setLoader(true)
         const pageNo = data.selected + 1;
-        await getCategoryList(pageNo)
+        await getMoodList(pageNo)
         setSelectedPage(pageNo);
     };
 
@@ -174,7 +173,7 @@ function Category() {
     }
 
     const handleEdit = (temp) => {
-        onClickAddCategory(true);
+        onClickAddMood(true);
         setData(temp)
     }
 
@@ -182,9 +181,9 @@ function Category() {
         <>
             <div data-sidebar="dark">
                 {
-                    openCategory && <AddCategory
+                    openMood && <AddMood
                         appendDataInAdd={appendDataInAdd}
-                        closeWrapper={onClickAddCategory}
+                        closeWrapper={onClickAddMood}
                         data={data} />
                 }
                 <div id="layout-wrapper">
@@ -194,7 +193,7 @@ function Category() {
                         activeModal={imageModal}
                         setActiveModal={() => { setImageModal(false); setUrl(""); }}
                         img={url}
-                        flag="Theme Image"
+                        flag="Mood Image"
                     />
                     <div className="main-content" style={{ minHeight: "100vh" }}>
                         <div className="page-content">
@@ -202,11 +201,11 @@ function Category() {
                                 <div className="row">
                                     <div className="col-12">
                                         <div className="page-title-box d-sm-flex align-items-center justify-content-between">
-                                            <h4 className="mb-sm-0">Theme Management</h4>
+                                            <h4 className="mb-sm-0">Mood Management</h4>
                                             <div className="page-title-right">
                                                 <ol className="breadcrumb m-0">
                                                     <li className="breadcrumb-item"><a href="/dashboard">Home</a></li>
-                                                    <li className="breadcrumb-item active">Theme Management</li>
+                                                    <li className="breadcrumb-item active">Mood Management</li>
                                                 </ol>
                                             </div>
                                         </div>
@@ -217,17 +216,17 @@ function Category() {
                                         <div className="card">
                                             <div className="card-body">
                                                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingBottom: "15px" }}>
-                                                    <h4 className="card-title">List of Theme</h4>
+                                                    <h4 className="card-title">List of Mood</h4>
                                                     <div className="d-flex flex-row">
-                                                        {/* <div class="wrap-input-18">
+                                                        <div class="wrap-input-18">
                                                             <div class="search">
                                                                 <div>
                                                                     <input type="text" placeholder="Search . . ." />
                                                                 </div>
                                                             </div>
-                                                        </div> */}
+                                                        </div>
                                                         <div className="d-grid">
-                                                            <button className="btn btn-primary waves-effect waves-light" type="buttom" style={{height:'40px',marginTop:'15px'}} onClick={() => onClickAddCategory(true)} >Add Theme</button>
+                                                            <button className="btn btn-primary waves-effect waves-light" type="buttom" style={{height:'40px',marginTop:'15px'}} onClick={() => onClickAddMood(true)} >Add Mood</button>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -236,21 +235,19 @@ function Category() {
                                                         <thead>
                                                             <tr>
                                                                 <th>#</th>
-                                                                <th>Name</th>
-                                                                <th>Logo</th>
                                                                 <th style={{ maxWidth: "100px" }}>Image</th>
+                                                                <th>Name</th>
                                                                 <th>Actions</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            {loader ? <tr><td colSpan={4}>Loading ...</td></tr> : Category?.length > 0 ?
-                                                                Category?.map((elem, index) => {
+                                                            {loader ? <tr><td colSpan={4}>Loading ...</td></tr> : Mood?.length > 0 ?
+                                                                Mood?.map((elem, index) => {
                                                                     return (
                                                                         <tr key={elem?._id}>
                                                                             <td>{(numberPerPage * (selectedPage - 1)) + (index + 1)}</td>
+                                                                            <td style={{ maxWidth: "100px", alignContent: 'center', whiteSpace: 'normal' }}>{<div className="d-flex flex-row justify-content-center"><img src={elem?.image} style={{ height: "100px", width: "100px", objectFit: 'cover', overflow: 'hidden', cursor: "pointer" }} onClick={() => { handleImageModal(elem?.image) }} /></div>}</td>
                                                                             <td>{elem?.name}</td>
-                                                                            <td style={{ maxWidth: "100px", alignContent: 'center', whiteSpace: 'normal' }}>{<div className="d-flex flex-row justify-content-center"><img src={elem?.logoImage} style={{ height: "50%", width: "50%", objectFit: 'cover', overflow: 'hidden', cursor: "pointer" }} onClick={() => { handleImageModal(elem?.logoImage) }} /></div>}</td>
-                                                                            <td style={{ maxWidth: "100px", alignContent: 'center', whiteSpace: 'normal' }}>{<div className="d-flex flex-row justify-content-center"><img src={elem?.image} style={{ height: "50%", width: "50%", objectFit: 'cover', overflow: 'hidden', cursor: "pointer" }} onClick={() => { handleImageModal(elem?.image) }} /></div>}</td>
                                                                             <td style={{ display: "flex", cursor: "pointer" }}>
                                                                                 <>
                                                                                     <ReactTooltip id="edit-comm" />
@@ -278,7 +275,7 @@ function Category() {
                                                                     )
                                                                 }
                                                                 )
-                                                                : <tr><td colSpan={4}>Theme Not Found</td></tr>}
+                                                                : <tr><td colSpan={4}>Mood Not Found</td></tr>}
                                                         </tbody>
                                                     </table>
                                                 </div>
@@ -308,4 +305,4 @@ function Category() {
         </>)
 }
 
-export default Category
+export default Mood
