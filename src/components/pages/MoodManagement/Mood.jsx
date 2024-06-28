@@ -3,7 +3,7 @@ import Header from "../../layout/Header"
 import Sidebar from "../../layout/Sidebar"
 import AddMood from "./AddMood"
 import "./Mood.css"
-import { getmoodApi,managemood } from "../../../services/mood"
+import { getmoodApi, managemood } from "../../../services/mood"
 import { displayErrorToast, displaySuccessToast } from "../../../Utills/displayToasts"
 import { TiTick } from "react-icons/ti";
 import { TiTimes } from "react-icons/ti";
@@ -16,6 +16,7 @@ import { GrPrevious, GrNext } from "react-icons/gr";
 import { getLoggedinUserProfile } from "../../../services/profile"
 import _ from "lodash";
 import ImageModal from "../../layout/ImageModal"
+import { RxCross2 } from "react-icons/rx";
 const PIE_API_URL = import.meta.env.VITE_REACT_IMAGE_URL;
 import Swal from "sweetalert2"
 
@@ -40,11 +41,13 @@ function Mood() {
     }
 
     const appendDataInAdd = async () => {
+        console.log("test1")
         setLoader(true)
         setSelectedPage(1)
         const paginateData = {
             number: 1,
-            size: numberPerPage
+            size: numberPerPage,
+            search: searchText
         }
         const data = await getmoodApi(paginateData)
         if (data?.success) {
@@ -62,10 +65,12 @@ function Mood() {
     }
 
     const getMoodList2 = async (select) => {
+        console.log("test2")
         setLoader(true)
         const paginateData = {
             number: select || selectedPage,
-            size: numberPerPage
+            size: numberPerPage,
+            search: searchText
         }
         const data = await getmoodApi(paginateData)
         if (data?.success) {
@@ -83,11 +88,13 @@ function Mood() {
     }
 
     const getMoodList = async (select) => {
+        console.log("test3")
         setLoader(true)
         if (!mainArrayMood[select || selectedPage]) {
             const paginateData = {
                 number: select || selectedPage,
-                size: numberPerPage
+                size: numberPerPage,
+                search: searchText
             }
             const data = await getmoodApi(paginateData)
             if (data?.success) {
@@ -177,6 +184,25 @@ function Mood() {
         setData(temp)
     }
 
+    const onClickCloseIcon = async () => {
+        setSelectedPage(1)
+        setSearchText("")
+        await getMoodList(1)
+    }
+
+    useEffect(() => {
+        if (searchText.length === 0) {
+            setSelectedPage(1)
+            getMoodList(1)
+        }
+        else {
+        const delayDebounceFn = setTimeout(async () => {
+            setSelectedPage(1)
+            await getMoodList2(1)
+        }, 1000)
+        return () => clearTimeout(delayDebounceFn)}
+    }, [searchText])
+
     return (
         <>
             <div data-sidebar="dark">
@@ -221,12 +247,13 @@ function Mood() {
                                                         <div class="wrap-input-18">
                                                             <div class="search">
                                                                 <div>
-                                                                    <input type="text" placeholder="Search . . ." />
+                                                                    <input type="text" value={searchText} onChange={(e) => { setSearchText(e.target.value.trimStart()) }} placeholder="Search . . ." />
+                                                                    {searchText?.length > 0 && <RxCross2 className="input-with-icon-design" color="grey" onClick={onClickCloseIcon} />}
                                                                 </div>
                                                             </div>
                                                         </div>
                                                         <div className="d-grid">
-                                                            <button className="btn btn-primary waves-effect waves-light" type="buttom" style={{height:'40px',marginTop:'15px'}} onClick={() => onClickAddMood(true)} >Add Mood</button>
+                                                            <button className="btn btn-primary waves-effect waves-light" type="buttom" style={{ height: '40px', marginTop: '15px' }} onClick={() => onClickAddMood(true)} >Add Mood</button>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -235,8 +262,8 @@ function Mood() {
                                                         <thead>
                                                             <tr>
                                                                 <th>#</th>
-                                                                <th style={{ maxWidth: "100px" }}>Image</th>
                                                                 <th>Name</th>
+                                                                <th style={{ maxWidth: "100px" }}>Image</th>
                                                                 <th>Actions</th>
                                                             </tr>
                                                         </thead>
@@ -246,8 +273,8 @@ function Mood() {
                                                                     return (
                                                                         <tr key={elem?._id}>
                                                                             <td>{(numberPerPage * (selectedPage - 1)) + (index + 1)}</td>
-                                                                            <td style={{ maxWidth: "100px", alignContent: 'center', whiteSpace: 'normal' }}>{<div className="d-flex flex-row justify-content-center"><img src={elem?.image} style={{ height: "100px", width: "100px", objectFit: 'cover', overflow: 'hidden', cursor: "pointer" }} onClick={() => { handleImageModal(elem?.image) }} /></div>}</td>
                                                                             <td>{elem?.name}</td>
+                                                                            <td style={{ maxWidth: "100px", alignContent: 'center', whiteSpace: 'normal' }}>{<div className="d-flex flex-row justify-content-center"><img src={elem?.image} style={{ height: "100px", width: "100px", objectFit: 'cover', overflow: 'hidden', cursor: "pointer" }} onClick={() => { handleImageModal(elem?.image) }} /></div>}</td>
                                                                             <td style={{ display: "flex", cursor: "pointer" }}>
                                                                                 <>
                                                                                     <ReactTooltip id="edit-comm" />
@@ -275,7 +302,7 @@ function Mood() {
                                                                     )
                                                                 }
                                                                 )
-                                                                : <tr><td colSpan={4}>Mood Not Found</td></tr>}
+                                                                : <tr><td colSpan={4}>Mood not found</td></tr>}
                                                         </tbody>
                                                     </table>
                                                 </div>

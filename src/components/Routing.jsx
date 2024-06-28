@@ -7,6 +7,7 @@ import CMSMangement from "./pages/CMSManagement/cmsManagement";
 import Category from "./pages/CategoryManagement/Category";
 import Mood from "./pages/MoodManagement/Mood";
 import { Toaster } from "react-hot-toast";
+import Meditation from "./pages/MeditationManagement/Meditation";
 
 const Routing = () => {
   return (
@@ -26,6 +27,7 @@ const Routing = () => {
           <Route path="/cms-management" element={<CMSMangement />} />
           <Route path="/category" element={<Category />} />
           <Route path="/mood" element={<Mood />} />
+          <Route path="/meditation" element={<Meditation />} />
         </Routes>
       }
     </>

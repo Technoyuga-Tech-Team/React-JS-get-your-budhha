@@ -39,11 +39,16 @@ const Dashboard = () => {
                                                         <thead>
                                                             <tr>
                                                                 <th>ID</th>
+                                                                <th>Name</th>
                                                                 <th>Email</th>
-                                                                <th>Role</th>
-                                                                <th>Set up</th>
+                                                                <th>Actions</th>
                                                             </tr>
                                                         </thead>
+                                                        <tbody>
+                                                            <tr>
+                                                                <td colSpan={4}>Comming Soon...</td>
+                                                            </tr>
+                                                        </tbody>
                                                         {/* <tbody>
                                                         {loader ? <tr><td>Loading...</td></tr> : subAdmin?.length > 0 ?
                                                             subAdmin?.map((elem, index) => {

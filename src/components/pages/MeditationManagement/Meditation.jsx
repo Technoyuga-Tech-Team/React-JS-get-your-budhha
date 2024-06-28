@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react"
 import Header from "../../layout/Header"
 import Sidebar from "../../layout/Sidebar"
-import AddCategory from "./AddCategory"
-import "./Category.css"
-import { getthemeApi, managetheme } from "../../../services/theme"
+import AddMeditation from "./AddMeditation"
+import "./Meditation.css"
+import { getmoodApi, managemood } from "../../../services/mood"
 import { displayErrorToast, displaySuccessToast } from "../../../Utills/displayToasts"
 import { TiTick } from "react-icons/ti";
 import { TiTimes } from "react-icons/ti";
@@ -16,26 +16,27 @@ import { GrPrevious, GrNext } from "react-icons/gr";
 import { getLoggedinUserProfile } from "../../../services/profile"
 import _ from "lodash";
 import ImageModal from "../../layout/ImageModal"
+import { RxCross2 } from "react-icons/rx";
 const PIE_API_URL = import.meta.env.VITE_REACT_IMAGE_URL;
 import Swal from "sweetalert2"
 
 const numberPerPage = 10;
 
-function Category() {
+function Meditation() {
 
-    const [openCategory, setopenCategory] = useState(false)
+    const [openMeditation, setopenMeditation] = useState(false)
     const [loader, setLoader] = useState(true)
-    const [Category, setCategory] = useState([])
+    const [Meditation, setMeditation] = useState([])
     const [totalPage, setTotalPage] = useState(0)
     const [selectedPage, setSelectedPage] = useState(1);
-    const [mainArrayCategory, setMainArrayCategory] = useState({})
+    const [mainArrayMeditation, setMainArrayMeditation] = useState({})
     const [imageModal, setImageModal] = useState(false);
     const [url, setUrl] = useState("");
     const [data, setData] = useState({})
     const [searchText, setSearchText] = useState("")
 
-    const onClickAddCategory = (data) => {
-        setopenCategory(data)
+    const onClickAddMeditation = (data) => {
+        setopenMeditation(data)
         setData({});
     }
 
@@ -44,16 +45,17 @@ function Category() {
         setSelectedPage(1)
         const paginateData = {
             number: 1,
-            size: numberPerPage
+            size: numberPerPage,
+            search: searchText
         }
-        const data = await getthemeApi(paginateData)
+        const data = await getmoodApi(paginateData)
         if (data?.success) {
-            let paginateData = data?.data?.themes
+            let paginateData = data?.data?.Meditations
             paginateData?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
             setTotalPage(data?.data?.totalPages)
             const mergeData = { [1]: paginateData }
-            setMainArrayCategory(mergeData)
-            setCategory(paginateData)
+            setMainArrayMeditation(mergeData)
+            setMeditation(paginateData)
         }
         else {
             displayErrorToast(data?.message || "something went wrong while fetching data")
@@ -61,20 +63,21 @@ function Category() {
         setLoader(false)
     }
 
-    const getCategoryList2 = async (select) => {
+    const getMeditationList2 = async (select) => {
         setLoader(true)
         const paginateData = {
             number: select || selectedPage,
-            size: numberPerPage
+            size: numberPerPage,
+            search: searchText
         }
-        const data = await getthemeApi(paginateData)
+        const data = await getmoodApi(paginateData)
         if (data?.success) {
-            let paginateData = data?.data?.themes;
+            let paginateData = data?.data?.Meditations;
             paginateData?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
             setTotalPage(data?.data?.totalPages)
-            const mergeData = { ...mainArrayCategory, [select || selectedPage]: paginateData }
-            setMainArrayCategory(mergeData)
-            setCategory(paginateData)
+            const mergeData = { ...mainArrayMeditation, [select || selectedPage]: paginateData }
+            setMainArrayMeditation(mergeData)
+            setMeditation(paginateData)
         }
         else {
             displayErrorToast(data?.message || "something went wrong while fetching data")
@@ -82,22 +85,22 @@ function Category() {
         setLoader(false)
     }
 
-    const getCategoryList = async (select) => {
-        console.log("called")
+    const getMeditationList = async (select) => {
         setLoader(true)
-        if (!mainArrayCategory[select || selectedPage]) {
+        if (!mainArrayMeditation[select || selectedPage]) {
             const paginateData = {
                 number: select || selectedPage,
-                size: numberPerPage
+                size: numberPerPage,
+                search: searchText
             }
-            const data = await getthemeApi(paginateData)
+            const data = await getmoodApi(paginateData)
             if (data?.success) {
-                let paginateData = data?.data?.themes;
+                let paginateData = data?.data?.Meditations;
                 paginateData?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                 setTotalPage(data?.data?.totalPages)
-                const mergeData = { ...mainArrayCategory, [select || selectedPage]: paginateData }
-                setMainArrayCategory(mergeData)
-                setCategory(paginateData)
+                const mergeData = { ...mainArrayMeditation, [select || selectedPage]: paginateData }
+                setMainArrayMeditation(mergeData)
+                setMeditation(paginateData)
             }
             else {
                 displayErrorToast(data?.message || "something went wrong while fetching data")
@@ -105,14 +108,14 @@ function Category() {
             setLoader(false)
         }
         else {
-            setCategory(mainArrayCategory[select || selectedPage])
+            setMeditation(mainArrayMeditation[select || selectedPage])
         }
         setLoader(false)
     }
 
     useEffect(() => {
         setLoader(true)
-        getCategoryList()
+        getMeditationList()
         getUserProfile()
     }, [])
 
@@ -128,19 +131,19 @@ function Category() {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 const object = new FormData();
-                object.append("themeId", data?._id);
-                object.append("deleteTheme", "delete");
+                object.append("MeditationId", data?._id);
+                object.append("deleteMeditation", "delete");
 
-                await managetheme(object).then(async (submit) => {
+                await managemood(object).then(async (submit) => {
                     if (submit?.success) {
-                        if (Category.length === 1 && selectedPage > 1) {
+                        if (Meditation.length === 1 && selectedPage > 1) {
                             setSelectedPage(selectedPage - 1)
-                            await getCategoryList(selectedPage - 1)
+                            await getMeditationList(selectedPage - 1)
 
                         }
                         else {
-                            // await getCategoryList()
-                            await getCategoryList2()
+                            // await getMeditationList()
+                            await getMeditationList2()
                         }
                         displaySuccessToast("Deleted successfully")
                     }
@@ -155,7 +158,7 @@ function Category() {
     const handlePageClick = async (data) => {
         setLoader(true)
         const pageNo = data.selected + 1;
-        await getCategoryList(pageNo)
+        await getMeditationList(pageNo)
         setSelectedPage(pageNo);
     };
 
@@ -174,17 +177,31 @@ function Category() {
     }
 
     const handleEdit = (temp) => {
-        onClickAddCategory(true);
+        onClickAddMeditation(true);
         setData(temp)
     }
+
+    const onClickCloseIcon = async () => {
+        setSelectedPage(1)
+        setSearchText("")
+        await getMeditationList(1)
+    }
+
+    useEffect(() => {
+        const delayDebounceFn = setTimeout(async () => {
+            setSelectedPage(1)
+            await getMeditationList2(1)
+        }, 1000)
+        return () => clearTimeout(delayDebounceFn)
+    }, [searchText])
 
     return (
         <>
             <div data-sidebar="dark">
                 {
-                    openCategory && <AddCategory
+                    openMeditation && <AddMeditation
                         appendDataInAdd={appendDataInAdd}
-                        closeWrapper={onClickAddCategory}
+                        closeWrapper={onClickAddMeditation}
                         data={data} />
                 }
                 <div id="layout-wrapper">
@@ -194,7 +211,7 @@ function Category() {
                         activeModal={imageModal}
                         setActiveModal={() => { setImageModal(false); setUrl(""); }}
                         img={url}
-                        flag="Theme Image"
+                        flag="Meditation Image"
                     />
                     <div className="main-content" style={{ minHeight: "100vh" }}>
                         <div className="page-content">
@@ -202,11 +219,11 @@ function Category() {
                                 <div className="row">
                                     <div className="col-12">
                                         <div className="page-title-box d-sm-flex align-items-center justify-content-between">
-                                            <h4 className="mb-sm-0">Theme Management</h4>
+                                            <h4 className="mb-sm-0">Meditation Management</h4>
                                             <div className="page-title-right">
                                                 <ol className="breadcrumb m-0">
                                                     <li className="breadcrumb-item"><a href="/dashboard">Home</a></li>
-                                                    <li className="breadcrumb-item active">Theme Management</li>
+                                                    <li className="breadcrumb-item active">Meditation Management</li>
                                                 </ol>
                                             </div>
                                         </div>
@@ -217,17 +234,18 @@ function Category() {
                                         <div className="card">
                                             <div className="card-body">
                                                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingBottom: "15px" }}>
-                                                    <h4 className="card-title">List of Theme</h4>
+                                                    <h4 className="card-title">List of Meditation</h4>
                                                     <div className="d-flex flex-row">
-                                                        {/* <div class="wrap-input-18">
+                                                        <div class="wrap-input-18">
                                                             <div class="search">
                                                                 <div>
-                                                                    <input type="text" placeholder="Search . . ." />
+                                                                    <input type="text" value={searchText} onChange={(e) => { setSearchText(e.target.value.trimStart()) }} placeholder="Search . . ." />
+                                                                    {searchText?.length > 0 && <RxCross2 className="input-with-icon-design" color="grey" onClick={onClickCloseIcon} />}
                                                                 </div>
                                                             </div>
-                                                        </div> */}
+                                                        </div>
                                                         <div className="d-grid">
-                                                            <button className="btn btn-primary waves-effect waves-light" type="buttom" style={{height:'40px',marginTop:'15px'}} onClick={() => onClickAddCategory(true)} >Add Theme</button>
+                                                            <button className="btn btn-primary waves-effect waves-light" type="buttom" style={{ height: '40px', marginTop: '15px' }} onClick={() => onClickAddMeditation(true)} >Add Meditation</button>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -237,20 +255,18 @@ function Category() {
                                                             <tr>
                                                                 <th>#</th>
                                                                 <th>Name</th>
-                                                                <th>Logo</th>
                                                                 <th style={{ maxWidth: "100px" }}>Image</th>
                                                                 <th>Actions</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            {loader ? <tr><td colSpan={4}>Loading ...</td></tr> : Category?.length > 0 ?
-                                                                Category?.map((elem, index) => {
+                                                            {loader ? <tr><td colSpan={4}>Loading ...</td></tr> : Meditation?.length > 0 ?
+                                                                Meditation?.map((elem, index) => {
                                                                     return (
                                                                         <tr key={elem?._id}>
                                                                             <td>{(numberPerPage * (selectedPage - 1)) + (index + 1)}</td>
                                                                             <td>{elem?.name}</td>
-                                                                            <td style={{ maxWidth: "100px", alignContent: 'center', whiteSpace: 'normal' }}>{<div className="d-flex flex-row justify-content-center"><img src={elem?.logoImage} style={{ height: "50%", width: "50%", objectFit: 'cover', overflow: 'hidden', cursor: "pointer" }} onClick={() => { handleImageModal(elem?.logoImage) }} /></div>}</td>
-                                                                            <td style={{ maxWidth: "100px", alignContent: 'center', whiteSpace: 'normal' }}>{<div className="d-flex flex-row justify-content-center"><img src={elem?.image} style={{ height: "50%", width: "50%", objectFit: 'cover', overflow: 'hidden', cursor: "pointer" }} onClick={() => { handleImageModal(elem?.image) }} /></div>}</td>
+                                                                            <td style={{ maxWidth: "100px", alignContent: 'center', whiteSpace: 'normal' }}>{<div className="d-flex flex-row justify-content-center"><img src={elem?.image} style={{ height: "100px", width: "100px", objectFit: 'cover', overflow: 'hidden', cursor: "pointer" }} onClick={() => { handleImageModal(elem?.image) }} /></div>}</td>
                                                                             <td style={{ display: "flex", cursor: "pointer" }}>
                                                                                 <>
                                                                                     <ReactTooltip id="edit-comm" />
@@ -278,7 +294,7 @@ function Category() {
                                                                     )
                                                                 }
                                                                 )
-                                                                : <tr><td colSpan={4}>Theme not found</td></tr>}
+                                                                : <tr><td colSpan={4}>Meditation not found</td></tr>}
                                                         </tbody>
                                                     </table>
                                                 </div>
@@ -308,4 +324,4 @@ function Category() {
         </>)
 }
 
-export default Category
+export default Meditation
