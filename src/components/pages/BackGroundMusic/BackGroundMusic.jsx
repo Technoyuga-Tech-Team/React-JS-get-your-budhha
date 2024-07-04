@@ -26,7 +26,6 @@ function BackGroundMusic() {
     const [selectedPage, setSelectedPage] = useState(1);
     const [mainArrayBackGroundMusic, setMainArrayBackGroundMusic] = useState({})
     const [imageModal, setImageModal] = useState(false);
-    const [audioModal, setAudioModal] = useState(false);
     const [url, setUrl] = useState("");
     const [data, setData] = useState({})
     const [searchText, setSearchText] = useState("")
@@ -46,8 +45,7 @@ function BackGroundMusic() {
         }
         const data = await getBackGroundMusicApi(paginateData)
         if (data?.success) {
-            let paginateData = data?.data?.updateResult
-            paginateData?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            let paginateData = data?.data?.audioData
             setTotalPage(data?.data?.totalPages)
             const mergeData = { [1]: paginateData }
             setMainArrayBackGroundMusic(mergeData)
@@ -65,13 +63,10 @@ function BackGroundMusic() {
             number: select || selectedPage,
             size: numberPerPage,
             search: searchText,
-            theme: filter?.theme?.value?.toString(),
-            mood: filter?.moods?.value?.toString(),
         }
         const data = await getBackGroundMusicApi(paginateData)
         if (data?.success) {
-            let paginateData = data?.data?.updateResult;
-            paginateData?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            let paginateData = data?.data?.audioData;
             setTotalPage(data?.data?.totalPages)
             const mergeData = { ...mainArrayBackGroundMusic, [select || selectedPage]: paginateData }
             setMainArrayBackGroundMusic(mergeData)
@@ -90,12 +85,10 @@ function BackGroundMusic() {
                 number: select || selectedPage,
                 size: numberPerPage,
                 search: searchText,
-                theme: filter?.theme?.value?.toString(),
-                mood: filter?.moods?.value?.toString(),
             }
             const data = await getBackGroundMusicApi(paginateData)
             if (data?.success) {
-                let paginateData = data?.data?.updateResult;
+                let paginateData = data?.data?.audioData;
                 paginateData?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                 setTotalPage(data?.data?.totalPages)
                 const mergeData = { ...mainArrayBackGroundMusic, [select || selectedPage]: paginateData }
@@ -131,14 +124,14 @@ function BackGroundMusic() {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 const object = new FormData();
-                object.append("BackGroundMusicId", data?._id);
-                object.append("deleteBackGroundMusic", "delete");
+                object.append("bgId", data?._id);
+                object.append("deleteBackGroundaudio", "delete");
 
                 await manageBackGroundMusic(object).then(async (submit) => {
                     if (submit?.success) {
                         if (BackGroundMusic.length === 1 && selectedPage > 1) {
                             setSelectedPage(selectedPage - 1)
-                            await getBackGroundMusicList(selectedPage - 1)
+                            await getBackGroundMusicList2(selectedPage - 1)
 
                         }
                         else {
@@ -187,13 +180,11 @@ function BackGroundMusic() {
         await getBackGroundMusicList(1)
     }
 
-    useEffect(() => {
-        const delayDebounceFn = setTimeout(async () => {
-            setSelectedPage(1)
-            await getBackGroundMusicList2(1)
-        }, 1000)
-        return () => clearTimeout(delayDebounceFn)
-    }, [searchText])
+    const onChangeSearchComponent = async (e) => {
+        setSearchText(e?.target?.value?.trimStart())
+        setSelectedPage(1)
+        await getBackGroundMusicList2(1)
+    }
 
 
     return (
@@ -240,7 +231,7 @@ function BackGroundMusic() {
                                                         <div class="wrap-input-18">
                                                             <div class="search">
                                                                 <div>
-                                                                    <input type="text" value={searchText} onChange={(e) => { setSearchText(e.target.value.trimStart()) }} placeholder="Search . . ." />
+                                                                    <input type="text" value={searchText} onChange={(e) => onChangeSearchComponent(e)} placeholder="Search . . ." />
                                                                     {searchText?.length > 0 && <RxCross2 className="input-with-icon-design" color="grey" onClick={onClickCloseIcon} />}
                                                                 </div>
                                                             </div>
@@ -267,41 +258,16 @@ function BackGroundMusic() {
                                                                     return (
                                                                         <tr key={elem?._id}>
                                                                             <td>{(numberPerPage * (selectedPage - 1)) + (index + 1)}</td>
-                                                                            <td style={{ maxWidth: "100px", alignContent: 'center', whiteSpace: 'normal' }}>{<div className="d-flex flex-row justify-content-center"><img src={elem?.bgImage} style={{ height: "100px", width: "100px", objectFit: 'cover', overflow: 'hidden', cursor: "pointer" }} onClick={() => { handleImageModal(elem?.BackGroundMusicImage) }} /></div>}</td>
-                                                                            <td>{elem?.BackGroundMusicName}</td>
-                                                                            <td style={{ maxWidth: "100px" }}>{elem?.description}</td>
-                                                                            <td>{elem?.moods.map(mood => mood.name).join(", ")}</td>
-                                                                            <td>{elem?.theme.name}</td>
-                                                                            <td>
-                                                                                <div className="d-flex flex-row justify-content-center">
-                                                                                    <FaPlayCircle color="black" size={20} style={{ cursor: 'pointer', marginRight: '5px', marginTop: '3px' }} onClick={() => { handleAudioModal(elem?.femaleAudio) }} />
-                                                                                    <p style={{ fontSize: '18px' }}>Play</p>
-                                                                                    {/* <button style={{borderRadius:'50px'}} type="button" class="btn btn-primary" onClick={() => { handleAudioModal(elem?.femaleAudio) }}>Play</button> */}
-                                                                                </div>
-                                                                            </td>
-                                                                            <td>
-                                                                                <div className="d-flex flex-row justify-content-center">
-                                                                                    <FaPlayCircle color="black" size={20} style={{ cursor: 'pointer', marginRight: '5px', marginTop: '3px' }} onClick={() => { handleAudioModal(elem?.maleAudio) }} />
-                                                                                    <p style={{ fontSize: '18px' }}>Play</p>
-                                                                                    {/* <button style={{borderRadius:'50px'}} type="button" class="btn btn-primary" onClick={() => { handleAudioModal(elem?.maleAudio) }}>Play</button> */}
-                                                                                </div>
-                                                                            </td>
-                                                                            {/* <td style={{ maxWidth: "200px", alignContent: 'center', whiteSpace: 'normal' }}>
+                                                                            <td style={{ maxWidth: "100px", alignContent: 'center', whiteSpace: 'normal' }}>{<div className="d-flex flex-row justify-content-center"><img src={elem?.bgImage} style={{ height: "100px", width: "100px", objectFit: 'cover', overflow: 'hidden', cursor: "pointer" }} onClick={() => { handleImageModal(elem?.bgImage) }} /></div>}</td>
+                                                                            <td>{elem?.name}</td>
+                                                                            <td style={{ maxWidth: "200px", alignContent: 'center', whiteSpace: 'normal' }}>
                                                                                 <div className="d-flex flex-row justify-content-center">
                                                                                     <audio controls>
-                                                                                        <source src={elem?.femaleAudio} type="audio/ogg" />
-                                                                                        <source src={elem?.femaleAudio} type="audio/mpeg" />
+                                                                                        <source src={elem?.audio} type="audio/ogg" />
+                                                                                        <source src={elem?.audio} type="audio/mpeg" />
                                                                                     </audio>
                                                                                 </div>
                                                                             </td>
-                                                                            <td style={{ maxWidth: "200px", alignContent: 'center', whiteSpace: 'normal' }} >
-                                                                                <div className="d-flex flex-row justify-content-center">
-                                                                                    <audio controls>
-                                                                                        <source src={elem?.maleAudio} type="audio/ogg" />
-                                                                                        <source src={elem?.maleAudio} type="audio/mpeg" />
-                                                                                    </audio>
-                                                                                </div>
-                                                                            </td> */}
                                                                             <td style={{ display: "flex", cursor: "pointer" }}>
                                                                                 <>
                                                                                     <ReactTooltip id="edit-comm" />

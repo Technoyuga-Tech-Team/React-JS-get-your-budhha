@@ -45,6 +45,7 @@ function AddBackGroundMusic({ closeWrapper, appendDataInAdd, data }) {
 
                 try {
                     object.append("name", formData?.name);
+                    object.append("bgId", data?._id);
                     const submit = await manageBackGroundMusic(object)
                     if (submit?.success) {
                         displaySuccessToast(submit?.message || "Data Updated successfully");

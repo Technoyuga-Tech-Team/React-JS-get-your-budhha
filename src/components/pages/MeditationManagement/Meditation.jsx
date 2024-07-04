@@ -79,7 +79,9 @@ function Meditation() {
         const paginateData = {
             number: 1,
             size: numberPerPage,
-            search: searchText
+            search: searchText,
+            theme: filter?.theme?.value?.toString(),
+            mood: filter?.moods?.value?.toString(),
         }
         const data = await getMeditationApi(paginateData)
         console.log('-----------------------------------------', data)
@@ -176,7 +178,7 @@ function Meditation() {
                     if (submit?.success) {
                         if (Meditation.length === 1 && selectedPage > 1) {
                             setSelectedPage(selectedPage - 1)
-                            await getMeditationList(selectedPage - 1)
+                            await getMeditationList2(selectedPage - 1)
 
                         }
                         else {
@@ -230,13 +232,11 @@ function Meditation() {
         await getMeditationList(1)
     }
 
-    useEffect(() => {
-        const delayDebounceFn = setTimeout(async () => {
-            setSelectedPage(1)
-            await getMeditationList2(1)
-        }, 1000)
-        return () => clearTimeout(delayDebounceFn)
-    }, [searchText])
+    const onChangeSearchComponent = async (e) => {
+        setSearchText(e?.target?.value?.trimStart())
+        setSelectedPage(1)
+        await getMeditationList2(1)
+    }
 
     const onChangeDropDownValue = (data, type) => {
         if (type === "theme") {
@@ -340,7 +340,7 @@ function Meditation() {
                                                         <div class="wrap-input-18">
                                                             <div class="search">
                                                                 <div>
-                                                                    <input type="text" value={searchText} onChange={(e) => { setSearchText(e.target.value.trimStart()) }} placeholder="Search . . ." />
+                                                                    <input type="text" value={searchText} onChange={(e) => { onChangeSearchComponent(e) }} placeholder="Search . . ." />
                                                                     {searchText?.length > 0 && <RxCross2 className="input-with-icon-design" color="grey" onClick={onClickCloseIcon} />}
                                                                 </div>
                                                             </div>
@@ -375,7 +375,7 @@ function Meditation() {
                                                                             <td>{elem?.meditationName}</td>
                                                                             <td style={{ maxWidth: "100px" }}>{elem?.description}</td>
                                                                             <td>{elem?.moods.map(mood => mood.name).join(", ")}</td>
-                                                                            <td>{elem?.theme.name}</td>
+                                                                            <td>{elem?.theme?.name}</td>
                                                                             <td>
                                                                                 <div className="d-flex flex-row justify-content-center">
                                                                                     <FaPlayCircle color="black" size={20} style={{ cursor: 'pointer', marginRight: '5px', marginTop: '3px' }} onClick={() => { handleAudioModal(elem?.femaleAudio) }} />

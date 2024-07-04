@@ -141,7 +141,7 @@ function Mood() {
                     if (submit?.success) {
                         if (Mood.length === 1 && selectedPage > 1) {
                             setSelectedPage(selectedPage - 1)
-                            await getMoodList(selectedPage - 1)
+                            await getMoodList2(selectedPage - 1)
 
                         }
                         else {
@@ -190,18 +190,11 @@ function Mood() {
         await getMoodList2(1,"")
     }
 
-    useEffect(() => {
-        if (searchText.length === 0) {
-            setSelectedPage(1)
-            getMoodList2(1)
-        }
-        else {
-        const delayDebounceFn = setTimeout(async () => {
-            setSelectedPage(1)
-            await getMoodList2(1)
-        }, 1000)
-        return () => clearTimeout(delayDebounceFn)}
-    }, [searchText])
+    const onChangeSearchComponent = async (e) => {
+        setSearchText(e?.target?.value?.trimStart())
+        setSelectedPage(1)
+        await getMoodList2(1)
+    }
 
     return (
         <>
@@ -247,7 +240,7 @@ function Mood() {
                                                         <div class="wrap-input-18">
                                                             <div class="search">
                                                                 <div>
-                                                                    <input type="text" value={searchText} onChange={(e) => { setSearchText(e.target.value.trimStart()) }} placeholder="Search . . ." />
+                                                                    <input type="text" value={searchText} onChange={(e) => { onChangeSearchComponent(e) }} placeholder="Search . . ." />
                                                                     {searchText?.length > 0 && <RxCross2 className="input-with-icon-design" color="grey" onClick={onClickCloseIcon} />}
                                                                 </div>
                                                             </div>

@@ -7,6 +7,7 @@ import { PiFlowerLotusDuotone } from "react-icons/pi";
 import "./Sidebar.css"
 import { useSelector } from "react-redux";
 import { ImMusic } from "react-icons/im";
+import { FaUser } from "react-icons/fa";
 // import { userRoleTypeForSuper } from "../../constant/constanant";
 import { SiDecapcms } from "react-icons/si"
 
@@ -17,38 +18,44 @@ const navBarConst = [
         icon: <BiSolidDashboard className="sidebar-icons" />,
         route: "/dashboard"
     },
+    // {
+    //     key: 2,
+    //     value: "User",
+    //     icon: <FaUser className="sidebar-icons" />,
+    //     route: "/"
+    // },
     {
-        key: 2,
+        key: 3,
         value: "Theme",
         icon: <MdCategory className="sidebar-icons" />,
         route: "/category"
     },
     {
-        key: 3,
+        key: 4,
         value: "Mood",
         icon: <TbMoodPlus className="sidebar-icons" />,
         route: "/mood"
     },
     {
-        key: 4,
+        key: 5,
         value: "Meditation",
         icon: <PiFlowerLotusDuotone className="sidebar-icons" />,
         route: "/meditation"
     },
     {
-        key: 5,
+        key: 6,
         value: "Background Music",
         icon: <ImMusic className="sidebar-icons" />,
         route: "/backgroundMusic"
     },
     {
-        key: 5,
+        key: 7,
         value: "CMS",
         icon: <SiDecapcms className="sidebar-icons" />,
         route: "/cms-management"
     },
     {
-        key: 6,
+        key: 8,
         value: "Setting",
         icon: <IoMdSettings className="sidebar-icons" />,
         route: "/setting"
