@@ -8,6 +8,7 @@ import Category from "./pages/CategoryManagement/Category";
 import Mood from "./pages/MoodManagement/Mood";
 import { Toaster } from "react-hot-toast";
 import Meditation from "./pages/MeditationManagement/Meditation";
+import BackGroundMusic from "./pages/BackGroundMusic/BackGroundMusic";
 
 const Routing = () => {
   return (
@@ -28,6 +29,7 @@ const Routing = () => {
           <Route path="/category" element={<Category />} />
           <Route path="/mood" element={<Mood />} />
           <Route path="/meditation" element={<Meditation />} />
+          <Route path="/backgroundMusic" element={<BackGroundMusic />} />
         </Routes>
       }
     </>

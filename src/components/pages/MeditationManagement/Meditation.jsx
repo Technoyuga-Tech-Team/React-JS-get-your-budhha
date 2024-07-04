@@ -3,7 +3,7 @@ import Header from "../../layout/Header"
 import Sidebar from "../../layout/Sidebar"
 import AddMeditation from "./AddMeditation"
 import "./Meditation.css"
-import { getmoodApi, managemood } from "../../../services/mood"
+import { getMeditationApi, manageMenidation } from "../../../services/meditation"
 import { displayErrorToast, displaySuccessToast } from "../../../Utills/displayToasts"
 import { TiTick } from "react-icons/ti";
 import { TiTimes } from "react-icons/ti";
@@ -19,6 +19,11 @@ import ImageModal from "../../layout/ImageModal"
 import { RxCross2 } from "react-icons/rx";
 const PIE_API_URL = import.meta.env.VITE_REACT_IMAGE_URL;
 import Swal from "sweetalert2"
+import AudioModal from "../../layout/AudioModal"
+import DropdownComponent from "../../../component/DropDown/Dropdown"
+import { getthemeApi } from "../../../services/theme"
+import { getmoodApi } from "../../../services/mood"
+import { FaPlayCircle } from "react-icons/fa";
 
 const numberPerPage = 10;
 
@@ -31,9 +36,37 @@ function Meditation() {
     const [selectedPage, setSelectedPage] = useState(1);
     const [mainArrayMeditation, setMainArrayMeditation] = useState({})
     const [imageModal, setImageModal] = useState(false);
+    const [audioModal, setAudioModal] = useState(false);
     const [url, setUrl] = useState("");
     const [data, setData] = useState({})
     const [searchText, setSearchText] = useState("")
+    const [themeDropDown, setThemeDropDown] = useState([]);
+    const [moodDropDown, setMoodDropDown] = useState([]);
+    const [filter, setFilter] = useState({
+        theme: "",
+        moods: ""
+    })
+
+    const getTheme = async () => {
+        const themeData = await getthemeApi()
+        if (themeData?.success) {
+            setThemeDropDown(themeData.data.themes)
+            // setThemeDropDown(themeData.data.themes.map(theme => ({ value: theme._id, label: theme.name })));
+        }
+    }
+
+    const getMoods = async () => {
+        const moodData = await getmoodApi()
+        if (moodData?.success) {
+            setMoodDropDown(moodData.data.moods)
+            // setMoodDropDown(moodData.data.moods.map(mood => ({ value: mood._id, label: mood.name })));
+        }
+    }
+
+    useEffect(() => {
+        getTheme()
+        getMoods()
+    }, [])
 
     const onClickAddMeditation = (data) => {
         setopenMeditation(data)
@@ -48,9 +81,10 @@ function Meditation() {
             size: numberPerPage,
             search: searchText
         }
-        const data = await getmoodApi(paginateData)
+        const data = await getMeditationApi(paginateData)
+        console.log('-----------------------------------------', data)
         if (data?.success) {
-            let paginateData = data?.data?.Meditations
+            let paginateData = data?.data?.updateResult
             paginateData?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
             setTotalPage(data?.data?.totalPages)
             const mergeData = { [1]: paginateData }
@@ -68,11 +102,13 @@ function Meditation() {
         const paginateData = {
             number: select || selectedPage,
             size: numberPerPage,
-            search: searchText
+            search: searchText,
+            theme: filter?.theme?.value?.toString(),
+            mood: filter?.moods?.value?.toString(),
         }
-        const data = await getmoodApi(paginateData)
+        const data = await getMeditationApi(paginateData)
         if (data?.success) {
-            let paginateData = data?.data?.Meditations;
+            let paginateData = data?.data?.updateResult;
             paginateData?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
             setTotalPage(data?.data?.totalPages)
             const mergeData = { ...mainArrayMeditation, [select || selectedPage]: paginateData }
@@ -91,11 +127,13 @@ function Meditation() {
             const paginateData = {
                 number: select || selectedPage,
                 size: numberPerPage,
-                search: searchText
+                search: searchText,
+                theme: filter?.theme?.value?.toString(),
+                mood: filter?.moods?.value?.toString(),
             }
-            const data = await getmoodApi(paginateData)
+            const data = await getMeditationApi(paginateData)
             if (data?.success) {
-                let paginateData = data?.data?.Meditations;
+                let paginateData = data?.data?.updateResult;
                 paginateData?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                 setTotalPage(data?.data?.totalPages)
                 const mergeData = { ...mainArrayMeditation, [select || selectedPage]: paginateData }
@@ -122,7 +160,7 @@ function Meditation() {
     const onPressDeleteIcon = async (data) => {
         Swal.fire({
             title: 'Are you sure?',
-            text: `You want to delete ${data?.name}`,
+            text: `You want to delete ${data?.meditationName}`,
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
@@ -131,10 +169,10 @@ function Meditation() {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 const object = new FormData();
-                object.append("MeditationId", data?._id);
+                object.append("meditationId", data?._id);
                 object.append("deleteMeditation", "delete");
 
-                await managemood(object).then(async (submit) => {
+                await manageMenidation(object).then(async (submit) => {
                     if (submit?.success) {
                         if (Meditation.length === 1 && selectedPage > 1) {
                             setSelectedPage(selectedPage - 1)
@@ -176,6 +214,11 @@ function Meditation() {
         setUrl(img)
     }
 
+    const handleAudioModal = (aud) => {
+        setAudioModal(true);
+        setUrl(aud)
+    }
+
     const handleEdit = (temp) => {
         onClickAddMeditation(true);
         setData(temp)
@@ -195,6 +238,22 @@ function Meditation() {
         return () => clearTimeout(delayDebounceFn)
     }, [searchText])
 
+    const onChangeDropDownValue = (data, type) => {
+        if (type === "theme") {
+            setFilter({
+                ...filter, theme: data
+            })
+        } else {
+            setFilter({
+                ...filter, moods: data
+            })
+        }
+    }
+
+    useEffect(() => {
+        getMeditationList2()
+    }, [filter])
+
     return (
         <>
             <div data-sidebar="dark">
@@ -207,12 +266,19 @@ function Meditation() {
                 <div id="layout-wrapper">
                     <Header />
                     <Sidebar />
-                    <ImageModal
+                    {imageModal && <ImageModal
                         activeModal={imageModal}
                         setActiveModal={() => { setImageModal(false); setUrl(""); }}
                         img={url}
                         flag="Meditation Image"
-                    />
+                    />}
+                    {
+                        audioModal && <AudioModal
+                            activeModal={audioModal}
+                            setActiveModal={() => { setAudioModal(false); setUrl(""); }}
+                            aud={url}
+                            flag="Meditation Audio" />
+                    }
                     <div className="main-content" style={{ minHeight: "100vh" }}>
                         <div className="page-content">
                             <div className="container-fluid">
@@ -236,6 +302,41 @@ function Meditation() {
                                                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingBottom: "15px" }}>
                                                     <h4 className="card-title">List of Meditation</h4>
                                                     <div className="d-flex flex-row">
+                                                        <div style={{ display: "flex", flexDirection: 'row', justifyContent: "space-between" }}>
+                                                            <div className="ul-dashboard-drop-down">
+                                                                <label>
+                                                                    Select Theme
+                                                                </label>
+                                                                <DropdownComponent
+                                                                    width={"170px"}
+                                                                    options={themeDropDown}
+                                                                    onChange={(value) => onChangeDropDownValue(value, "theme")}
+                                                                    defaultVal={themeDropDown && themeDropDown[0]}
+                                                                    value={filter?.theme}
+                                                                    placeholder="Select Theme"
+                                                                    isDisabled={false}
+                                                                    isMulti={false}
+                                                                    isClear={true}
+                                                                />
+                                                            </div>
+
+                                                            <div className="ul-dashboard-drop-down" style={{ marginLeft: '20px' }}>
+                                                                <label>
+                                                                    Select Mood
+                                                                </label>
+                                                                <DropdownComponent
+                                                                    width={"170px"}
+                                                                    options={moodDropDown}
+                                                                    onChange={(value) => onChangeDropDownValue(value, "moods")}
+                                                                    defaultVal={moodDropDown && moodDropDown[0]}
+                                                                    value={filter?.moods}
+                                                                    placeholder="Select Moods"
+                                                                    isDisabled={false}
+                                                                    isMulti={false}
+                                                                    isClear={true}
+                                                                />
+                                                            </div>
+                                                        </div>
                                                         <div class="wrap-input-18">
                                                             <div class="search">
                                                                 <div>
@@ -254,8 +355,13 @@ function Meditation() {
                                                         <thead>
                                                             <tr>
                                                                 <th>#</th>
-                                                                <th>Name</th>
                                                                 <th style={{ maxWidth: "100px" }}>Image</th>
+                                                                <th>Name</th>
+                                                                <th style={{ maxWidth: "100px" }}>Description</th>
+                                                                <th>Moods</th>
+                                                                <th>Theme</th>
+                                                                <th>Female Audio</th>
+                                                                <th>Male Audio</th>
                                                                 <th>Actions</th>
                                                             </tr>
                                                         </thead>
@@ -265,8 +371,41 @@ function Meditation() {
                                                                     return (
                                                                         <tr key={elem?._id}>
                                                                             <td>{(numberPerPage * (selectedPage - 1)) + (index + 1)}</td>
-                                                                            <td>{elem?.name}</td>
-                                                                            <td style={{ maxWidth: "100px", alignContent: 'center', whiteSpace: 'normal' }}>{<div className="d-flex flex-row justify-content-center"><img src={elem?.image} style={{ height: "100px", width: "100px", objectFit: 'cover', overflow: 'hidden', cursor: "pointer" }} onClick={() => { handleImageModal(elem?.image) }} /></div>}</td>
+                                                                            <td style={{ maxWidth: "100px", alignContent: 'center', whiteSpace: 'normal' }}>{<div className="d-flex flex-row justify-content-center"><img src={elem?.meditationImage} style={{ height: "100px", width: "100px", objectFit: 'cover', overflow: 'hidden', cursor: "pointer" }} onClick={() => { handleImageModal(elem?.meditationImage) }} /></div>}</td>
+                                                                            <td>{elem?.meditationName}</td>
+                                                                            <td style={{ maxWidth: "100px" }}>{elem?.description}</td>
+                                                                            <td>{elem?.moods.map(mood => mood.name).join(", ")}</td>
+                                                                            <td>{elem?.theme.name}</td>
+                                                                            <td>
+                                                                                <div className="d-flex flex-row justify-content-center">
+                                                                                    <FaPlayCircle color="black" size={20} style={{ cursor: 'pointer', marginRight: '5px', marginTop: '3px' }} onClick={() => { handleAudioModal(elem?.femaleAudio) }} />
+                                                                                    <p style={{ fontSize: '18px' }}>Play</p>
+                                                                                    {/* <button style={{borderRadius:'50px'}} type="button" class="btn btn-primary" onClick={() => { handleAudioModal(elem?.femaleAudio) }}>Play</button> */}
+                                                                                </div>
+                                                                            </td>
+                                                                            <td>
+                                                                                <div className="d-flex flex-row justify-content-center">
+                                                                                    <FaPlayCircle color="black" size={20} style={{ cursor: 'pointer', marginRight: '5px', marginTop: '3px' }} onClick={() => { handleAudioModal(elem?.maleAudio) }} />
+                                                                                    <p style={{ fontSize: '18px' }}>Play</p>
+                                                                                    {/* <button style={{borderRadius:'50px'}} type="button" class="btn btn-primary" onClick={() => { handleAudioModal(elem?.maleAudio) }}>Play</button> */}
+                                                                                </div>
+                                                                            </td>
+                                                                            {/* <td style={{ maxWidth: "200px", alignContent: 'center', whiteSpace: 'normal' }}>
+                                                                                <div className="d-flex flex-row justify-content-center">
+                                                                                    <audio controls>
+                                                                                        <source src={elem?.femaleAudio} type="audio/ogg" />
+                                                                                        <source src={elem?.femaleAudio} type="audio/mpeg" />
+                                                                                    </audio>
+                                                                                </div>
+                                                                            </td>
+                                                                            <td style={{ maxWidth: "200px", alignContent: 'center', whiteSpace: 'normal' }} >
+                                                                                <div className="d-flex flex-row justify-content-center">
+                                                                                    <audio controls>
+                                                                                        <source src={elem?.maleAudio} type="audio/ogg" />
+                                                                                        <source src={elem?.maleAudio} type="audio/mpeg" />
+                                                                                    </audio>
+                                                                                </div>
+                                                                            </td> */}
                                                                             <td style={{ display: "flex", cursor: "pointer" }}>
                                                                                 <>
                                                                                     <ReactTooltip id="edit-comm" />

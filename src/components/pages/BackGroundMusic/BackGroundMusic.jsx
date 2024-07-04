@@ -1,14 +1,10 @@
 import { useEffect, useState } from "react"
 import Header from "../../layout/Header"
 import Sidebar from "../../layout/Sidebar"
-import AddMood from "./AddMood"
-import "./Mood.css"
-import { getmoodApi, managemood } from "../../../services/mood"
+import AddBackGroundMusic from "./AddBackGroundMusic"
+import "./BackGroundMusic.css"
+import { getBackGroundMusicApi, manageBackGroundMusic } from "../../../services/backGroundMusic"
 import { displayErrorToast, displaySuccessToast } from "../../../Utills/displayToasts"
-import { TiTick } from "react-icons/ti";
-import { TiTimes } from "react-icons/ti";
-// import { numberPerPage, userRoleTypeForSuper } from "../../../constant/constanant"
-import { useSelector } from "react-redux"
 import { Tooltip as ReactTooltip } from 'react-tooltip'
 import { MdDelete, MdEdit } from "react-icons/md"
 import ReactPaginate from "react-paginate"
@@ -17,31 +13,30 @@ import { getLoggedinUserProfile } from "../../../services/profile"
 import _ from "lodash";
 import ImageModal from "../../layout/ImageModal"
 import { RxCross2 } from "react-icons/rx";
-const PIE_API_URL = import.meta.env.VITE_REACT_IMAGE_URL;
 import Swal from "sweetalert2"
 
 const numberPerPage = 10;
 
-function Mood() {
+function BackGroundMusic() {
 
-    const [openMood, setopenMood] = useState(false)
+    const [openBackGroundMusic, setopenBackGroundMusic] = useState(false)
     const [loader, setLoader] = useState(true)
-    const [Mood, setMood] = useState([])
+    const [BackGroundMusic, setBackGroundMusic] = useState([])
     const [totalPage, setTotalPage] = useState(0)
     const [selectedPage, setSelectedPage] = useState(1);
-    const [mainArrayMood, setMainArrayMood] = useState({})
+    const [mainArrayBackGroundMusic, setMainArrayBackGroundMusic] = useState({})
     const [imageModal, setImageModal] = useState(false);
+    const [audioModal, setAudioModal] = useState(false);
     const [url, setUrl] = useState("");
     const [data, setData] = useState({})
     const [searchText, setSearchText] = useState("")
 
-    const onClickAddMood = (data) => {
-        setopenMood(data)
+    const onClickAddBackGroundMusic = (data) => {
+        setopenBackGroundMusic(data)
         setData({});
     }
 
     const appendDataInAdd = async () => {
-        console.log("test1")
         setLoader(true)
         setSelectedPage(1)
         const paginateData = {
@@ -49,14 +44,14 @@ function Mood() {
             size: numberPerPage,
             search: searchText
         }
-        const data = await getmoodApi(paginateData)
+        const data = await getBackGroundMusicApi(paginateData)
         if (data?.success) {
-            let paginateData = data?.data?.moods
+            let paginateData = data?.data?.updateResult
             paginateData?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
             setTotalPage(data?.data?.totalPages)
             const mergeData = { [1]: paginateData }
-            setMainArrayMood(mergeData)
-            setMood(paginateData)
+            setMainArrayBackGroundMusic(mergeData)
+            setBackGroundMusic(paginateData)
         }
         else {
             displayErrorToast(data?.message || "something went wrong while fetching data")
@@ -64,22 +59,23 @@ function Mood() {
         setLoader(false)
     }
 
-    const getMoodList2 = async (select,search) => {
-        console.log("test2")
+    const getBackGroundMusicList2 = async (select) => {
         setLoader(true)
         const paginateData = {
             number: select || selectedPage,
             size: numberPerPage,
-            search: search || searchText
+            search: searchText,
+            theme: filter?.theme?.value?.toString(),
+            mood: filter?.moods?.value?.toString(),
         }
-        const data = await getmoodApi(paginateData)
+        const data = await getBackGroundMusicApi(paginateData)
         if (data?.success) {
-            let paginateData = data?.data?.moods;
+            let paginateData = data?.data?.updateResult;
             paginateData?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
             setTotalPage(data?.data?.totalPages)
-            const mergeData = { ...mainArrayMood, [select || selectedPage]: paginateData }
-            setMainArrayMood(mergeData)
-            setMood(paginateData)
+            const mergeData = { ...mainArrayBackGroundMusic, [select || selectedPage]: paginateData }
+            setMainArrayBackGroundMusic(mergeData)
+            setBackGroundMusic(paginateData)
         }
         else {
             displayErrorToast(data?.message || "something went wrong while fetching data")
@@ -87,23 +83,24 @@ function Mood() {
         setLoader(false)
     }
 
-    const getMoodList = async (select) => {
-        console.log("test3")
+    const getBackGroundMusicList = async (select) => {
         setLoader(true)
-        if (!mainArrayMood[select || selectedPage]) {
+        if (!mainArrayBackGroundMusic[select || selectedPage]) {
             const paginateData = {
                 number: select || selectedPage,
                 size: numberPerPage,
-                search: searchText
+                search: searchText,
+                theme: filter?.theme?.value?.toString(),
+                mood: filter?.moods?.value?.toString(),
             }
-            const data = await getmoodApi(paginateData)
+            const data = await getBackGroundMusicApi(paginateData)
             if (data?.success) {
-                let paginateData = data?.data?.moods;
+                let paginateData = data?.data?.updateResult;
                 paginateData?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                 setTotalPage(data?.data?.totalPages)
-                const mergeData = { ...mainArrayMood, [select || selectedPage]: paginateData }
-                setMainArrayMood(mergeData)
-                setMood(paginateData)
+                const mergeData = { ...mainArrayBackGroundMusic, [select || selectedPage]: paginateData }
+                setMainArrayBackGroundMusic(mergeData)
+                setBackGroundMusic(paginateData)
             }
             else {
                 displayErrorToast(data?.message || "something went wrong while fetching data")
@@ -111,14 +108,14 @@ function Mood() {
             setLoader(false)
         }
         else {
-            setMood(mainArrayMood[select || selectedPage])
+            setBackGroundMusic(mainArrayBackGroundMusic[select || selectedPage])
         }
         setLoader(false)
     }
 
     useEffect(() => {
         setLoader(true)
-        getMoodList()
+        getBackGroundMusicList()
         getUserProfile()
     }, [])
 
@@ -134,19 +131,19 @@ function Mood() {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 const object = new FormData();
-                object.append("moodId", data?._id);
-                object.append("deleteMood", "delete");
+                object.append("BackGroundMusicId", data?._id);
+                object.append("deleteBackGroundMusic", "delete");
 
-                await managemood(object).then(async (submit) => {
+                await manageBackGroundMusic(object).then(async (submit) => {
                     if (submit?.success) {
-                        if (Mood.length === 1 && selectedPage > 1) {
+                        if (BackGroundMusic.length === 1 && selectedPage > 1) {
                             setSelectedPage(selectedPage - 1)
-                            await getMoodList(selectedPage - 1)
+                            await getBackGroundMusicList(selectedPage - 1)
 
                         }
                         else {
-                            // await getMoodList()
-                            await getMoodList2()
+                            // await getBackGroundMusicList()
+                            await getBackGroundMusicList2()
                         }
                         displaySuccessToast("Deleted successfully")
                     }
@@ -161,7 +158,7 @@ function Mood() {
     const handlePageClick = async (data) => {
         setLoader(true)
         const pageNo = data.selected + 1;
-        await getMoodList(pageNo)
+        await getBackGroundMusicList(pageNo)
         setSelectedPage(pageNo);
     };
 
@@ -180,58 +177,54 @@ function Mood() {
     }
 
     const handleEdit = (temp) => {
-        onClickAddMood(true);
+        onClickAddBackGroundMusic(true);
         setData(temp)
     }
 
     const onClickCloseIcon = async () => {
         setSelectedPage(1)
         setSearchText("")
-        await getMoodList2(1,"")
+        await getBackGroundMusicList(1)
     }
 
     useEffect(() => {
-        if (searchText.length === 0) {
-            setSelectedPage(1)
-            getMoodList2(1)
-        }
-        else {
         const delayDebounceFn = setTimeout(async () => {
             setSelectedPage(1)
-            await getMoodList2(1)
+            await getBackGroundMusicList2(1)
         }, 1000)
-        return () => clearTimeout(delayDebounceFn)}
+        return () => clearTimeout(delayDebounceFn)
     }, [searchText])
+
 
     return (
         <>
             <div data-sidebar="dark">
                 {
-                    openMood && <AddMood
+                    openBackGroundMusic && <AddBackGroundMusic
                         appendDataInAdd={appendDataInAdd}
-                        closeWrapper={onClickAddMood}
+                        closeWrapper={onClickAddBackGroundMusic}
                         data={data} />
                 }
                 <div id="layout-wrapper">
                     <Header />
                     <Sidebar />
-                    <ImageModal
+                    {imageModal && <ImageModal
                         activeModal={imageModal}
                         setActiveModal={() => { setImageModal(false); setUrl(""); }}
                         img={url}
-                        flag="Mood Image"
-                    />
+                        flag="BackGround Music Image"
+                    />}
                     <div className="main-content" style={{ minHeight: "100vh" }}>
                         <div className="page-content">
                             <div className="container-fluid">
                                 <div className="row">
                                     <div className="col-12">
                                         <div className="page-title-box d-sm-flex align-items-center justify-content-between">
-                                            <h4 className="mb-sm-0">Mood Management</h4>
+                                            <h4 className="mb-sm-0">Background Music Management</h4>
                                             <div className="page-title-right">
                                                 <ol className="breadcrumb m-0">
                                                     <li className="breadcrumb-item"><a href="/dashboard">Home</a></li>
-                                                    <li className="breadcrumb-item active">Mood Management</li>
+                                                    <li className="breadcrumb-item active">Background Music Management</li>
                                                 </ol>
                                             </div>
                                         </div>
@@ -242,7 +235,7 @@ function Mood() {
                                         <div className="card">
                                             <div className="card-body">
                                                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingBottom: "15px" }}>
-                                                    <h4 className="card-title">List of Mood</h4>
+                                                    <h4 className="card-title">List of Background Music</h4>
                                                     <div className="d-flex flex-row">
                                                         <div class="wrap-input-18">
                                                             <div class="search">
@@ -253,7 +246,7 @@ function Mood() {
                                                             </div>
                                                         </div>
                                                         <div className="d-grid">
-                                                            <button className="btn btn-primary waves-effect waves-light" type="buttom" style={{ height: '40px', marginTop: '15px' }} onClick={() => onClickAddMood(true)} >Add Mood</button>
+                                                            <button className="btn btn-primary waves-effect waves-light" type="buttom" style={{ height: '40px', marginTop: '15px' }} onClick={() => onClickAddBackGroundMusic(true)} >Add Background Music</button>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -262,19 +255,53 @@ function Mood() {
                                                         <thead>
                                                             <tr>
                                                                 <th>#</th>
-                                                                <th>Name</th>
                                                                 <th style={{ maxWidth: "100px" }}>Image</th>
+                                                                <th>Name</th>
+                                                                <th>Backgroud Music</th>
                                                                 <th>Actions</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            {loader ? <tr><td colSpan={4}>Loading ...</td></tr> : Mood?.length > 0 ?
-                                                                Mood?.map((elem, index) => {
+                                                            {loader ? <tr><td colSpan={4}>Loading ...</td></tr> : BackGroundMusic?.length > 0 ?
+                                                                BackGroundMusic?.map((elem, index) => {
                                                                     return (
                                                                         <tr key={elem?._id}>
                                                                             <td>{(numberPerPage * (selectedPage - 1)) + (index + 1)}</td>
-                                                                            <td>{elem?.name}</td>
-                                                                            <td style={{ maxWidth: "100px", alignContent: 'center', whiteSpace: 'normal' }}>{<div className="d-flex flex-row justify-content-center"><img src={elem?.image} style={{ height: "100px", width: "100px", objectFit: 'cover', overflow: 'hidden', cursor: "pointer" }} onClick={() => { handleImageModal(elem?.image) }} /></div>}</td>
+                                                                            <td style={{ maxWidth: "100px", alignContent: 'center', whiteSpace: 'normal' }}>{<div className="d-flex flex-row justify-content-center"><img src={elem?.bgImage} style={{ height: "100px", width: "100px", objectFit: 'cover', overflow: 'hidden', cursor: "pointer" }} onClick={() => { handleImageModal(elem?.BackGroundMusicImage) }} /></div>}</td>
+                                                                            <td>{elem?.BackGroundMusicName}</td>
+                                                                            <td style={{ maxWidth: "100px" }}>{elem?.description}</td>
+                                                                            <td>{elem?.moods.map(mood => mood.name).join(", ")}</td>
+                                                                            <td>{elem?.theme.name}</td>
+                                                                            <td>
+                                                                                <div className="d-flex flex-row justify-content-center">
+                                                                                    <FaPlayCircle color="black" size={20} style={{ cursor: 'pointer', marginRight: '5px', marginTop: '3px' }} onClick={() => { handleAudioModal(elem?.femaleAudio) }} />
+                                                                                    <p style={{ fontSize: '18px' }}>Play</p>
+                                                                                    {/* <button style={{borderRadius:'50px'}} type="button" class="btn btn-primary" onClick={() => { handleAudioModal(elem?.femaleAudio) }}>Play</button> */}
+                                                                                </div>
+                                                                            </td>
+                                                                            <td>
+                                                                                <div className="d-flex flex-row justify-content-center">
+                                                                                    <FaPlayCircle color="black" size={20} style={{ cursor: 'pointer', marginRight: '5px', marginTop: '3px' }} onClick={() => { handleAudioModal(elem?.maleAudio) }} />
+                                                                                    <p style={{ fontSize: '18px' }}>Play</p>
+                                                                                    {/* <button style={{borderRadius:'50px'}} type="button" class="btn btn-primary" onClick={() => { handleAudioModal(elem?.maleAudio) }}>Play</button> */}
+                                                                                </div>
+                                                                            </td>
+                                                                            {/* <td style={{ maxWidth: "200px", alignContent: 'center', whiteSpace: 'normal' }}>
+                                                                                <div className="d-flex flex-row justify-content-center">
+                                                                                    <audio controls>
+                                                                                        <source src={elem?.femaleAudio} type="audio/ogg" />
+                                                                                        <source src={elem?.femaleAudio} type="audio/mpeg" />
+                                                                                    </audio>
+                                                                                </div>
+                                                                            </td>
+                                                                            <td style={{ maxWidth: "200px", alignContent: 'center', whiteSpace: 'normal' }} >
+                                                                                <div className="d-flex flex-row justify-content-center">
+                                                                                    <audio controls>
+                                                                                        <source src={elem?.maleAudio} type="audio/ogg" />
+                                                                                        <source src={elem?.maleAudio} type="audio/mpeg" />
+                                                                                    </audio>
+                                                                                </div>
+                                                                            </td> */}
                                                                             <td style={{ display: "flex", cursor: "pointer" }}>
                                                                                 <>
                                                                                     <ReactTooltip id="edit-comm" />
@@ -302,7 +329,7 @@ function Mood() {
                                                                     )
                                                                 }
                                                                 )
-                                                                : <tr><td colSpan={4}>Mood not found</td></tr>}
+                                                                : <tr><td colSpan={4}>Background Music not found</td></tr>}
                                                         </tbody>
                                                     </table>
                                                 </div>
@@ -332,4 +359,4 @@ function Mood() {
         </>)
 }
 
-export default Mood
+export default BackGroundMusic

@@ -13,7 +13,7 @@ export const managetheme = async (data) => {
 
 export const getthemeApi = async (paginateData) => {
     try {
-        const catagory = await api_services.post(`admin/v1/get-theme-list?page=${paginateData.number}&limit=${paginateData.size}`);
+        const catagory = await api_services.post(`admin/v1/get-theme-list?page=${paginateData?.number}&limit=${paginateData?.size}`);
         console.log(catagory.data)
         return catagory.data;
     } catch (err) {

@@ -8,7 +8,9 @@ const DropdownComponent = ({
   width,
   padding,
   placeholder,
-  isDisabled
+  isDisabled,
+  isMulti,
+  isClear
 }) => {
   const customStyles = {
     control: (provided, state) => ({
@@ -57,6 +59,8 @@ const DropdownComponent = ({
         isSearchable={false}
         value={value}
         isDisabled={isDisabled || false}
+        isMulti={isMulti || false}
+        isClearable={isClear || false}
       />
     </div>
   );
