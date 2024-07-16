@@ -148,7 +148,7 @@ function Password() {
                                                             onClick={() => onClickEyeIcon("oldPass")}
                                                             src={
                                                                 passwordType?.oldPass === "password"
-                                                                    ? "/images/eye-slash.png" : "/images/eye.png"
+                                                                    ? "/images/eye.png" : "/images/eye-slash.png"
                                                             }
                                                         />
                                                     </div>
@@ -180,7 +180,7 @@ function Password() {
                                                             onClick={() => onClickEyeIcon("newPass")}
                                                             src={
                                                                 passwordType?.newPass === "password"
-                                                                    ? "/images/eye-slash.png" : "/images/eye.png"
+                                                                    ? "/images/eye.png" : "/images/eye-slash.png"
                                                             }
                                                         />
                                                     </div>
@@ -212,7 +212,7 @@ function Password() {
                                                             onClick={() => onClickEyeIcon("confirmNewPass")}
                                                             src={
                                                                 passwordType?.confirmNewPass === "password"
-                                                                    ? "/images/eye-slash.png" : "/images/eye.png"
+                                                                    ? "/images/eye.png" : "/images/eye-slash.png"
                                                             }
                                                         />
                                                     </div>

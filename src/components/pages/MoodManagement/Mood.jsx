@@ -19,6 +19,7 @@ import ImageModal from "../../layout/ImageModal"
 import { RxCross2 } from "react-icons/rx";
 const PIE_API_URL = import.meta.env.VITE_REACT_IMAGE_URL;
 import Swal from "sweetalert2"
+import SearchComponent from "../../../component/Search/Search"
 
 const numberPerPage = 10;
 
@@ -64,13 +65,13 @@ function Mood() {
         setLoader(false)
     }
 
-    const getMoodList2 = async (select,search) => {
+    const getMoodList2 = async (select, search) => {
         console.log("test2")
         setLoader(true)
         const paginateData = {
-            number: select || selectedPage,
+            number: select,
             size: numberPerPage,
-            search: search || searchText
+            search: search
         }
         const data = await getmoodApi(paginateData)
         if (data?.success) {
@@ -187,13 +188,14 @@ function Mood() {
     const onClickCloseIcon = async () => {
         setSelectedPage(1)
         setSearchText("")
-        await getMoodList2(1,"")
+        await getMoodList2(1, "")
     }
 
     const onChangeSearchComponent = async (e) => {
-        setSearchText(e?.target?.value?.trimStart())
+        console.log("=========", e?.target?.value)
+        setSearchText(e?.target?.value)
         setSelectedPage(1)
-        await getMoodList2(1)
+        await getMoodList2(1, e?.target?.value)
     }
 
     return (
@@ -237,16 +239,12 @@ function Mood() {
                                                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingBottom: "15px" }}>
                                                     <h4 className="card-title">List of Mood</h4>
                                                     <div className="d-flex flex-row">
-                                                        <div class="wrap-input-18">
-                                                            <div class="search">
-                                                                <div>
-                                                                    <input type="text" value={searchText} onChange={(e) => { onChangeSearchComponent(e) }} placeholder="Search . . ." />
-                                                                    {searchText?.length > 0 && <RxCross2 className="input-with-icon-design" color="grey" onClick={onClickCloseIcon} />}
-                                                                </div>
-                                                            </div>
-                                                        </div>
+                                                        <SearchComponent
+                                                            data={searchText}
+                                                            onChange={(data) => onChangeSearchComponent(data)}
+                                                            onClickCloseIcon={onClickCloseIcon} />
                                                         <div className="d-grid">
-                                                            <button className="btn btn-primary waves-effect waves-light" type="buttom" style={{ height: '40px', marginTop: '15px' }} onClick={() => onClickAddMood(true)} >Add Mood</button>
+                                                            <button className="btn btn-primary waves-effect waves-light" type="buttom" style={{ height: '40px',marginLeft:'10px' }} onClick={() => onClickAddMood(true)} >Add Mood</button>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -267,7 +265,7 @@ function Mood() {
                                                                         <tr key={elem?._id}>
                                                                             <td>{(numberPerPage * (selectedPage - 1)) + (index + 1)}</td>
                                                                             <td>{elem?.name}</td>
-                                                                            <td style={{ maxWidth: "100px", alignContent: 'center', whiteSpace: 'normal' }}>{<div className="d-flex flex-row justify-content-center"><img src={elem?.image} style={{ height: "100px", width: "100px", objectFit: 'cover', overflow: 'hidden', cursor: "pointer" }} onClick={() => { handleImageModal(elem?.image) }} /></div>}</td>
+                                                                            <td style={{ maxWidth: "100px", alignContent: 'center', whiteSpace: 'normal' }}>{<div className="d-flex flex-row justify-content-center"><img loading="lazy" src={elem?.image} style={{ height: "100px", width: "100px", objectFit: 'cover', overflow: 'hidden', cursor: "pointer" }} onClick={() => { handleImageModal(elem?.image) }} /></div>}</td>
                                                                             <td style={{ display: "flex", cursor: "pointer" }}>
                                                                                 <>
                                                                                     <ReactTooltip id="edit-comm" />

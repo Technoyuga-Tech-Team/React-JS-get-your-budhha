@@ -14,7 +14,7 @@ export const manageBackGroundMusic = async (data) => {
 export const getBackGroundMusicApi = async (paginateData) => {
     console.log(paginateData)
     try {
-        const music = await api_services.get(`admin/v1/get-backGround-audio?page=${paginateData?.number}&limit=${paginateData?.size}&search=${paginateData?.search}`);
+        const music = await api_services.get(`admin/v1/get-backGround-audio?page=${paginateData?.number}&limit=${paginateData?.size}&search=${paginateData?.search ? paginateData?.search : ''}`);
         console.log(music.data)
         return music.data;
     } catch (err) {

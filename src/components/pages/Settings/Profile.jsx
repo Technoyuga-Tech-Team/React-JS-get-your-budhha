@@ -192,7 +192,7 @@ function Profile() {
                                                 <div className="col-md-12">
                                                     <div className="mb-4">
                                                         <label className="form-label" htmlFor="name">
-                                                            name
+                                                            Name
                                                         </label>
                                                         <input
                                                             type="text"

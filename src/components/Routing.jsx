@@ -9,6 +9,8 @@ import Mood from "./pages/MoodManagement/Mood";
 import { Toaster } from "react-hot-toast";
 import Meditation from "./pages/MeditationManagement/Meditation";
 import BackGroundMusic from "./pages/BackGroundMusic/BackGroundMusic";
+import UserList from "./pages/Users/UserList";
+import ViewFeedback from "./pages/MeditationManagement/viewFeedback";
 
 const Routing = () => {
   return (
@@ -23,12 +25,14 @@ const Routing = () => {
         :
         <Routes>
           <Route path="*" element={<Navigate to="/dashboard" />} />
+          <Route path="/user" element={<UserList/>} />
           <Route path="/dashboard" element={<DashBoard />} />
           <Route path="/setting" element={<Setting />} />
           <Route path="/cms-management" element={<CMSMangement />} />
           <Route path="/category" element={<Category />} />
           <Route path="/mood" element={<Mood />} />
           <Route path="/meditation" element={<Meditation />} />
+          <Route path="/feedback-list" element={<ViewFeedback/>} />
           <Route path="/backgroundMusic" element={<BackGroundMusic />} />
         </Routes>
       }

@@ -135,8 +135,7 @@ function Category() {
                     if (submit?.success) {
                         if (Category.length === 1 && selectedPage > 1) {
                             setSelectedPage(selectedPage - 1)
-                            await getCategoryList(selectedPage - 1)
-
+                            await getCategoryList2(selectedPage - 1)
                         }
                         else {
                             // await getCategoryList()

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { lazy, useEffect, useState } from "react"
 import Header from "../../layout/Header"
 import Sidebar from "../../layout/Sidebar"
 import AddBackGroundMusic from "./AddBackGroundMusic"
@@ -14,6 +14,7 @@ import _ from "lodash";
 import ImageModal from "../../layout/ImageModal"
 import { RxCross2 } from "react-icons/rx";
 import Swal from "sweetalert2"
+import SearchComponent from "../../../component/Search/Search"
 
 const numberPerPage = 10;
 
@@ -57,12 +58,12 @@ function BackGroundMusic() {
         setLoader(false)
     }
 
-    const getBackGroundMusicList2 = async (select) => {
+    const getBackGroundMusicList2 = async (select, search) => {
         setLoader(true)
         const paginateData = {
             number: select || selectedPage,
             size: numberPerPage,
-            search: searchText,
+            search: search,
         }
         const data = await getBackGroundMusicApi(paginateData)
         if (data?.success) {
@@ -183,7 +184,7 @@ function BackGroundMusic() {
     const onChangeSearchComponent = async (e) => {
         setSearchText(e?.target?.value?.trimStart())
         setSelectedPage(1)
-        await getBackGroundMusicList2(1)
+        await getBackGroundMusicList2(1, e?.target?.value?.trimStart())
     }
 
 
@@ -228,16 +229,15 @@ function BackGroundMusic() {
                                                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingBottom: "15px" }}>
                                                     <h4 className="card-title">List of Background Music</h4>
                                                     <div className="d-flex flex-row">
-                                                        <div class="wrap-input-18">
-                                                            <div class="search">
-                                                                <div>
-                                                                    <input type="text" value={searchText} onChange={(e) => onChangeSearchComponent(e)} placeholder="Search . . ." />
-                                                                    {searchText?.length > 0 && <RxCross2 className="input-with-icon-design" color="grey" onClick={onClickCloseIcon} />}
-                                                                </div>
-                                                            </div>
+                                                        <div>
+                                                            <SearchComponent
+                                                                data={searchText}
+                                                                onChange={(data) => onChangeSearchComponent(data)}
+                                                                onClickCloseIcon={onClickCloseIcon} 
+                                                                />
                                                         </div>
                                                         <div className="d-grid">
-                                                            <button className="btn btn-primary waves-effect waves-light" type="buttom" style={{ height: '40px', marginTop: '15px' }} onClick={() => onClickAddBackGroundMusic(true)} >Add Background Music</button>
+                                                            <button className="btn btn-primary waves-effect waves-light" type="buttom" style={{ height: '40px', marginLeft: '10px' }} onClick={() => onClickAddBackGroundMusic(true)} >Add Background Music</button>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -258,7 +258,7 @@ function BackGroundMusic() {
                                                                     return (
                                                                         <tr key={elem?._id}>
                                                                             <td>{(numberPerPage * (selectedPage - 1)) + (index + 1)}</td>
-                                                                            <td style={{ maxWidth: "100px", alignContent: 'center', whiteSpace: 'normal' }}>{<div className="d-flex flex-row justify-content-center"><img src={elem?.bgImage} style={{ height: "100px", width: "100px", objectFit: 'cover', overflow: 'hidden', cursor: "pointer" }} onClick={() => { handleImageModal(elem?.bgImage) }} /></div>}</td>
+                                                                            <td style={{ maxWidth: "100px", alignContent: 'center', whiteSpace: 'normal' }}>{<div className="d-flex flex-row justify-content-center"><img loading={lazy} src={elem?.bgImage} style={{ height: "100px", width: "100px", objectFit: 'cover', overflow: 'hidden', cursor: "pointer" }} onClick={() => { handleImageModal(elem?.bgImage) }} /></div>}</td>
                                                                             <td>{elem?.name}</td>
                                                                             <td style={{ maxWidth: "200px", alignContent: 'center', whiteSpace: 'normal' }}>
                                                                                 <div className="d-flex flex-row justify-content-center">

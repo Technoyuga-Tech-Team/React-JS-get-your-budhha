@@ -18,12 +18,12 @@ const navBarConst = [
         icon: <BiSolidDashboard className="sidebar-icons" />,
         route: "/dashboard"
     },
-    // {
-    //     key: 2,
-    //     value: "User",
-    //     icon: <FaUser className="sidebar-icons" />,
-    //     route: "/"
-    // },
+    {
+        key: 2,
+        value: "User",
+        icon: <FaUser className="sidebar-icons" />,
+        route: "/user"
+    },
     {
         key: 3,
         value: "Theme",

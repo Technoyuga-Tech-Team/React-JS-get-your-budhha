@@ -11,38 +11,70 @@ const Login = () => {
     });
     const [passwordType, setPasswordType] = useState("password");
     const [disable, setDisable] = useState(false);
+    const [submitForm, setSubmitForm] = useState(false)
+    const [errors, setErrors] = useState({})
+
     const nav = useNavigate();
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setDetails({ ...details, [name]: value })
+        if(submitForm){
+            validation({ ...details, [name]: value.trim() })
+        }
+        setDetails({ ...details, [name]: value.trim() })
     }
 
-    const validation = () => {
-        let errors = {};
-        for (let key in details) {
-            if (!details[key]) {
-                errors[key + '_err'] = 'Please enter ' + key.replace(/_/g, " ");
-                toast.error('Please enter ' + key.replace(/_/g, " "), { style: { background: '#333', color: '#fff' } })
-            }
-            else if (key === "email") {
-                if (typeof details[key] !== "undefined") {
-                    let lastAtPos = details[key].lastIndexOf('@');
-                    let lastDotPos = details[key].lastIndexOf('.');
+    const validation = (data) => {
+        let isValid = true;
+        let newErrors = {};
 
-                    if (!(lastAtPos < lastDotPos && lastAtPos > 0 && details[key].indexOf('@@') === -1 && lastDotPos > 2 && (details[key].length - lastDotPos) > 2)) {
-                        errors['email_err'] = "Email is not valid";
-                        toast.error('Email is not valid', { style: { background: '#333', color: '#fff' } })
-                    }
-                }
+        if (!data.email) {
+            newErrors.email = "Email is required";
+            isValid = false;
+        }
+
+        if (!data.password) {
+            newErrors.password = "Password is required";
+            isValid = false;
+        }
+
+        if (data.email) {
+            let lastAtPos = data.email.lastIndexOf('@');
+            let lastDotPos = data.email.lastIndexOf('.');
+            if (!(lastAtPos < lastDotPos && lastAtPos > 0 && data.email.indexOf('@@') === -1 && lastDotPos > 2 && (data.email.length - lastDotPos) > 2)) {
+                newErrors.email = "Email is not valid";
+                isValid = false;
             }
         }
-        return (Object.keys(errors).length > 0) ? false : true;
+
+        setErrors(newErrors);
+        return isValid;
+
+
+        // for (let key in details) {
+        //     if (!details[key]) {
+        //         errors[key + '_err'] = 'Please enter ' + key.replace(/_/g, " ");
+        //         toast.error('Please enter ' + key.replace(/_/g, " "), { style: { background: '#333', color: '#fff' } })
+        //     }
+        //     else if (key === "email") {
+        //         if (typeof details[key] !== "undefined") {
+        //             let lastAtPos = details[key].lastIndexOf('@');
+        //             let lastDotPos = details[key].lastIndexOf('.');
+
+        //             if (!(lastAtPos < lastDotPos && lastAtPos > 0 && details[key].indexOf('@@') === -1 && lastDotPos > 2 && (details[key].length - lastDotPos) > 2)) {
+        //                 errors['email_err'] = "Email is not valid";
+        //                 toast.error('Email is not valid', { style: { background: '#333', color: '#fff' } })
+        //             }
+        //         }
+        //     }
+        // }
+        // return (Object.keys(errors).length > 0) ? false : true;
     }
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (validation()) {
+        setSubmitForm(true);
+        if (validation(details)) {
             setDisable(true);
             var bodyParameter = new URLSearchParams();
             bodyParameter.append('email', details?.email);
@@ -55,15 +87,15 @@ const Login = () => {
             }).then((response) => {
                 console.log(response?.data)
                 if (response?.data?.success) {
-                    toast.success(response?.data?.message, { style: { background: '#333', color: '#fff' } })
+                    toast.success(response?.data?.message, { style: { background: '#333', color: '#fff' } } || "Login Successful")
                     localStorage.setItem("PIE_ADMIN_TOKEN", response?.data?.data);
                     <Navigate to="/dashboard" />
                     window.location.reload();
                 } else {
-                    toast.error(response?.data?.message, { style: { background: '#333', color: '#fff' } })
+                    toast.error(response?.data?.message, { style: { background: '#333', color: '#fff' } } || "Something Went Wrong While Login")
                 }
             }).catch((error) => {
-                toast.error(error?.response?.data?.message, { style: { background: '#333', color: '#fff' } })
+                toast.error(error?.response?.data?.message, { style: { background: '#333', color: '#fff' } } || "Something Went Wrong While Login")
             })
             setDisable(false);
         }
@@ -90,6 +122,11 @@ const Login = () => {
                                                     <div className="mb-4">
                                                         <label className="form-label" htmlFor="username">Email</label>
                                                         <input type="text" className="form-control" id="username" placeholder="Enter email" name="email" onChange={handleChange} value={details?.email} />
+                                                        {errors?.email && (
+                                                            <div className="error-message">
+                                                                {errors?.email}
+                                                            </div>
+                                                        )}
                                                     </div>
                                                     <div className="mb-4 password">
                                                         <label className="form-label" htmlFor="userpassword">Password</label>
@@ -97,7 +134,12 @@ const Login = () => {
                                                         <img className="eye-icon"
                                                             onClick={() => {
                                                                 setPasswordType(passwordType === "password" ? "text" : "password");
-                                                            }} src={passwordType === 'password' ? "/images/eye-slash.png" : "/images/eye.png"} />
+                                                            }} src={passwordType === 'password' ? "/images/eye.png" : "/images/eye-slash.png"} />
+                                                        {errors?.password && (
+                                                            <div className="error-message">
+                                                                {errors?.password}
+                                                            </div>
+                                                        )}
                                                     </div>
                                                     <div className="row">
                                                         <div className="col">
@@ -107,8 +149,8 @@ const Login = () => {
                                                             </div> */}
                                                         </div>
                                                         <div className="col-7">
-                                                            <div className="text-md-end mt-3 mt-md-0">
-                                                                <a href="/forgot-password" className="text-muted"><i className="mdi mdi-lock" /> Forgot your password?</a>
+                                                            <div className="text-md-end mt-3 mt-md-0 d-flex flex-row justify-content-end">
+                                                                <a href="/forgot-password" className="text-muted"><i className="mdi mdi-lock" />Forgot password?</a>
                                                             </div>
                                                         </div>
                                                     </div>

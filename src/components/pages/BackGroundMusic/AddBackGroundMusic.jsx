@@ -225,7 +225,7 @@ function AddBackGroundMusic({ closeWrapper, appendDataInAdd, data }) {
                 <RxCross2 className="asa-cross-icon" size={20} onClick={() => closeWrapper(false)} />
                 <div className="asa-header-design">{data?._id ?
                     <>
-                        Update Background<br/> Music
+                        Update Background<br /> Music
                     </> :
                     <>
                         Add Background <br /> Music

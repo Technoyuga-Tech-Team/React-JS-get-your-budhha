@@ -24,6 +24,9 @@ import DropdownComponent from "../../../component/DropDown/Dropdown"
 import { getthemeApi } from "../../../services/theme"
 import { getmoodApi } from "../../../services/mood"
 import { FaPlayCircle } from "react-icons/fa";
+import SearchComponent from "../../../component/Search/Search"
+import { MdFeedback } from "react-icons/md";
+import { useNavigate } from "react-router-dom"
 
 const numberPerPage = 10;
 
@@ -46,6 +49,8 @@ function Meditation() {
         theme: "",
         moods: ""
     })
+
+    const navigate = useNavigate()
 
     const getTheme = async () => {
         const themeData = await getthemeApi()
@@ -99,12 +104,12 @@ function Meditation() {
         setLoader(false)
     }
 
-    const getMeditationList2 = async (select) => {
+    const getMeditationList2 = async (select, search) => {
         setLoader(true)
         const paginateData = {
             number: select || selectedPage,
             size: numberPerPage,
-            search: searchText,
+            search: search,
             theme: filter?.theme?.value?.toString(),
             mood: filter?.moods?.value?.toString(),
         }
@@ -130,8 +135,8 @@ function Meditation() {
                 number: select || selectedPage,
                 size: numberPerPage,
                 search: searchText,
-                theme: filter?.theme?.value?.toString(),
-                mood: filter?.moods?.value?.toString(),
+                // theme: filter?.theme?.value?.toString(),
+                // mood: filter?.moods?.value?.toString(),
             }
             const data = await getMeditationApi(paginateData)
             if (data?.success) {
@@ -229,13 +234,13 @@ function Meditation() {
     const onClickCloseIcon = async () => {
         setSelectedPage(1)
         setSearchText("")
-        await getMeditationList(1)
+        await getMeditationList2(1, "")
     }
 
     const onChangeSearchComponent = async (e) => {
         setSearchText(e?.target?.value?.trimStart())
         setSelectedPage(1)
-        await getMeditationList2(1)
+        await getMeditationList2(1, e?.target?.value?.trimStart())
     }
 
     const onChangeDropDownValue = (data, type) => {
@@ -251,7 +256,9 @@ function Meditation() {
     }
 
     useEffect(() => {
-        getMeditationList2()
+        if (filter.moods !== "" || filter.theme !== "") {
+            getMeditationList2()
+        }
     }, [filter])
 
     return (
@@ -305,23 +312,6 @@ function Meditation() {
                                                         <div style={{ display: "flex", flexDirection: 'row', justifyContent: "space-between" }}>
                                                             <div className="ul-dashboard-drop-down">
                                                                 <label>
-                                                                    Select Theme
-                                                                </label>
-                                                                <DropdownComponent
-                                                                    width={"170px"}
-                                                                    options={themeDropDown}
-                                                                    onChange={(value) => onChangeDropDownValue(value, "theme")}
-                                                                    defaultVal={themeDropDown && themeDropDown[0]}
-                                                                    value={filter?.theme}
-                                                                    placeholder="Select Theme"
-                                                                    isDisabled={false}
-                                                                    isMulti={false}
-                                                                    isClear={true}
-                                                                />
-                                                            </div>
-
-                                                            <div className="ul-dashboard-drop-down" style={{ marginLeft: '20px' }}>
-                                                                <label>
                                                                     Select Mood
                                                                 </label>
                                                                 <DropdownComponent
@@ -336,17 +326,32 @@ function Meditation() {
                                                                     isClear={true}
                                                                 />
                                                             </div>
-                                                        </div>
-                                                        <div class="wrap-input-18">
-                                                            <div class="search">
-                                                                <div>
-                                                                    <input type="text" value={searchText} onChange={(e) => { onChangeSearchComponent(e) }} placeholder="Search . . ." />
-                                                                    {searchText?.length > 0 && <RxCross2 className="input-with-icon-design" color="grey" onClick={onClickCloseIcon} />}
-                                                                </div>
+
+                                                            <div className="ul-dashboard-drop-down" style={{ marginLeft: '20px' }}>
+                                                                <label>
+                                                                    Select Theme
+                                                                </label>
+                                                                <DropdownComponent
+                                                                    width={"170px"}
+                                                                    options={themeDropDown}
+                                                                    onChange={(value) => onChangeDropDownValue(value, "theme")}
+                                                                    defaultVal={themeDropDown && themeDropDown[0]}
+                                                                    value={filter?.theme}
+                                                                    placeholder="Select Theme"
+                                                                    isDisabled={false}
+                                                                    isMulti={false}
+                                                                    isClear={true}
+                                                                />
                                                             </div>
                                                         </div>
+                                                        <div style={{ marginTop: '28px', marginLeft: '10px' }}>
+                                                            <SearchComponent
+                                                                data={searchText}
+                                                                onChange={(data) => onChangeSearchComponent(data)}
+                                                                onClickCloseIcon={onClickCloseIcon} />
+                                                        </div>
                                                         <div className="d-grid">
-                                                            <button className="btn btn-primary waves-effect waves-light" type="buttom" style={{ height: '40px', marginTop: '15px' }} onClick={() => onClickAddMeditation(true)} >Add Meditation</button>
+                                                            <button className="btn btn-primary waves-effect waves-light" type="buttom" style={{ height: '40px', marginTop: '27px', marginLeft: '10px' }} onClick={() => onClickAddMeditation(true)} >Add Meditation</button>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -360,6 +365,7 @@ function Meditation() {
                                                                 <th style={{ maxWidth: "100px" }}>Description</th>
                                                                 <th>Moods</th>
                                                                 <th>Theme</th>
+                                                                <th>Rating</th>
                                                                 <th>Female Audio</th>
                                                                 <th>Male Audio</th>
                                                                 <th>Actions</th>
@@ -371,11 +377,12 @@ function Meditation() {
                                                                     return (
                                                                         <tr key={elem?._id}>
                                                                             <td>{(numberPerPage * (selectedPage - 1)) + (index + 1)}</td>
-                                                                            <td style={{ maxWidth: "100px", alignContent: 'center', whiteSpace: 'normal' }}>{<div className="d-flex flex-row justify-content-center"><img src={elem?.meditationImage} style={{ height: "100px", width: "100px", objectFit: 'cover', overflow: 'hidden', cursor: "pointer" }} onClick={() => { handleImageModal(elem?.meditationImage) }} /></div>}</td>
+                                                                            <td style={{ maxWidth: "100px", alignContent: 'center', whiteSpace: 'normal' }}>{<div className="d-flex flex-row justify-content-center"><img loading="lazy" src={elem?.meditationImage} style={{ height: "100px", width: "100px", objectFit: 'cover', overflow: 'hidden', cursor: "pointer" }} onClick={() => { handleImageModal(elem?.meditationImage) }} /></div>}</td>
                                                                             <td>{elem?.meditationName}</td>
                                                                             <td style={{ maxWidth: "100px" }}>{elem?.description}</td>
                                                                             <td>{elem?.moods.map(mood => mood.name).join(", ")}</td>
                                                                             <td>{elem?.theme?.name}</td>
+                                                                            <td className="d-flex flex-row justify-content-center">{elem?.overallRating}</td>
                                                                             <td>
                                                                                 <div className="d-flex flex-row justify-content-center">
                                                                                     <FaPlayCircle color="black" size={20} style={{ cursor: 'pointer', marginRight: '5px', marginTop: '3px' }} onClick={() => { handleAudioModal(elem?.femaleAudio) }} />
@@ -407,6 +414,17 @@ function Meditation() {
                                                                                 </div>
                                                                             </td> */}
                                                                             <td style={{ display: "flex", cursor: "pointer" }}>
+                                                                                <>
+                                                                                    <ReactTooltip id="User-info" />
+                                                                                    <MdFeedback
+                                                                                        style={{ marginRight: "10px" }}
+                                                                                        data-tooltip-place="bottom"
+                                                                                        data-tooltip-id="User-info"
+                                                                                        data-tooltip-content="Feedback"
+                                                                                        size={20}
+                                                                                        // onClick={() => navigate("/feedback-list", { state: { data: elem, selectedPage, pathname: location?.pathname }})}
+                                                                                    />
+                                                                                </>
                                                                                 <>
                                                                                     <ReactTooltip id="edit-comm" />
                                                                                     <MdEdit

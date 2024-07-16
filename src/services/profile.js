@@ -21,7 +21,6 @@ export const changeProfilePassword = async (data) => {
     }
 }
 
-
 export const updateProfileData = async (data) => {
     try {
         const catagory = await api_services.post("admin/v1/update-profile", data);
