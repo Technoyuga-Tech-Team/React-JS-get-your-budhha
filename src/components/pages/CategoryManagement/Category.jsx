@@ -3,7 +3,7 @@ import Header from "../../layout/Header"
 import Sidebar from "../../layout/Sidebar"
 import AddCategory from "./AddCategory"
 import "./Category.css"
-import { getthemeApi, managetheme } from "../../../services/theme"
+import { getthemeApi, managetheme, deletetheme } from "../../../services/theme"
 import { displayErrorToast, displaySuccessToast } from "../../../Utills/displayToasts"
 import { TiTick } from "react-icons/ti";
 import { TiTimes } from "react-icons/ti";
@@ -83,7 +83,6 @@ function Category() {
     }
 
     const getCategoryList = async (select) => {
-        console.log("called")
         setLoader(true)
         if (!mainArrayCategory[select || selectedPage]) {
             const paginateData = {
@@ -127,11 +126,10 @@ function Category() {
             confirmButtonText: 'Yes, delete it!'
         }).then(async (result) => {
             if (result.isConfirmed) {
-                const object = new FormData();
-                object.append("themeId", data?._id);
-                object.append("deleteTheme", "delete");
+                const object ={};
+                object.themeId = data?._id;
 
-                await managetheme(object).then(async (submit) => {
+                await deletetheme(object).then(async (submit) => {
                     if (submit?.success) {
                         if (Category.length === 1 && selectedPage > 1) {
                             setSelectedPage(selectedPage - 1)
@@ -226,7 +224,7 @@ function Category() {
                                                             </div>
                                                         </div> */}
                                                         <div className="d-grid">
-                                                            <button className="btn btn-primary waves-effect waves-light" type="buttom" style={{height:'40px',marginTop:'15px'}} onClick={() => onClickAddCategory(true)} >Add Theme</button>
+                                                            <button className="btn btn-primary waves-effect waves-light" type="buttom" style={{ height: '40px', marginTop: '15px' }} onClick={() => onClickAddCategory(true)} >Add Theme</button>
                                                         </div>
                                                     </div>
                                                 </div>

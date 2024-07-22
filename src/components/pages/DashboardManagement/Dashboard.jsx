@@ -1,15 +1,60 @@
-import ReactPaginate from "react-paginate"
-import Header from "../../layout/Header"
-import Sidebar from "../../layout/Sidebar"
-// import FilterUsers from "./FilterUsers"
+import React, { useState } from "react";
 import { GrPrevious, GrNext } from "react-icons/gr";
-import { useState } from "react";
+import { AiOutlineUser, AiOutlineDollarCircle, AiOutlineUsergroupAdd } from "react-icons/ai";
+import { FiUsers } from "react-icons/fi";
+import ReactPaginate from "react-paginate";
+import { Bar, Line } from "react-chartjs-2";
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title, Tooltip, Legend } from 'chart.js';
+import Header from "../../layout/Header";
+import Sidebar from "../../layout/Sidebar";
+
+// Register the necessary components
+ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title, Tooltip, Legend);
+
 
 const Dashboard = () => {
-    const [totalPage, setTotalPage] = useState(0)
+    const [totalPage] = useState(10); // Static total pages
 
-    const handlePageClick = async (data) => {
+    const handlePageClick = (data) => {
         const pageNo = data.selected + 1;
+        console.log(`User requested page number ${pageNo}`);
+        // Fetch new page data based on pageNo (Static data so no fetching here)
+    };
+
+    const stats = [
+        { title: "Total Users", value: 1000, icon: <AiOutlineUser fontSize={30} />, color: "bg-primary" },
+        { title: "Total Paid Users", value: 300, icon: <AiOutlineDollarCircle fontSize={30} />, color: "bg-success" },
+        { title: "Total Free Users", value: 700, icon: <FiUsers fontSize={30} />, color: "bg-warning" },
+        { title: "Total Revenue", value: "$34,245", icon: <AiOutlineDollarCircle fontSize={30} />, color: "bg-info" },
+        { title: "Total Active Users", value: 800, icon: <AiOutlineUsergroupAdd fontSize={30} />, color: "bg-danger" }
+    ];
+
+    const barData = {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        datasets: [
+            {
+                label: 'Website Views',
+                backgroundColor: 'rgba(75,192,192,1)',
+                borderColor: 'rgba0,0,0,1)',
+                borderWidth: 2,
+                data: [65, 59, 80, 81, 56, 55, 40, 70, 60, 90, 75, 80]
+            }
+        ]
+    };
+
+    const lineData = {
+        labels: ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
+        datasets: [
+            {
+                label: 'Daily Earnings',
+                fill: false,
+                lineTension: 0.5,
+                backgroundColor: 'rgba(75,192,192,1)',
+                borderColor: 'rgba(75,192,192,1)',
+                borderWidth: 2,
+                data: [2000, 4000, 3000, 5000, 7000, 8000, 10000]
+            }
+        ]
     };
 
     return (
@@ -25,73 +70,45 @@ const Dashboard = () => {
                                     <div className="page-title-box d-sm-flex align-items-center justify-content-between">
                                         <h4 className="mb-sm-0">Dashboard & Analytics</h4>
                                     </div>
-                                    <div className="row">
-                                        <div className="col-12">
-                                            <div className="card">
-                                                <div className="card-body">
-                                                    <div className="pb-4" style={{ display: "flex", justifyContent: "space-between" }}>
-                                                        {/* <FilterUsers /> */}
+                                </div>
+                            </div>
+
+                            <div className="row">
+                                {stats.map((stat, index) => (
+                                    <div className="col-md-6 col-xl-3" key={index}>
+                                        <div className={`card ${stat.color} text-white`}>
+                                            <div className="card-body">
+                                                <div className="d-flex align-items-center">
+                                                    <div className="me-3 align-self-center">
+                                                        {stat.icon}
                                                     </div>
-                                                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingBottom: "15px" }}>
-                                                        <h4 className="card-title">List of Users</h4>
+                                                    <div className="flex-grow-1 text-end">
+                                                        <h4 className="mb-1 text-white">{stat.value}</h4>
+                                                        <p className="mb-0">{stat.title}</p>
                                                     </div>
-                                                    <table id="datatable" className="table table-bordered dt-responsive nowrap" style={{ borderCollapse: "collapse", borderSpacing: "0", width: "100%" }}>
-                                                        <thead>
-                                                            <tr>
-                                                                <th>ID</th>
-                                                                <th>Name</th>
-                                                                <th>Email</th>
-                                                                <th>Actions</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            <tr>
-                                                                <td colSpan={4}>Comming Soon...</td>
-                                                            </tr>
-                                                        </tbody>
-                                                        {/* <tbody>
-                                                        {loader ? <tr><td>Loading...</td></tr> : subAdmin?.length > 0 ?
-                                                            subAdmin?.map((elem, index) => {
-                                                                return (
-                                                                    <tr key={elem?._id}>
-                                                                        <td>{(numberPerPage * (selectedPage - 1)) + (index + 1)}</td>
-                                                                        <td>{elem?.email}</td>
-                                                                        <td>{elem?.permission == 1 ? "View" : "Edit"}</td>
-                                                                        <td>
-                                                                            {
-                                                                                elem?.name ?
-                                                                                    <TiTick className="tickmark-wrpper" style={{ color: "green" }} /> :
-                                                                                    <TiTimes className="tickmark-wrpper" style={{ color: "red" }} />
-                                                                            }
-                                                                        </td>
-                                                                        {(userRoleType?.type == userRoleTypeForSuper) &&
-                                                                            <td style={{ display: "flex", cursor: "pointer" }}>
-                                                                                <MdDelete style={{ marginRight: "10px" }} size={20} onClick={() => onPressDeleteIcon(elem)} />
-                                                                            </td>
-                                                                        }
-                                                                    </tr>
-                                                                )
-                                                            }
-                                                            )
-                                                            : <tr><td>No reviews found</td></tr>}
-                                                    </tbody> */}
-                                                    </table>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div style={{ justifyContent: "center", width: "100%", alignItems: "center", display: "flex" }}>
-                                        <ReactPaginate
-                                            previousLabel={<GrPrevious style={{ color: "black" }} />}
-                                            nextLabel={<GrNext style={{ color: "black" }} />}
-                                            pageCount={totalPage || 0}
-                                            marginPagesDisplayed={2}
-                                            pageRangeDisplayed={5}
-                                            onPageChange={handlePageClick}
-                                            containerClassName={"pagination"}
-                                            activeClassName={"active-pagination bg-primary"}
-                                        // forcePage={ }
-                                        />
+                                ))}
+                            </div>
+
+                            <div className="row">
+                                <div className="col-xl-6">
+                                    <div className="card">
+                                        <div className="card-body">
+                                            <h4 className="card-title">Website Views</h4>
+                                            <Bar data={barData} />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="col-xl-6">
+                                    <div className="card">
+                                        <div className="card-body">
+                                            <h4 className="card-title">Daily Earnings</h4>
+                                            <Line data={lineData} />
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -100,8 +117,7 @@ const Dashboard = () => {
                 </div>
             </div>
         </div>
+    );
+};
 
-    )
-}
-
-export default Dashboard
+export default Dashboard;

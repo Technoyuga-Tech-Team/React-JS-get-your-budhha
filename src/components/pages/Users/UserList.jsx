@@ -7,7 +7,7 @@ import { displayErrorToast, displaySuccessToast } from "../../../Utills/displayT
 import { useSelector } from "react-redux";
 import ReactPaginate from "react-paginate";
 import { GrPrevious, GrNext } from "react-icons/gr";
-import { getUserApi } from "../../../services/user";
+import { getUserApi, updateUserApi } from "../../../services/user";
 import { MdBlock } from "react-icons/md";
 import { Tooltip as ReactTooltip } from 'react-tooltip'
 import Swal from "sweetalert2";
@@ -19,7 +19,6 @@ import { IoLogoAppleAppstore } from "react-icons/io5";
 import { AiFillGoogleCircle } from "react-icons/ai";
 import ImageModal from "../../layout/ImageModal";
 
-
 const numberPerPage = 10;
 
 function UserList() {
@@ -28,6 +27,7 @@ function UserList() {
   const [totalPage, setTotalPage] = useState(0)
   const [selectedPage, setSelectedPage] = useState(1)
   const [userList, setUserList] = useState([])
+  const [mainArrayUser, setmainArrayUser] = useState({})
   const [url, setUrl] = useState("");
   const [imageModal, setImageModal] = useState(false);
   const [loader, setLoader] = useState(false)
@@ -36,16 +36,42 @@ function UserList() {
 
   const getUserList = async (page, size, search) => {
     setLoader(true)
-    const finalObject = {
-      size,
-      number: page,
-      search: search
+    if (!mainArrayUser[page || selectedPage]) {
+      const paginateData = {
+        number: page || selectedPage,
+        size,
+        search: search,
+      }
+      const response = await getUserApi(paginateData)
+      if (response?.success) {
+        setUserList(response?.data?.users)
+        setTotalPage(response?.data?.totalPages)
+        const mergeData = { ...mainArrayUser, [page || selectedPage]: response?.data?.users }
+        setmainArrayUser(mergeData)
+      } else {
+        displayErrorToast(response?.message || "Something went wrong")
+      }
+      setLoader(false)
     }
-    const response = await getUserApi(finalObject)
-    console.log(response)
+    else {
+      setUserList(mainArrayUser[page || selectedPage])
+    }
+    setLoader(false)
+  }
+
+  const getUserList2 = async (page, size, search) => {
+    setLoader(true)
+    const paginateData = {
+      number: page || selectedPage,
+      size,
+      search: search,
+    }
+    const response = await getUserApi(paginateData)
     if (response?.success) {
       setUserList(response?.data?.users)
       setTotalPage(response?.data?.totalPages)
+      const mergeData = { ...mainArrayUser, [page || selectedPage]: response?.data?.users }
+      setmainArrayUser(mergeData)
     } else {
       displayErrorToast(response?.message || "Something went wrong")
     }
@@ -85,13 +111,10 @@ function UserList() {
       showCancelButton: true,
     }).then(async (res) => {
       if (res.isConfirmed) {
-        const response = await deleteUserApi(data?._id);
+        const response = await updateUserStatus(data?._id, "delete");
         if (response?.success) {
-          await updateUserStatusLocally(data?._id, 3);
+          await updateUserStatusLocally(data?._id, 2);
           // getUserList(selectedPage, numberPerPage, searchText)
-          displaySuccessToast("User Deleted successfully");
-        } else {
-          displayErrorToast(response?.message);
         }
       }
     })
@@ -99,20 +122,17 @@ function UserList() {
 
   const onPressBlockIcon = (data) => {
     Swal.fire({
-      title: data?.status !== userStatus?.block ? "Block User" : "Unblock User",
-      text: `Are you sure you want to ${data?.status !== userStatus?.block ? "block" : "unblock"} this user?`,
+      title: data?.status === 0 ? "Block User" : "Unblock User",
+      text: `Are you sure you want to ${data?.status === 0 ? "block" : "unblock"} ${data?.firstName + " " + data?.lastName}?`,
       confirmButtonColor: '#127139',
       cancelButtonColor: '#d33',
       confirmButtonText: 'Yes',
       showCancelButton: true,
     }).then(async (res) => {
       if (res.isConfirmed) {
-        const response = await blockUserApi(data?._id, data?.status !== userStatus?.block ? userStatus?.block : userStatus?.active);
-        await updateUserStatusLocally(data?._id, data?.status !== userStatus?.block ? userStatus?.block : userStatus?.active);
+        const response = await updateUserStatus(data?._id, data?.status === 0 ? "block" : "unblock");
         if (response?.success) {
-          displaySuccessToast(response?.message || "User Block successfully");
-        } else {
-          displayErrorToast(response?.message);
+          await updateUserStatusLocally(data?._id, data?.status === 0 ? 1 : 0);
         }
       }
     })
@@ -128,18 +148,32 @@ function UserList() {
   const onClickCloseIcon = async () => {
     setSelectedPage(1)
     setSearchText("")
-    await getUserList(1, numberPerPage, "")
+    await getUserList2(1, numberPerPage, "")
   }
 
   const onChangeSearchComponent = async (e) => {
     setSearchText(e?.target?.value)
     setSelectedPage(1)
-    await getUserList(1, numberPerPage, e?.target?.value)
+    await getUserList2(1, numberPerPage, e?.target?.value)
   }
 
   const handleImageModal = (img) => {
     setImageModal(true);
     setUrl(img)
+  }
+
+  const updateUserStatus = async (id, status) => {
+    const finalObject = {
+      userId: id,
+      action: status
+    }
+    const response = await updateUserApi(finalObject)
+    if (response?.success) {
+      displaySuccessToast(response?.message);
+    } else {
+      displayErrorToast(response?.message)
+    }
+    return response;
   }
 
   return (
@@ -202,8 +236,9 @@ function UserList() {
                                   <tr key={elem?._id} className="text-container">
                                     <td>{(numberPerPage * (selectedPage - 1)) + (index + 1)}</td>
                                     {(elem?.profilePic === "") ?
-                                      <td>-</td> :
-                                      <td style={{ maxWidth: "100px", alignContent: 'center', whiteSpace: 'normal' }}>{<div className="d-flex flex-row justify-content-center"><img loading="lazy" src={elem?.profilePic} style={{ height: "100px", width: "100px", objectFit: 'cover', overflow: 'hidden', cursor: "pointer" }} onClick={() => { handleImageModal(elem?.profilePic) }} /></div>}</td>}
+                                      <td style={{ maxWidth: "100px", alignContent: 'center', whiteSpace: 'normal' }}>{<div className="d-flex flex-row justify-content-center"><img loading="lazy" style={{height:"50px"}} src={"/images/users/user.png"} /></div>}</td>
+                                    :
+                                    <td style={{ maxWidth: "100px", alignContent: 'center', whiteSpace: 'normal' }}>{<div className="d-flex flex-row justify-content-center"><img loading="lazy" src={elem?.profilePic} style={{ height: "100px", width: "100px", objectFit: 'cover', overflow: 'hidden', cursor: "pointer" }} onClick={() => { handleImageModal(elem?.profilePic) }} /></div>}</td>}
                                     <td style={{ maxWidth: "200px" }}>
                                       <div className="two-line-text">
                                         {elem?.firstName}{" "} {elem?.lastName}
@@ -212,45 +247,18 @@ function UserList() {
                                     <td>{elem?.email ? elem?.email : "-"}</td>
                                     <td style={{ textAlign: 'center' }} >{elem?.registerType === 0 ? <MdEmail fontSize={20} /> : <><AiFillGoogleCircle fontSize={20} /> / <IoLogoAppleAppstore fontSize={20} /></>}</td>
 
-                                    <td style={{ display: "flex", cursor: "pointer" }}>
-                                      <ReactTooltip id="User-info" />
-                                      {elem?.business_onboarding_completed && location.pathname == "/bussiness-user-list" &&
-                                        <IoInformationCircle
-                                          style={{ marginRight: "10px" }}
-                                          data-tooltip-place="bottom"
-                                          data-tooltip-id="User-info"
-                                          data-tooltip-content="Info"
-                                          size={20}
-                                          onClick={() => navigate(location.pathname == "/user-list" ? "/user-list/view-bussiness-user-detail" : "/bussiness-user-list/view-bussiness-user-detail", { state: { data: elem, selectedPage, pathname: location?.pathname } })}
-                                        />
-                                      }
-
-                                      {/* {
-                                        elem?.status !== userStatus?.delete ?
+                                    <td style={{ display: "flex", cursor: "pointer", justifyContent: 'center' }}>
+                                      {elem?.status === 2 ? <span style={{ color: 'red', cursor: 'default' }}>User Deleted</span> :
+                                        elem?.status === 0 ?
                                           <>
-                                            {elem?.status !== userStatus?.block ?
-                                              <>
-                                                <ReactTooltip id="Block-user" />
-                                                <MdBlock
-                                                  data-tooltip-place="bottom"
-                                                  data-tooltip-id="Block-user"
-                                                  data-tooltip-content="Block User"
-                                                  size={20}
-                                                  style={{ marginRight: "10px", color: "red" }}
-                                                  onClick={() => onPressBlockIcon(elem)} />
-                                              </> :
-                                              <>
-                                                <ReactTooltip id="unBlock-user" />
-                                                <CgUnblock
-                                                  data-tooltip-place="bottom"
-                                                  data-tooltip-id="unBlock-user"
-                                                  data-tooltip-content="Unblock User"
-                                                  size={22}
-                                                  style={{ marginRight: "8px", color: "green" }}
-                                                  onClick={() => onPressBlockIcon(elem)} />
-                                              </>
-                                            }
-
+                                            <ReactTooltip id="Block-user" />
+                                            <MdBlock
+                                              data-tooltip-place="bottom"
+                                              data-tooltip-id="Block-user"
+                                              data-tooltip-content="Block User"
+                                              size={20}
+                                              style={{ marginRight: "10px", color: "red" }}
+                                              onClick={() => onPressBlockIcon(elem)} />
                                             <ReactTooltip id="Delete-user" />
                                             <MdDelete
                                               data-tooltip-place="bottom"
@@ -259,18 +267,25 @@ function UserList() {
                                               size={20}
                                               style={{ marginRight: "10px" }}
                                               onClick={() => onPressDeleteIcon(elem)} />
-                                          </> : <span style={{ marginRight: "10px" }}>User Deleted</span>} */}
-                                      <ReactTooltip id="User-info" />
-                                      {elem?.business_onboarding_completed && location.pathname == "/user-list" ?
-                                        <IoInformationCircle
-                                          style={{ marginRight: "10px" }}
-                                          data-tooltip-place="bottom"
-                                          data-tooltip-id="User-info"
-                                          data-tooltip-content="Info"
-                                          size={20}
-                                          onClick={() => navigate(location.pathname == "/user-list" ? "/user-list/view-bussiness-user-detail" : "/bussiness-user-list/view-bussiness-user-detail", { state: { data: elem, selectedPage, pathname: location?.pathname } })}
-                                        />
-                                        : <span style={{ marginRight: "30px" }}></span>
+                                          </> :
+                                          <>
+                                            <ReactTooltip id="unBlock-user" />
+                                            <CgUnblock
+                                              data-tooltip-place="bottom"
+                                              data-tooltip-id="unBlock-user"
+                                              data-tooltip-content="Unblock User"
+                                              size={22}
+                                              style={{ marginRight: "8px", color: "green" }}
+                                              onClick={() => onPressBlockIcon(elem)} />
+                                            <ReactTooltip id="Delete-user" />
+                                            <MdDelete
+                                              data-tooltip-place="bottom"
+                                              data-tooltip-id="Delete-user"
+                                              data-tooltip-content="Delete User"
+                                              size={20}
+                                              style={{ marginRight: "10px" }}
+                                              onClick={() => onPressDeleteIcon(elem)} />
+                                          </>
                                       }
                                     </td>
                                   </tr>

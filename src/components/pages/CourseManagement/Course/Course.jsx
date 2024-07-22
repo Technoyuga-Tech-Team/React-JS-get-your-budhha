@@ -1,38 +1,43 @@
 import { lazy, useEffect, useState } from "react"
-import Header from "../../layout/Header"
-import Sidebar from "../../layout/Sidebar"
-import AddBackGroundMusic from "./AddBackGroundMusic"
-import "./BackGroundMusic.css"
-import { getBackGroundMusicApi, manageBackGroundMusic, deleteBackGroundMusic } from "../../../services/backGroundMusic"
-import { displayErrorToast, displaySuccessToast } from "../../../Utills/displayToasts"
+import Header from "../../../layout/Header"
+import Sidebar from "../../../layout/Sidebar"
+import AddCourse from "./AddCourse"
+import "./Course.css"
+import { getCourseApi, manageCourseApi } from "../../../../services/course"
+import { displayErrorToast, displaySuccessToast } from "../../../../Utills/displayToasts"
 import { Tooltip as ReactTooltip } from 'react-tooltip'
-import { MdDelete, MdEdit } from "react-icons/md"
+import { MdDelete, MdEdit, MdFeedback } from "react-icons/md"
 import ReactPaginate from "react-paginate"
 import { GrPrevious, GrNext } from "react-icons/gr";
-import { getLoggedinUserProfile } from "../../../services/profile"
+import { getLoggedinUserProfile } from "../../../../services/profile"
 import _ from "lodash";
-import ImageModal from "../../layout/ImageModal"
-import { RxCross2 } from "react-icons/rx";
+import ImageModal from "../../../layout/ImageModal"
 import Swal from "sweetalert2"
-import SearchComponent from "../../../component/Search/Search"
+import { FaPlayCircle } from "react-icons/fa";
+import SearchComponent from "../../../../component/Search/Search"
+import { IoIosInformationCircle } from "react-icons/io";
+import { useLocation, useNavigate } from "react-router-dom"
 
 const numberPerPage = 10;
 
-function BackGroundMusic() {
+function Course() {
 
-    const [openBackGroundMusic, setopenBackGroundMusic] = useState(false)
+    const [openCourse, setopenCourse] = useState(false)
     const [loader, setLoader] = useState(true)
-    const [BackGroundMusic, setBackGroundMusic] = useState([])
+    const [Course, setCourse] = useState([])
     const [totalPage, setTotalPage] = useState(0)
     const [selectedPage, setSelectedPage] = useState(1);
-    const [mainArrayBackGroundMusic, setMainArrayBackGroundMusic] = useState({})
+    const [mainArrayCourse, setMainArrayCourse] = useState({})
     const [imageModal, setImageModal] = useState(false);
     const [url, setUrl] = useState("");
     const [data, setData] = useState({})
     const [searchText, setSearchText] = useState("")
 
-    const onClickAddBackGroundMusic = (data) => {
-        setopenBackGroundMusic(data)
+    const navigate = useNavigate()
+    const location = useLocation()
+
+    const onClickAddCourse = (data) => {
+        setopenCourse(data)
         setData({});
     }
 
@@ -42,15 +47,16 @@ function BackGroundMusic() {
         const paginateData = {
             number: 1,
             size: numberPerPage,
-            search: searchText
+            search: searchText,
         }
-        const data = await getBackGroundMusicApi(paginateData)
+        const data = await getCourseApi(paginateData)
         if (data?.success) {
-            let paginateData = data?.data?.audioData
+            let paginateData = data?.data?.courses
+            // paginateData?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
             setTotalPage(data?.data?.totalPages)
             const mergeData = { [1]: paginateData }
-            setMainArrayBackGroundMusic(mergeData)
-            setBackGroundMusic(paginateData)
+            setMainArrayCourse(mergeData)
+            setCourse(paginateData)
         }
         else {
             displayErrorToast(data?.message || "something went wrong while fetching data")
@@ -58,20 +64,21 @@ function BackGroundMusic() {
         setLoader(false)
     }
 
-    const getBackGroundMusicList2 = async (select, search) => {
+    const getCourseList2 = async (select, search) => {
         setLoader(true)
         const paginateData = {
             number: select || selectedPage,
             size: numberPerPage,
-            search: search,
+            search: search
         }
-        const data = await getBackGroundMusicApi(paginateData)
+        const data = await getCourseApi(paginateData)
         if (data?.success) {
-            let paginateData = data?.data?.audioData;
+            let paginateData = data?.data?.courses;
+            // paginateData?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
             setTotalPage(data?.data?.totalPages)
-            const mergeData = { ...mainArrayBackGroundMusic, [select || selectedPage]: paginateData }
-            setMainArrayBackGroundMusic(mergeData)
-            setBackGroundMusic(paginateData)
+            const mergeData = { ...mainArrayCourse, [select || selectedPage]: paginateData }
+            setMainArrayCourse(mergeData)
+            setCourse(paginateData)
         }
         else {
             displayErrorToast(data?.message || "something went wrong while fetching data")
@@ -79,22 +86,22 @@ function BackGroundMusic() {
         setLoader(false)
     }
 
-    const getBackGroundMusicList = async (select) => {
+    const getCourseList = async (select) => {
         setLoader(true)
-        if (!mainArrayBackGroundMusic[select || selectedPage]) {
+        if (!mainArrayCourse[select || selectedPage]) {
             const paginateData = {
                 number: select || selectedPage,
                 size: numberPerPage,
                 search: searchText,
             }
-            const data = await getBackGroundMusicApi(paginateData)
+            const data = await getCourseApi(paginateData)
             if (data?.success) {
-                let paginateData = data?.data?.audioData;
-                paginateData?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                let paginateData = data?.data?.courses;
+                // paginateData?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                 setTotalPage(data?.data?.totalPages)
-                const mergeData = { ...mainArrayBackGroundMusic, [select || selectedPage]: paginateData }
-                setMainArrayBackGroundMusic(mergeData)
-                setBackGroundMusic(paginateData)
+                const mergeData = { ...mainArrayCourse, [select || selectedPage]: paginateData }
+                setMainArrayCourse(mergeData)
+                setCourse(paginateData)
             }
             else {
                 displayErrorToast(data?.message || "something went wrong while fetching data")
@@ -102,14 +109,26 @@ function BackGroundMusic() {
             setLoader(false)
         }
         else {
-            setBackGroundMusic(mainArrayBackGroundMusic[select || selectedPage])
+            setCourse(mainArrayCourse[select || selectedPage])
         }
         setLoader(false)
     }
 
+    const clearAllStateData = () => {
+        setSelectedPage(1)
+        setSearchText("")
+    }
+
     useEffect(() => {
         setLoader(true)
-        getBackGroundMusicList()
+        if (location?.state?.activePage) {
+            setSelectedPage(location?.state?.activePage)
+            getCourseList(location?.state?.activePage)
+
+        } else {
+            getCourseList(1)
+            clearAllStateData()
+        }
         getUserProfile()
     }, [])
 
@@ -124,19 +143,18 @@ function BackGroundMusic() {
             confirmButtonText: 'Yes, delete it!'
         }).then(async (result) => {
             if (result.isConfirmed) {
-                const object ={};
-                object.backGroundAudioId = data?._id;
+                const object = new FormData();
+                object.append("courseId", data?._id);
+                object.append("deleteCourse", "delete");
 
-                await deleteBackGroundMusic(object).then(async (submit) => {
+                await manageCourseApi(object).then(async (submit) => {
                     if (submit?.success) {
-                        if (BackGroundMusic.length === 1 && selectedPage > 1) {
+                        if (Course.length === 1 && selectedPage > 1) {
                             setSelectedPage(selectedPage - 1)
-                            await getBackGroundMusicList2(selectedPage - 1)
-
+                            await getCourseList2(selectedPage - 1)
                         }
                         else {
-                            // await getBackGroundMusicList()
-                            await getBackGroundMusicList2()
+                            await getCourseList2()
                         }
                         displaySuccessToast("Deleted successfully")
                     }
@@ -151,7 +169,7 @@ function BackGroundMusic() {
     const handlePageClick = async (data) => {
         setLoader(true)
         const pageNo = data.selected + 1;
-        await getBackGroundMusicList(pageNo)
+        await getCourseList(pageNo)
         setSelectedPage(pageNo);
     };
 
@@ -170,30 +188,29 @@ function BackGroundMusic() {
     }
 
     const handleEdit = (temp) => {
-        onClickAddBackGroundMusic(true);
+        onClickAddCourse(true);
         setData(temp)
     }
 
     const onClickCloseIcon = async () => {
         setSelectedPage(1)
         setSearchText("")
-        await getBackGroundMusicList(1)
+        await getCourseList2(1, "")
     }
 
     const onChangeSearchComponent = async (e) => {
         setSearchText(e?.target?.value?.trimStart())
         setSelectedPage(1)
-        await getBackGroundMusicList2(1, e?.target?.value?.trimStart())
+        await getCourseList2(1, e?.target?.value?.trimStart())
     }
-
 
     return (
         <>
             <div data-sidebar="dark">
                 {
-                    openBackGroundMusic && <AddBackGroundMusic
+                    openCourse && <AddCourse
                         appendDataInAdd={appendDataInAdd}
-                        closeWrapper={onClickAddBackGroundMusic}
+                        closeWrapper={onClickAddCourse}
                         data={data} />
                 }
                 <div id="layout-wrapper">
@@ -203,7 +220,7 @@ function BackGroundMusic() {
                         activeModal={imageModal}
                         setActiveModal={() => { setImageModal(false); setUrl(""); }}
                         img={url}
-                        flag="BackGround Music Image"
+                        flag="Course Image"
                     />}
                     <div className="main-content" style={{ minHeight: "100vh" }}>
                         <div className="page-content">
@@ -211,11 +228,11 @@ function BackGroundMusic() {
                                 <div className="row">
                                     <div className="col-12">
                                         <div className="page-title-box d-sm-flex align-items-center justify-content-between">
-                                            <h4 className="mb-sm-0">Background Music Management</h4>
+                                            <h4 className="mb-sm-0">Course Management</h4>
                                             <div className="page-title-right">
                                                 <ol className="breadcrumb m-0">
                                                     <li className="breadcrumb-item"><a href="/dashboard">Home</a></li>
-                                                    <li className="breadcrumb-item active">Background Music Management</li>
+                                                    <li className="breadcrumb-item active">Course Management</li>
                                                 </ol>
                                             </div>
                                         </div>
@@ -226,17 +243,16 @@ function BackGroundMusic() {
                                         <div className="card">
                                             <div className="card-body">
                                                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingBottom: "15px" }}>
-                                                    <h4 className="card-title">List of Background Music</h4>
+                                                    <h4 className="card-title">List of Course</h4>
                                                     <div className="d-flex flex-row">
-                                                        <div>
+                                                        <div style={{ marginRight: '10px' }}>
                                                             <SearchComponent
                                                                 data={searchText}
                                                                 onChange={(data) => onChangeSearchComponent(data)}
-                                                                onClickCloseIcon={onClickCloseIcon}
-                                                            />
+                                                                onClickCloseIcon={onClickCloseIcon} />
                                                         </div>
                                                         <div className="d-grid">
-                                                            <button className="btn btn-primary waves-effect waves-light" type="buttom" style={{ height: '40px', marginLeft: '10px' }} onClick={() => onClickAddBackGroundMusic(true)} >Add Background Music</button>
+                                                            <button className="btn btn-primary waves-effect waves-light" type="buttom" onClick={() => onClickAddCourse(true)} >Add Course</button>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -247,27 +263,33 @@ function BackGroundMusic() {
                                                                 <th>#</th>
                                                                 <th style={{ maxWidth: "100px" }}>Image</th>
                                                                 <th>Name</th>
-                                                                <th>Backgroud Music</th>
+                                                                <th style={{ maxWidth: "100px" }}>Description</th>
+                                                                <th>Type</th>
                                                                 <th>Actions</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            {loader ? <tr><td colSpan={4}>Loading ...</td></tr> : BackGroundMusic?.length > 0 ?
-                                                                BackGroundMusic?.map((elem, index) => {
+                                                            {loader ? <tr><td colSpan={6}>Loading ...</td></tr> : Course?.length > 0 ?
+                                                                Course?.map((elem, index) => {
                                                                     return (
                                                                         <tr key={elem?._id}>
                                                                             <td>{(numberPerPage * (selectedPage - 1)) + (index + 1)}</td>
-                                                                            <td style={{ maxWidth: "100px", alignContent: 'center', whiteSpace: 'normal' }}>{<div className="d-flex flex-row justify-content-center"><img loading={lazy} src={elem?.bgImage} style={{ height: "100px", width: "100px", objectFit: 'cover', overflow: 'hidden', cursor: "pointer" }} onClick={() => { handleImageModal(elem?.bgImage) }} /></div>}</td>
+                                                                            <td style={{ maxWidth: "100px", alignContent: 'center', whiteSpace: 'normal' }}>{<div className="d-flex flex-row justify-content-center"><img loading={lazy} src={elem?.courseImage} style={{ height: "100px", width: "100px", objectFit: 'cover', overflow: 'hidden', cursor: "pointer" }} onClick={() => { handleImageModal(elem?.courseImage) }} /></div>}</td>
                                                                             <td>{elem?.name}</td>
-                                                                            <td style={{ maxWidth: "200px", alignContent: 'center', whiteSpace: 'normal' }}>
-                                                                                <div className="d-flex flex-row justify-content-center">
-                                                                                    <audio controls>
-                                                                                        <source src={elem?.audio} type="audio/ogg" />
-                                                                                        <source src={elem?.audio} type="audio/mpeg" />
-                                                                                    </audio>
-                                                                                </div>
-                                                                            </td>
+                                                                            <td style={{ maxWidth: "100px" }}>{elem?.description}</td>
+                                                                            <td>{elem?.is_free ? "Free" : "Paid"}</td>
                                                                             <td style={{ display: "flex", cursor: "pointer" }}>
+                                                                                <>
+                                                                                    <ReactTooltip id="User-info" />
+                                                                                    <IoIosInformationCircle
+                                                                                        style={{ marginRight: "10px" }}
+                                                                                        data-tooltip-place="bottom"
+                                                                                        data-tooltip-id="User-info"
+                                                                                        data-tooltip-content="Stage"
+                                                                                        size={20}
+                                                                                        onClick={() => navigate("/stage", { state: { course: elem, selectedPage } })}
+                                                                                    />
+                                                                                </>
                                                                                 <>
                                                                                     <ReactTooltip id="edit-comm" />
                                                                                     <MdEdit
@@ -289,12 +311,11 @@ function BackGroundMusic() {
                                                                                     />
                                                                                 </>
                                                                             </td>
-
                                                                         </tr>
                                                                     )
                                                                 }
                                                                 )
-                                                                : <tr><td colSpan={4}>Background Music not found</td></tr>}
+                                                                : <tr><td colSpan={6}>Course not found</td></tr>}
                                                         </tbody>
                                                     </table>
                                                 </div>
@@ -324,4 +345,4 @@ function BackGroundMusic() {
         </>)
 }
 
-export default BackGroundMusic
+export default Course

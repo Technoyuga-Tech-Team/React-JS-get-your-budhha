@@ -1,24 +1,24 @@
 import { useEffect, useState } from "react";
 import { RxCross2 } from "react-icons/rx";
-import { displayErrorToast, displaySuccessToast } from "../../../Utills/displayToasts";
-import { managetheme } from "../../../services/theme";
-const PIE_API_URL = import.meta.env.VITE_REACT_IMAGE_URL;
+import { displayErrorToast, displaySuccessToast } from "../../../../Utills/displayToasts";
+import { manageCourseApi } from "../../../../services/course";
 
-function AddCategory({ closeWrapper, appendDataInAdd, data }) {
+function AddCourse({ closeWrapper, appendDataInAdd, data }) {
 
     const [formData, setFormData] = useState({
         name: "",
+        description: "",
         image: "",
-        logoImage: ""
+        is_free: true,
     })
     const [initialData, setInitialData] = useState({
         name: "",
+        description: "",
         image: "",
-        logoImage: ""
+        is_free: true,
     })
     const [submitForm, setSubmitForm] = useState(false)
     const [previewImage, setPreviewImage] = useState(null);
-    const [previewImage2, setPreviewImage2] = useState(null);
     const [loader, setLoader] = useState(false)
     const [errors, setErrors] = useState({})
 
@@ -30,21 +30,18 @@ function AddCategory({ closeWrapper, appendDataInAdd, data }) {
         if (isValidate) {
             if (data?._id) {
                 let imageChanged = initialData.image !== formData.image;
-                let logoChanged = initialData.logoImage !== formData.logoImage;
                 const object = new FormData();
 
                 if (imageChanged) {
-                    object.append("image", formData?.image);
-                }
-
-                if (logoChanged) {
-                    object.append("logoImage", formData?.logoImage);
+                    object.append("courseImage", formData?.image);
                 }
 
                 try {
                     object.append("name", formData?.name);
-                    object.append("themeId", data._id);
-                    const submit = await managetheme(object)
+                    object.append("description", formData?.description);
+                    object.append("is_free", formData?.is_free);
+                    object.append("courseId", data._id);
+                    const submit = await manageCourseApi(object)
                     if (submit?.success) {
                         displaySuccessToast(submit?.message || "Data Updated successfully");
                         closeWrapper(false)
@@ -59,10 +56,11 @@ function AddCategory({ closeWrapper, appendDataInAdd, data }) {
             }
             else {
                 const object = new FormData();
-                object.append("image", formData?.image);
+                object.append("courseImage", formData?.image);
+                object.append("description", formData?.description);
                 object.append("name", formData?.name);
-                object.append("logoImage", formData?.logoImage);
-                const submit = await managetheme(object)
+                object.append("is_free", formData?.is_free);
+                const submit = await manageCourseApi(object)
                 if (submit?.success) {
                     displaySuccessToast(submit?.message || "Data added successfully");
                     closeWrapper(false)
@@ -79,17 +77,22 @@ function AddCategory({ closeWrapper, appendDataInAdd, data }) {
 
     useEffect(() => {
         if (data._id) {
-            setPreviewImage(data?.image)
-            setPreviewImage2(data?.logoImage)
+            setPreviewImage(data?.courseImage)
             setFormData({
                 name: data.name,
-                image: data.image,
-                logoImage: data.logoImage
+                description: data.description,
+                image: data.courseImage,
+                is_free: data.is_free,
+                // femaleAudioDuration: data.femaleAudioDuration,
+                // maleAudioDuration: data.maleAudioDuration
             })
             setInitialData({
                 name: data.name,
-                image: data.image,
-                logoImage: data.logoImage
+                description: data.description,
+                image: data.courseImage,
+                is_free: data.is_free,
+                // femaleAudioDuration: data.femaleAudioDuration,
+                // maleAudioDuration: data.maleAudioDuration
             })
         }
     }, [data])
@@ -110,66 +113,61 @@ function AddCategory({ closeWrapper, appendDataInAdd, data }) {
             }
         }
 
+        if (!data.description) {
+            newErrors.description = "Description is required";
+            isValid = false;
+        }
+
+        if (data.description) {
+            if (data.description.length > 500) {
+                newErrors.description = "Description should be less than 500 characters";
+                isValid = false;
+            }
+        }
+
         if (!data.image) {
             newErrors.image = "image is required";
             isValid = false;
         }
 
         if (typeof (data.image) === "object") {
-            if (data.image.type.includes("video")) {
+            if (!data.image.type.includes("image")) {
                 newErrors.image = "Only image(jpeg) is allowed";
                 isValid = false;
             }
         }
 
-        if (!data.logoImage) {
-            newErrors.logoImage = "Logo is required";
+        if (data.is_free === undefined) {
+            newErrors.is_free = "Is free is required";
             isValid = false;
-        }
-
-        if (typeof (data.logoImage) === "object") {
-            if (data.logoImage.type.includes("video")) {
-                newErrors.logoImage = "Only image(jpeg) is allowed";
-                isValid = false;
-            }
         }
 
         setErrors(newErrors);
         return isValid;
     };
 
-    const onChangeInputFeild = (e) => {
+    const onChangeInputField = (e) => {
         const { name, value } = e.target
+        const newValue = name === "is_free" ? (value === "true") : value.trimStart();
         if (submitForm) {
-            validateForm({ ...formData, [name]: value.trimStart() })
+            validateForm({ ...formData, [name]: newValue })
         }
         setFormData({
-            ...formData, [name]: value.trimStart()
+            ...formData, [name]: newValue
         })
     }
 
-    const onClickCrossIcon = (type) => {
-        if (type === "img") {
-            setPreviewImage(null);
-            setFormData({ ...formData, image: "" });
-        } else {
-            setPreviewImage2(null);
-            setFormData({ ...formData, logoImage: "" });
-        }
+    const onClickCrossIcon = () => {
+        setPreviewImage(null);
+        setFormData({ ...formData, image: "" });
     };
 
-    const onClickPhoto = async (e, type) => {
+    const onClickPhoto = async (e) => {
         const file = e.target.files[0];
         const reader = new FileReader();
-
         reader.onloadend = () => {
-            if (type === "img") {
-                setPreviewImage(reader.result);
-                setFormData({ ...formData, image: file });
-            } else {
-                setPreviewImage2(reader.result);
-                setFormData({ ...formData, logoImage: file });
-            }
+            setPreviewImage(reader.result);
+            setFormData({ ...formData, image: file });
         };
         reader.readAsDataURL(file);
     };
@@ -180,13 +178,11 @@ function AddCategory({ closeWrapper, appendDataInAdd, data }) {
         }
     }, [formData])
 
-
-
     return (
         <div className="main-wrapper-fixed-position" onClick={() => closeWrapper(false)}>
             <div className="asa-main-wrapper-right" onClick={(e) => e.stopPropagation()}>
                 <RxCross2 className="asa-cross-icon" size={20} onClick={() => closeWrapper(false)} />
-                <div className="asa-header-design">{data?._id ? "Update Theme" : "Add Theme"}</div>
+                <div className="asa-header-design">{data?._id ? "Update Course" : "Add Course"}</div>
                 <form
                     className="form-horizontal"
                     style={{ marginTop: "35px" }}
@@ -209,7 +205,7 @@ function AddCategory({ closeWrapper, appendDataInAdd, data }) {
                                         id="name"
                                         placeholder="Enter name"
                                         name="name"
-                                        onChange={onChangeInputFeild}
+                                        onChange={onChangeInputField}
                                         value={formData.name}
                                     />
                                     {errors?.name && (
@@ -220,72 +216,67 @@ function AddCategory({ closeWrapper, appendDataInAdd, data }) {
                                 </div>
 
                                 <div className="mb-4">
-                                    {previewImage2 ? (
-                                        <>
-                                            <label
-                                                className="form-label"
-                                                htmlFor="photo"
-                                                style={{ marginBottom: "0px" }}
-                                            >
-                                                Logo
-                                            </label>
-                                            <div className="image-container">
-                                                <img
-                                                    src={previewImage2}
-                                                    alt="Preview"
-                                                    style={{
-                                                        maxWidth: "100%",
-                                                        marginTop: "8px",
-                                                    }}
-                                                />
-                                                <div
-                                                    onClick={() => onClickCrossIcon("logo")}
-                                                    className="cross-icon bg-primary"
-                                                // style={Object.keys(errors).length === 3 ? { marginTop: "135px" } : Object.keys(errors).length === 2 ? { marginTop: "120px" } : Object.keys(errors).length === 1 ? { marginTop: "105px" } : { marginTop: "90px" }}
-                                                >
-                                                    <RxCross2
-                                                        color="#fff"
-                                                        size={20}
-                                                    />
-                                                </div>
-                                                {errors?.logoImage && (
-                                                    <div className="error-message">
-                                                        {errors?.logoImage}
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <input
-                                                accept="image/*"
-                                                id="photo"
-                                                name="photo"
-                                                type="file"
-                                                onChange={(event) =>
-                                                    onClickPhoto(event, "logo")
-                                                }
-                                                style={{ display: "none" }}
-                                            />
-                                            <button
-                                                type="button"
-                                                className="btn btn-primary waves-effect waves-light"
-                                            >
-                                                <label
-                                                    style={{ marginBottom: "0px" }}
-                                                    htmlFor="photo"
-                                                >
-                                                    Upload Logo
-                                                </label>
-                                            </button>
-                                            {errors?.logoImage && (
-                                                <div className="error-message">
-                                                    {errors?.logoImage}
-                                                </div>
-                                            )}
-                                        </>
+                                    <label
+                                        className="form-label"
+                                        htmlFor="description"
+                                    >
+                                        Description
+                                    </label>
+                                    <textarea
+                                        className="form-control"
+                                        rows={2}
+                                        id="description"
+                                        placeholder="Enter description"
+                                        name="description"
+                                        onChange={onChangeInputField}
+                                        value={formData?.description}>
+                                    </textarea>
+                                    {errors?.description && (
+                                        <div className="error-message">
+                                            {errors?.description}
+                                        </div>
                                     )}
                                 </div>
+
+                                <div className="mb-4">
+                                    <label className="form-label">Is Free</label>
+                                    <div>
+                                        <div className="form-check form-check-inline">
+                                            <input
+                                                className="form-check-input"
+                                                type="radio"
+                                                name="is_free"
+                                                id="isFreeYes"
+                                                value="true"
+                                                checked={formData.is_free === true}
+                                                onChange={onChangeInputField}
+                                            />
+                                            <label className="form-check-label" htmlFor="isFreeYes">
+                                                Yes
+                                            </label>
+                                        </div>
+                                        <div className="form-check form-check-inline">
+                                            <input
+                                                className="form-check-input"
+                                                type="radio"
+                                                name="is_free"
+                                                id="isFreeNo"
+                                                value="false"
+                                                checked={formData.is_free === false}
+                                                onChange={onChangeInputField}
+                                            />
+                                            <label className="form-check-label" htmlFor="isFreeNo">
+                                                No
+                                            </label>
+                                        </div>
+                                    </div>
+                                    {errors?.is_free && (
+                                        <div className="error-message">
+                                            {errors?.is_free}
+                                        </div>
+                                    )}
+                                </div>
+
 
                                 <div className="mb-4">
                                     {previewImage ? (
@@ -307,9 +298,8 @@ function AddCategory({ closeWrapper, appendDataInAdd, data }) {
                                                     }}
                                                 />
                                                 <div
-                                                    onClick={() => onClickCrossIcon("img")}
+                                                    onClick={() => onClickCrossIcon()}
                                                     className="cross-icon bg-primary"
-                                                // style={Object.keys(errors).length === 3 ? { marginTop: "135px" } : Object.keys(errors).length === 2 ? { marginTop: "120px" } : Object.keys(errors).length === 1 ? { marginTop: "105px" } : { marginTop: "90px" }}
                                                 >
                                                     <RxCross2
                                                         color="#fff"
@@ -331,7 +321,7 @@ function AddCategory({ closeWrapper, appendDataInAdd, data }) {
                                                 name="photo"
                                                 type="file"
                                                 onChange={(event) =>
-                                                    onClickPhoto(event, "img")
+                                                    onClickPhoto(event)
                                                 }
                                                 style={{ display: "none" }}
                                             />
@@ -356,7 +346,7 @@ function AddCategory({ closeWrapper, appendDataInAdd, data }) {
                                 </div>
 
                                 <div className="d-grid mt-4">
-                                    <button className="btn btn-primary" type="submit" disabled={loader}>{loader ? 'Processing..' : data?._id ? 'Update theme' : 'Add theme'}</button>
+                                    <button className="btn btn-primary" type="submit" disabled={loader}>{loader ? 'Processing..' : data?._id ? 'Update Course' : 'Add Course'}</button>
                                 </div>
                             </div>
                         </div>
@@ -368,4 +358,4 @@ function AddCategory({ closeWrapper, appendDataInAdd, data }) {
     )
 }
 
-export default AddCategory
+export default AddCourse

@@ -85,7 +85,6 @@ const Login = () => {
                 headers: { "Content-Type": "application/x-www-form-urlencoded" },
                 data: bodyParameter
             }).then((response) => {
-                console.log(response?.data)
                 if (response?.data?.success) {
                     toast.success(response?.data?.message, { style: { background: '#333', color: '#fff' } } || "Login Successful")
                     localStorage.setItem("PIE_ADMIN_TOKEN", response?.data?.data);

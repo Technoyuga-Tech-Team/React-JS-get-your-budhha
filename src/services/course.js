@@ -1,9 +1,9 @@
 import { errorHandlerFunctionCatchBlock } from "./ErrorHandler";
 import { api_services } from "./httpClient";
 
-export const getFeedbackApi = async (paginateData,data) => {
+export const getCourseApi = async (paginateData) => {
     try {
-        const response = await api_services.get(`admin/v1/get-feedback?page=${paginateData?.number}&limit=${paginateData?.size}&search=${paginateData?.search}&meditation=${data}`);
+        const response = await api_services.post(`admin/v1/get-course-list?page=${paginateData?.number}&limit=${paginateData?.size}&search=${paginateData?.search ? paginateData?.search : ''}`);
         return response.data;
     } catch (err) {
         const data = await errorHandlerFunctionCatchBlock(err);
@@ -11,9 +11,9 @@ export const getFeedbackApi = async (paginateData,data) => {
     }
 }
 
-export const updateFeedbackApi = async (data) => {
+export const manageCourseApi = async (data) => {
     try {
-        const response = await api_services.post(`admin/v1/mark-as-read/`,data);
+        const response = await api_services.post(`admin/v1/manage-course`,data);
         return response.data;
     } catch (err) {
         const data = await errorHandlerFunctionCatchBlock(err);

@@ -5,7 +5,6 @@ import { managemood } from "../../../services/mood"
 const PIE_API_URL = import.meta.env.VITE_REACT_IMAGE_URL;
 
 function AddMood({ closeWrapper, appendDataInAdd, data }) {
-    console.log(data)
 
     const [formData, setFormData] = useState({
         name: "",
@@ -131,7 +130,6 @@ function AddMood({ closeWrapper, appendDataInAdd, data }) {
     };
 
     const onClickPhoto = async (e) => {
-        // console.log(type)
         const file = e.target.files[0];
         const reader = new FileReader();
 

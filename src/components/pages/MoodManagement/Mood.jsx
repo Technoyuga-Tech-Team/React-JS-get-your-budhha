@@ -3,7 +3,7 @@ import Header from "../../layout/Header"
 import Sidebar from "../../layout/Sidebar"
 import AddMood from "./AddMood"
 import "./Mood.css"
-import { getmoodApi, managemood } from "../../../services/mood"
+import { getmoodApi, managemood, deletemood } from "../../../services/mood"
 import { displayErrorToast, displaySuccessToast } from "../../../Utills/displayToasts"
 import { TiTick } from "react-icons/ti";
 import { TiTimes } from "react-icons/ti";
@@ -42,7 +42,6 @@ function Mood() {
     }
 
     const appendDataInAdd = async () => {
-        console.log("test1")
         setLoader(true)
         setSelectedPage(1)
         const paginateData = {
@@ -66,7 +65,6 @@ function Mood() {
     }
 
     const getMoodList2 = async (select, search) => {
-        console.log("test2")
         setLoader(true)
         const paginateData = {
             number: select,
@@ -89,7 +87,6 @@ function Mood() {
     }
 
     const getMoodList = async (select) => {
-        console.log("test3")
         setLoader(true)
         if (!mainArrayMood[select || selectedPage]) {
             const paginateData = {
@@ -134,11 +131,10 @@ function Mood() {
             confirmButtonText: 'Yes, delete it!'
         }).then(async (result) => {
             if (result.isConfirmed) {
-                const object = new FormData();
-                object.append("moodId", data?._id);
-                object.append("deleteMood", "delete");
+                const object ={};
+                object.moodId = data?._id;
 
-                await managemood(object).then(async (submit) => {
+                await deletemood(object).then(async (submit) => {
                     if (submit?.success) {
                         if (Mood.length === 1 && selectedPage > 1) {
                             setSelectedPage(selectedPage - 1)
@@ -147,7 +143,7 @@ function Mood() {
                         }
                         else {
                             // await getMoodList()
-                            await getMoodList2()
+                            await getMoodList2(selectedPage)
                         }
                         displaySuccessToast("Deleted successfully")
                     }
@@ -192,7 +188,6 @@ function Mood() {
     }
 
     const onChangeSearchComponent = async (e) => {
-        console.log("=========", e?.target?.value)
         setSearchText(e?.target?.value)
         setSelectedPage(1)
         await getMoodList2(1, e?.target?.value)
@@ -244,7 +239,7 @@ function Mood() {
                                                             onChange={(data) => onChangeSearchComponent(data)}
                                                             onClickCloseIcon={onClickCloseIcon} />
                                                         <div className="d-grid">
-                                                            <button className="btn btn-primary waves-effect waves-light" type="buttom" style={{ height: '40px',marginLeft:'10px' }} onClick={() => onClickAddMood(true)} >Add Mood</button>
+                                                            <button className="btn btn-primary waves-effect waves-light" type="buttom" style={{ height: '40px', marginLeft: '10px' }} onClick={() => onClickAddMood(true)} >Add Mood</button>
                                                         </div>
                                                     </div>
                                                 </div>

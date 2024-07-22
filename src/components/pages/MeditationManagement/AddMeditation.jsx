@@ -5,10 +5,8 @@ import { manageMenidation } from "../../../services/meditation"
 import DropdownComponent from "../../../component/DropDown/Dropdown";
 import { getthemeApi } from "../../../services/theme";
 import { getmoodApi } from "../../../services/mood";
-const PIE_API_URL = import.meta.env.VITE_REACT_IMAGE_URL;
 
 function AddMeditation({ closeWrapper, appendDataInAdd, data }) {
-    console.log(data)
 
     const [formData, setFormData] = useState({
         name: "",
@@ -66,7 +64,6 @@ function AddMeditation({ closeWrapper, appendDataInAdd, data }) {
         e.preventDefault()
         setLoader(true);
         setSubmitForm(true)
-        console.log("--------------------------", formData)
         const isValidate = validateForm(formData)
         if (isValidate) {
             if (data?._id) {
@@ -107,7 +104,6 @@ function AddMeditation({ closeWrapper, appendDataInAdd, data }) {
                 }
             }
             else {
-                console.log("=======", formData)
                 const object = new FormData();
                 object.append("meditationImage", formData?.image);
                 object.append("maleAudio", formData?.maleAudio);
@@ -266,40 +262,7 @@ function AddMeditation({ closeWrapper, appendDataInAdd, data }) {
         }
     };
 
-    // const onClickPhoto = async (e, type) => {
-    //     const file = e.target.files[0];
-    //     console.log("file ==================",);
-    //     const reader = new FileReader();
-
-    //     if (type === "img") {
-    //         reader.onloadend = () => {
-    //             setPreviewImage(reader.result);
-    //             setFormData({ ...formData, image: file });
-    //         };
-    //         reader.readAsDataURL(file);
-    //     }
-    //     else if (type === "female" || type === "male") {
-    //         reader.onloadend = () => {
-    //             const audio = new Audio(reader.result);
-    //             audio.onloadedmetadata = () => {
-    //                 const duration = audio.duration * 1000;
-    //                 if (type === "female") {
-    //                     setPreviewFemaleAudio(reader.result);
-    //                     setFormData({ ...formData, femaleAudio: file, femaleAudioDuration: duration });
-    //                 }
-    //                 else if (type === "male") {
-    //                     setPreviewMaleAudio(reader.result);
-    //                     setFormData({ ...formData, maleAudio: file, maleAudioDuration: duration });
-    //                 }
-    //             };
-    //         };
-    //         reader.readAsDataURL(file);
-    //     }
-    // };
-
-
     const onClickPhoto = async (e, type) => {
-        // console.log(type)
         const file = e.target.files[0];
         const reader = new FileReader();
         if (type === "img") {
@@ -332,7 +295,6 @@ function AddMeditation({ closeWrapper, appendDataInAdd, data }) {
     }, [formData])
 
     const onChangeDropDownValue = (data, type) => {
-        console.log(data, type)
         if (type === "theme") {
             setFormData({
                 ...formData, theme: data

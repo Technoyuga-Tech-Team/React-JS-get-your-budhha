@@ -1,24 +1,28 @@
 import { useEffect, useState } from "react";
 import { RxCross2 } from "react-icons/rx";
-import { displayErrorToast, displaySuccessToast } from "../../../Utills/displayToasts";
-import { managetheme } from "../../../services/theme";
-const PIE_API_URL = import.meta.env.VITE_REACT_IMAGE_URL;
+import { displayErrorToast, displaySuccessToast } from "../../../../Utills/displayToasts";
+import { manageMenidation } from "../../../../services/meditation";
 
-function AddCategory({ closeWrapper, appendDataInAdd, data }) {
+function AddMeditation({ closeWrapper, appendDataInAdd, data, id }) {
 
     const [formData, setFormData] = useState({
         name: "",
+        description: "",
         image: "",
-        logoImage: ""
+        femaleAudio: "",
+        maleAudio: "",
     })
     const [initialData, setInitialData] = useState({
         name: "",
+        description: "",
         image: "",
-        logoImage: ""
+        femaleAudio: "",
+        maleAudio: "",
     })
     const [submitForm, setSubmitForm] = useState(false)
     const [previewImage, setPreviewImage] = useState(null);
-    const [previewImage2, setPreviewImage2] = useState(null);
+    const [previewMaleAudio, setPreviewMaleAudio] = useState(null);
+    const [previewFemaleAudio, setPreviewFemaleAudio] = useState(null);
     const [loader, setLoader] = useState(false)
     const [errors, setErrors] = useState({})
 
@@ -30,21 +34,28 @@ function AddCategory({ closeWrapper, appendDataInAdd, data }) {
         if (isValidate) {
             if (data?._id) {
                 let imageChanged = initialData.image !== formData.image;
-                let logoChanged = initialData.logoImage !== formData.logoImage;
+                let maleAudioChanged = initialData.maleAudio !== formData.maleAudio;
+                let femaleAudioChanged = initialData.femaleAudio !== formData.femaleAudio;
                 const object = new FormData();
 
                 if (imageChanged) {
-                    object.append("image", formData?.image);
+                    object.append("meditationImage", formData?.image);
                 }
-
-                if (logoChanged) {
-                    object.append("logoImage", formData?.logoImage);
+                if (maleAudioChanged) {
+                    object.append("maleAudio", formData?.maleAudio);
+                    // object.append("maleAudioDuration", formData?.maleAudioDuration);
+                }
+                if (femaleAudioChanged) {
+                    object.append("femaleAudio", formData?.femaleAudio);
+                    // object.append("femaleAudioDuration", formData?.femaleAudioDuration);
                 }
 
                 try {
-                    object.append("name", formData?.name);
-                    object.append("themeId", data._id);
-                    const submit = await managetheme(object)
+                    object.append("meditationName", formData?.name);
+                    object.append("description", formData?.description);
+                    object.append("meditationId", data._id);
+                    object.append("type", "course");
+                    const submit = await manageMenidation(object)
                     if (submit?.success) {
                         displaySuccessToast(submit?.message || "Data Updated successfully");
                         closeWrapper(false)
@@ -59,10 +70,16 @@ function AddCategory({ closeWrapper, appendDataInAdd, data }) {
             }
             else {
                 const object = new FormData();
-                object.append("image", formData?.image);
-                object.append("name", formData?.name);
-                object.append("logoImage", formData?.logoImage);
-                const submit = await managetheme(object)
+                object.append("meditationImage", formData?.image);
+                object.append("maleAudio", formData?.maleAudio);
+                object.append("femaleAudio", formData?.femaleAudio);
+                object.append("description", formData?.description);
+                object.append("meditationName", formData?.name);
+                object.append("type", "course");
+                object.append("course", id.course);
+                object.append("stage", id._id);
+                //need to pass course and stage
+                const submit = await manageMenidation(object)
                 if (submit?.success) {
                     displaySuccessToast(submit?.message || "Data added successfully");
                     closeWrapper(false)
@@ -79,17 +96,22 @@ function AddCategory({ closeWrapper, appendDataInAdd, data }) {
 
     useEffect(() => {
         if (data._id) {
-            setPreviewImage(data?.image)
-            setPreviewImage2(data?.logoImage)
+            setPreviewImage(data?.meditationImage)
+            setPreviewMaleAudio(data?.maleAudio)
+            setPreviewFemaleAudio(data?.femaleAudio)
             setFormData({
-                name: data.name,
-                image: data.image,
-                logoImage: data.logoImage
+                name: data.meditationName,
+                description: data.description,
+                image: data.meditationImage,
+                femaleAudio: data.femaleAudio,
+                maleAudio: data.maleAudio,
             })
             setInitialData({
-                name: data.name,
-                image: data.image,
-                logoImage: data.logoImage
+                name: data.meditationName,
+                description: data.description,
+                image: data.meditationImage,
+                femaleAudio: data.femaleAudio,
+                maleAudio: data.maleAudio,
             })
         }
     }, [data])
@@ -110,26 +132,50 @@ function AddCategory({ closeWrapper, appendDataInAdd, data }) {
             }
         }
 
+        if (!data.description) {
+            newErrors.description = "Description is required";
+            isValid = false;
+        }
+
+        if (data.description) {
+            if (data.description.length > 500) {
+                newErrors.description = "Description should be less than 500 characters";
+                isValid = false;
+            }
+        }
+
         if (!data.image) {
             newErrors.image = "image is required";
             isValid = false;
         }
 
         if (typeof (data.image) === "object") {
-            if (data.image.type.includes("video")) {
+            if (!data.image.type.includes("image")) {
                 newErrors.image = "Only image(jpeg) is allowed";
                 isValid = false;
             }
         }
 
-        if (!data.logoImage) {
-            newErrors.logoImage = "Logo is required";
+        if (!data.femaleAudio) {
+            newErrors.femaleAudio = "Female Audio is required";
             isValid = false;
         }
 
-        if (typeof (data.logoImage) === "object") {
-            if (data.logoImage.type.includes("video")) {
-                newErrors.logoImage = "Only image(jpeg) is allowed";
+        if (!data.maleAudio) {
+            newErrors.maleAudio = "Male Audio is required";
+            isValid = false;
+        }
+
+        if (typeof (data.femaleAudio) === "object") {
+            if (!data.femaleAudio.type.includes("audio")) {
+                newErrors.femaleAudio = "Only audio(mp3) is allowed";
+                isValid = false;
+            }
+        }
+
+        if (typeof (data.maleAudio) === "object") {
+            if (!data.maleAudio.type.includes("audio")) {
+                newErrors.maleAudio = "Only audio(mp3) is allowed";
                 isValid = false;
             }
         }
@@ -152,26 +198,41 @@ function AddCategory({ closeWrapper, appendDataInAdd, data }) {
         if (type === "img") {
             setPreviewImage(null);
             setFormData({ ...formData, image: "" });
-        } else {
-            setPreviewImage2(null);
-            setFormData({ ...formData, logoImage: "" });
+        }
+        else if (type === "female") {
+            setPreviewFemaleAudio(null);
+            setFormData({ ...formData, femaleAudio: "" });
+        }
+        else if (type === "male") {
+            setPreviewMaleAudio(null);
+            setFormData({ ...formData, maleAudio: "" });
         }
     };
 
     const onClickPhoto = async (e, type) => {
         const file = e.target.files[0];
         const reader = new FileReader();
-
-        reader.onloadend = () => {
-            if (type === "img") {
+        if (type === "img") {
+            reader.onloadend = () => {
                 setPreviewImage(reader.result);
                 setFormData({ ...formData, image: file });
-            } else {
-                setPreviewImage2(reader.result);
-                setFormData({ ...formData, logoImage: file });
-            }
-        };
-        reader.readAsDataURL(file);
+            };
+            reader.readAsDataURL(file);
+        }
+        else if (type === "female") {
+            reader.onloadend = () => {
+                setPreviewFemaleAudio(reader.result);
+                setFormData({ ...formData, femaleAudio: file });
+            };
+            reader.readAsDataURL(file);
+        }
+        else if (type === "male") {
+            reader.onloadend = () => {
+                setPreviewMaleAudio(reader.result);
+                setFormData({ ...formData, maleAudio: file });
+            };
+            reader.readAsDataURL(file);
+        }
     };
 
     useEffect(() => {
@@ -180,13 +241,11 @@ function AddCategory({ closeWrapper, appendDataInAdd, data }) {
         }
     }, [formData])
 
-
-
     return (
         <div className="main-wrapper-fixed-position" onClick={() => closeWrapper(false)}>
             <div className="asa-main-wrapper-right" onClick={(e) => e.stopPropagation()}>
                 <RxCross2 className="asa-cross-icon" size={20} onClick={() => closeWrapper(false)} />
-                <div className="asa-header-design">{data?._id ? "Update Theme" : "Add Theme"}</div>
+                <div className="asa-header-design">{data?._id ? "Update Meditation" : "Add Meditation"}</div>
                 <form
                     className="form-horizontal"
                     style={{ marginTop: "35px" }}
@@ -220,37 +279,56 @@ function AddCategory({ closeWrapper, appendDataInAdd, data }) {
                                 </div>
 
                                 <div className="mb-4">
-                                    {previewImage2 ? (
+                                    <label
+                                        className="form-label"
+                                        htmlFor="description"
+                                    >
+                                        Description
+                                    </label>
+                                    <textarea
+                                        className="form-control"
+                                        rows={2}
+                                        id="description"
+                                        placeholder="Enter description"
+                                        name="description"
+                                        onChange={onChangeInputFeild}
+                                        value={formData?.description}>
+                                    </textarea>
+                                    {errors?.description && (
+                                        <div className="error-message">
+                                            {errors?.description}
+                                        </div>
+                                    )}
+                                </div>
+
+                                <div className="mb-4">
+                                    {previewFemaleAudio ? (
                                         <>
                                             <label
                                                 className="form-label"
                                                 htmlFor="photo"
                                                 style={{ marginBottom: "0px" }}
                                             >
-                                                Logo
+                                                Female Audio
                                             </label>
                                             <div className="image-container">
-                                                <img
-                                                    src={previewImage2}
-                                                    alt="Preview"
-                                                    style={{
-                                                        maxWidth: "100%",
-                                                        marginTop: "8px",
-                                                    }}
-                                                />
+                                                <audio controls style={{ width: '265px' }}>
+                                                    <source src={previewFemaleAudio} type="audio/ogg" />
+                                                    <source src={previewFemaleAudio} type="audio/mpeg" />
+                                                </audio>
                                                 <div
-                                                    onClick={() => onClickCrossIcon("logo")}
+                                                    onClick={() => onClickCrossIcon("female")}
                                                     className="cross-icon bg-primary"
-                                                // style={Object.keys(errors).length === 3 ? { marginTop: "135px" } : Object.keys(errors).length === 2 ? { marginTop: "120px" } : Object.keys(errors).length === 1 ? { marginTop: "105px" } : { marginTop: "90px" }}
+                                                    style={{ marginTop: '-20px' }}
                                                 >
                                                     <RxCross2
                                                         color="#fff"
                                                         size={20}
                                                     />
                                                 </div>
-                                                {errors?.logoImage && (
+                                                {errors?.femaleAudio && (
                                                     <div className="error-message">
-                                                        {errors?.logoImage}
+                                                        {errors?.femaleAudio}
                                                     </div>
                                                 )}
                                             </div>
@@ -258,12 +336,12 @@ function AddCategory({ closeWrapper, appendDataInAdd, data }) {
                                     ) : (
                                         <>
                                             <input
-                                                accept="image/*"
+                                                accept="audio/*"
                                                 id="photo"
                                                 name="photo"
                                                 type="file"
                                                 onChange={(event) =>
-                                                    onClickPhoto(event, "logo")
+                                                    onClickPhoto(event, "female")
                                                 }
                                                 style={{ display: "none" }}
                                             />
@@ -275,12 +353,76 @@ function AddCategory({ closeWrapper, appendDataInAdd, data }) {
                                                     style={{ marginBottom: "0px" }}
                                                     htmlFor="photo"
                                                 >
-                                                    Upload Logo
+                                                    Upload Female Audio
                                                 </label>
                                             </button>
-                                            {errors?.logoImage && (
+                                            {errors?.femaleAudio && (
                                                 <div className="error-message">
-                                                    {errors?.logoImage}
+                                                    {errors?.femaleAudio}
+                                                </div>
+                                            )}
+                                        </>
+                                    )}
+                                </div>
+
+                                <div className="mb-4">
+                                    {previewMaleAudio ? (
+                                        <>
+                                            <label
+                                                className="form-label"
+                                                htmlFor="photo"
+                                                style={{ marginBottom: "0px" }}
+                                            >
+                                                Male Audio
+                                            </label>
+                                            <div className="image-container">
+                                                <audio controls style={{ width: '265px' }}>
+                                                    <source src={previewMaleAudio} type="audio/ogg" />
+                                                    <source src={previewMaleAudio} type="audio/mpeg" />
+                                                </audio>
+                                                <div
+                                                    onClick={() => onClickCrossIcon("male")}
+                                                    style={{ marginTop: '-20px' }}
+                                                    className="cross-icon bg-primary"
+                                                >
+                                                    <RxCross2
+                                                        color="#fff"
+                                                        size={20}
+                                                    />
+                                                </div>
+                                                {errors?.maleAudio && (
+                                                    <div className="error-message">
+                                                        {errors?.maleAudio}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <input
+                                                accept="audio/*"
+                                                id="photo"
+                                                name="photo"
+                                                type="file"
+                                                onChange={(event) =>
+                                                    onClickPhoto(event, "male")
+                                                }
+                                                style={{ display: "none" }}
+                                            />
+                                            <button
+                                                type="button"
+                                                className="btn btn-primary waves-effect waves-light"
+                                            >
+                                                <label
+                                                    style={{ marginBottom: "0px" }}
+                                                    htmlFor="photo"
+                                                >
+                                                    Upload Male Audio
+                                                </label>
+                                            </button>
+                                            {errors?.maleAudio && (
+                                                <div className="error-message">
+                                                    {errors?.maleAudio}
                                                 </div>
                                             )}
                                         </>
@@ -309,7 +451,6 @@ function AddCategory({ closeWrapper, appendDataInAdd, data }) {
                                                 <div
                                                     onClick={() => onClickCrossIcon("img")}
                                                     className="cross-icon bg-primary"
-                                                // style={Object.keys(errors).length === 3 ? { marginTop: "135px" } : Object.keys(errors).length === 2 ? { marginTop: "120px" } : Object.keys(errors).length === 1 ? { marginTop: "105px" } : { marginTop: "90px" }}
                                                 >
                                                     <RxCross2
                                                         color="#fff"
@@ -356,7 +497,7 @@ function AddCategory({ closeWrapper, appendDataInAdd, data }) {
                                 </div>
 
                                 <div className="d-grid mt-4">
-                                    <button className="btn btn-primary" type="submit" disabled={loader}>{loader ? 'Processing..' : data?._id ? 'Update theme' : 'Add theme'}</button>
+                                    <button className="btn btn-primary" type="submit" disabled={loader}>{loader ? 'Processing..' : data?._id ? 'Update Meditation' : 'Add Meditation'}</button>
                                 </div>
                             </div>
                         </div>
@@ -368,4 +509,4 @@ function AddCategory({ closeWrapper, appendDataInAdd, data }) {
     )
 }
 
-export default AddCategory
+export default AddMeditation
