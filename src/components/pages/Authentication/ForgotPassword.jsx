@@ -38,7 +38,6 @@ const ForgotPassword = () => {
                 headers: { "Content-Type": "application/x-www-form-urlencoded" },
                 data: bodyParameter
             }).then((response) => {
-                console.log(response?.data)
                 if (response?.data?.success) {
                     setEmail('');
                     toast.success(response?.data?.message, { style: { background: '#333', color: '#fff' } })

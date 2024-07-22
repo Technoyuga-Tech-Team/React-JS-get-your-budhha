@@ -3,12 +3,8 @@ import Header from "../../layout/Header"
 import Sidebar from "../../layout/Sidebar"
 import AddMeditation from "./AddMeditation"
 import "./Meditation.css"
-import { getMeditationApi, manageMenidation } from "../../../services/meditation"
+import { deleteMeditation, getMeditationApi, manageMenidation } from "../../../services/meditation"
 import { displayErrorToast, displaySuccessToast } from "../../../Utills/displayToasts"
-import { TiTick } from "react-icons/ti";
-import { TiTimes } from "react-icons/ti";
-// import { numberPerPage, userRoleTypeForSuper } from "../../../constant/constanant"
-import { useSelector } from "react-redux"
 import { Tooltip as ReactTooltip } from 'react-tooltip'
 import { MdDelete, MdEdit } from "react-icons/md"
 import ReactPaginate from "react-paginate"
@@ -16,8 +12,6 @@ import { GrPrevious, GrNext } from "react-icons/gr";
 import { getLoggedinUserProfile } from "../../../services/profile"
 import _ from "lodash";
 import ImageModal from "../../layout/ImageModal"
-import { RxCross2 } from "react-icons/rx";
-const PIE_API_URL = import.meta.env.VITE_REACT_IMAGE_URL;
 import Swal from "sweetalert2"
 import AudioModal from "../../layout/AudioModal"
 import DropdownComponent from "../../../component/DropDown/Dropdown"
@@ -26,7 +20,7 @@ import { getmoodApi } from "../../../services/mood"
 import { FaPlayCircle } from "react-icons/fa";
 import SearchComponent from "../../../component/Search/Search"
 import { MdFeedback } from "react-icons/md";
-import { useNavigate } from "react-router-dom"
+import { useLocation, useNavigate } from "react-router-dom"
 
 const numberPerPage = 10;
 
@@ -49,6 +43,7 @@ function Meditation() {
         theme: "",
         moods: ""
     })
+    const location = useLocation()
 
     const navigate = useNavigate()
 
@@ -88,8 +83,7 @@ function Meditation() {
             theme: filter?.theme?.value?.toString(),
             mood: filter?.moods?.value?.toString(),
         }
-        const data = await getMeditationApi(paginateData)
-        console.log('-----------------------------------------', data)
+        const data = await getMeditationApi(paginateData,"theme")
         if (data?.success) {
             let paginateData = data?.data?.updateResult
             paginateData?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
@@ -113,7 +107,7 @@ function Meditation() {
             theme: filter?.theme?.value?.toString(),
             mood: filter?.moods?.value?.toString(),
         }
-        const data = await getMeditationApi(paginateData)
+        const data = await getMeditationApi(paginateData,"theme")
         if (data?.success) {
             let paginateData = data?.data?.updateResult;
             paginateData?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
@@ -135,10 +129,8 @@ function Meditation() {
                 number: select || selectedPage,
                 size: numberPerPage,
                 search: searchText,
-                // theme: filter?.theme?.value?.toString(),
-                // mood: filter?.moods?.value?.toString(),
             }
-            const data = await getMeditationApi(paginateData)
+            const data = await getMeditationApi(paginateData,"theme")
             if (data?.success) {
                 let paginateData = data?.data?.updateResult;
                 paginateData?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
@@ -158,9 +150,21 @@ function Meditation() {
         setLoader(false)
     }
 
+    const clearAllStateData = () => {
+        setSelectedPage(1)
+        setSearchText("")
+      }
+
     useEffect(() => {
         setLoader(true)
-        getMeditationList()
+        if (location?.state?.activePage) {
+            setSelectedPage(location?.state?.activePage)
+            getMeditationList(location?.state?.activePage)
+
+        } else {
+            getMeditationList(1)
+            clearAllStateData()
+        }
         getUserProfile()
     }, [])
 
@@ -175,11 +179,10 @@ function Meditation() {
             confirmButtonText: 'Yes, delete it!'
         }).then(async (result) => {
             if (result.isConfirmed) {
-                const object = new FormData();
-                object.append("meditationId", data?._id);
-                object.append("deleteMeditation", "delete");
+                const object ={};
+                object.meditationId = data?._id;
 
-                await manageMenidation(object).then(async (submit) => {
+                await deleteMeditation(object).then(async (submit) => {
                     if (submit?.success) {
                         if (Meditation.length === 1 && selectedPage > 1) {
                             setSelectedPage(selectedPage - 1)
@@ -380,8 +383,8 @@ function Meditation() {
                                                                             <td style={{ maxWidth: "100px", alignContent: 'center', whiteSpace: 'normal' }}>{<div className="d-flex flex-row justify-content-center"><img loading="lazy" src={elem?.meditationImage} style={{ height: "100px", width: "100px", objectFit: 'cover', overflow: 'hidden', cursor: "pointer" }} onClick={() => { handleImageModal(elem?.meditationImage) }} /></div>}</td>
                                                                             <td>{elem?.meditationName}</td>
                                                                             <td style={{ maxWidth: "100px" }}>{elem?.description}</td>
-                                                                            <td>{elem?.moods.map(mood => mood.name).join(", ")}</td>
-                                                                            <td>{elem?.theme?.name}</td>
+                                                                            <td>{elem?.moods?.length > 0 ? elem?.moods.map(mood => mood.name).join(", ") : "-"}</td>
+                                                                            <td>{elem?.theme?.name ? elem?.theme?.name : "-"}</td>
                                                                             <td className="d-flex flex-row justify-content-center">{elem?.overallRating}</td>
                                                                             <td>
                                                                                 <div className="d-flex flex-row justify-content-center">
@@ -422,7 +425,7 @@ function Meditation() {
                                                                                         data-tooltip-id="User-info"
                                                                                         data-tooltip-content="Feedback"
                                                                                         size={20}
-                                                                                        // onClick={() => navigate("/feedback-list", { state: { data: elem, selectedPage, pathname: location?.pathname }})}
+                                                                                        onClick={() => navigate("/feedback-list", { state: { data: elem, selectedPage } })}
                                                                                     />
                                                                                 </>
                                                                                 <>

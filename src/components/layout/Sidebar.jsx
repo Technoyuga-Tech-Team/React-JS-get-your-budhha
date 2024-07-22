@@ -8,7 +8,7 @@ import "./Sidebar.css"
 import { useSelector } from "react-redux";
 import { ImMusic } from "react-icons/im";
 import { FaUser } from "react-icons/fa";
-// import { userRoleTypeForSuper } from "../../constant/constanant";
+import { GiBrain } from "react-icons/gi";
 import { SiDecapcms } from "react-icons/si"
 
 const navBarConst = [
@@ -50,12 +50,18 @@ const navBarConst = [
     },
     {
         key: 7,
+        value: "Course",
+        icon: <GiBrain className="sidebar-icons" />,
+        route: "/course"
+    },
+    {
+        key: 8,
         value: "CMS",
         icon: <SiDecapcms className="sidebar-icons" />,
         route: "/cms-management"
     },
     {
-        key: 8,
+        key: 9,
         value: "Setting",
         icon: <IoMdSettings className="sidebar-icons" />,
         route: "/setting"

@@ -10,10 +10,7 @@ function FilterUsers() {
         date: { startDate: "", endDate: "" }
     })
 
-
-
     const onChangeDateValue = (data, key) => {
-        console.log("data ===============", data);
         if (key === "startDate") {
             setFilter({
                 ...filter,
@@ -26,9 +23,6 @@ function FilterUsers() {
             })
         }
     }
-
-    console.log("filter =======", filter);
-
 
     return (
         <>

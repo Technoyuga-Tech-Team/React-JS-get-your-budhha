@@ -1,11 +1,9 @@
 import { useEffect, useState } from "react";
 import { RxCross2 } from "react-icons/rx";
 import { displayErrorToast, displaySuccessToast } from "../../../Utills/displayToasts";
-import { getBackGroundMusicApi, manageBackGroundMusic } from "../../../services/backGroundMusic";
-const PIE_API_URL = import.meta.env.VITE_REACT_IMAGE_URL;
+import { manageBackGroundMusic } from "../../../services/backGroundMusic";
 
 function AddBackGroundMusic({ closeWrapper, appendDataInAdd, data }) {
-    console.log(data)
 
     const [formData, setFormData] = useState({
         name: "",
@@ -161,40 +159,7 @@ function AddBackGroundMusic({ closeWrapper, appendDataInAdd, data }) {
         }
     };
 
-    // const onClickPhoto = async (e, type) => {
-    //     const file = e.target.files[0];
-    //     console.log("file ==================",);
-    //     const reader = new FileReader();
-
-    //     if (type === "img") {
-    //         reader.onloadend = () => {
-    //             setPreviewImage(reader.result);
-    //             setFormData({ ...formData, image: file });
-    //         };
-    //         reader.readAsDataURL(file);
-    //     }
-    //     else if (type === "female" || type === "male") {
-    //         reader.onloadend = () => {
-    //             const audio = new Audio(reader.result);
-    //             audio.onloadedmetadata = () => {
-    //                 const duration = audio.duration * 1000;
-    //                 if (type === "female") {
-    //                     setPreviewFemaleAudio(reader.result);
-    //                     setFormData({ ...formData, femaleAudio: file, femaleAudioDuration: duration });
-    //                 }
-    //                 else if (type === "male") {
-    //                     setpreviewAudio(reader.result);
-    //                     setFormData({ ...formData, maleAudio: file, maleAudioDuration: duration });
-    //                 }
-    //             };
-    //         };
-    //         reader.readAsDataURL(file);
-    //     }
-    // };
-
-
     const onClickPhoto = async (e, type) => {
-        // console.log(type)
         const file = e.target.files[0];
         const reader = new FileReader();
         if (type === "img") {

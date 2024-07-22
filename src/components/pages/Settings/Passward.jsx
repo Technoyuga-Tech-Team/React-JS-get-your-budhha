@@ -78,7 +78,6 @@ function Password() {
                 newPassword: formData?.newPass
             }
             const changePass = await changeProfilePassword(data)
-            console.log(changePass)
             if (changePass?.success) {
                 setSubmitForm(false)
                 setFormData({
