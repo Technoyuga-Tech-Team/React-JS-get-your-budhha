@@ -90,6 +90,7 @@ function AddMeditation({ closeWrapper, appendDataInAdd, data }) {
                     object.append("meditationId", data._id);
                     object.append("theme", formData?.theme?.value?.toString());
                     object.append("moods", JSON.stringify(formData?.moods?.map(mood => mood.value)));
+                    object.append("type", "theme");
                     const submit = await manageMenidation(object)
                     if (submit?.success) {
                         displaySuccessToast(submit?.message || "Data Updated successfully");
@@ -114,6 +115,7 @@ function AddMeditation({ closeWrapper, appendDataInAdd, data }) {
                 object.append("maleAudioDuration", formData?.maleAudioDuration);
                 object.append("theme", formData?.theme?.value?.toString());
                 object.append("moods", JSON.stringify(formData?.moods?.map(mood => mood.value)));
+                object.append("type", "theme");
                 const submit = await manageMenidation(object)
                 if (submit?.success) {
                     displaySuccessToast(submit?.message || "Data added successfully");
@@ -192,7 +194,7 @@ function AddMeditation({ closeWrapper, appendDataInAdd, data }) {
             isValid = false;
         }
 
-        if (typeof(data.image) === "object") {
+        if (typeof (data.image) === "object") {
             if (!data.image.type.includes("image")) {
                 newErrors.image = "Only image(jpeg) is allowed";
                 isValid = false;
@@ -219,14 +221,14 @@ function AddMeditation({ closeWrapper, appendDataInAdd, data }) {
             isValid = false;
         }
 
-        if(typeof(data.femaleAudio) === "object"){
+        if (typeof (data.femaleAudio) === "object") {
             if (!data.femaleAudio.type.includes("audio")) {
                 newErrors.femaleAudio = "Only audio(mp3) is allowed";
                 isValid = false;
             }
         }
 
-        if(typeof(data.maleAudio) === "object"){
+        if (typeof (data.maleAudio) === "object") {
             if (!data.maleAudio.type.includes("audio")) {
                 newErrors.maleAudio = "Only audio(mp3) is allowed";
                 isValid = false;
