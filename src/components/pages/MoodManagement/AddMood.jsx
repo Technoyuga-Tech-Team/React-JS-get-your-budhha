@@ -104,8 +104,8 @@ function AddMood({ closeWrapper, appendDataInAdd, data }) {
         }
 
         if (typeof (data.image) === "object") {
-            if (data.image.type.includes("video")) {
-                newErrors.image = "Only image(jpeg) is allowed";
+            if (!data.image.type.includes("image")) {
+                newErrors.image = "Only image should allowed";
                 isValid = false;
             }
         }
@@ -115,14 +115,15 @@ function AddMood({ closeWrapper, appendDataInAdd, data }) {
     };
 
     const onChangeInputFeild = (e) => {
-        const { name, value } = e.target
+        const { name, value } = e.target;
+        const newValue = value.replace(/\s+/g, ' '); // Replace multiple spaces with a single space
         if (submitForm) {
-            validateForm({ ...formData, [name]: value.trimStart() })
+            validateForm({ ...formData, [name]: newValue.trimStart() });
         }
         setFormData({
-            ...formData, [name]: value.trimStart()
-        })
-    }
+            ...formData, [name]: newValue.trimStart()
+        });
+    };
 
     const onClickCrossIcon = () => {
         setPreviewImage(null);
@@ -134,8 +135,8 @@ function AddMood({ closeWrapper, appendDataInAdd, data }) {
         const reader = new FileReader();
 
         reader.onloadend = () => {
-                setPreviewImage(reader.result);
-                setFormData({ ...formData, image: file });
+            setPreviewImage(reader.result);
+            setFormData({ ...formData, image: file });
         };
         reader.readAsDataURL(file);
     };
@@ -149,7 +150,7 @@ function AddMood({ closeWrapper, appendDataInAdd, data }) {
 
 
     return (
-        <div className="main-wrapper-fixed-position" onClick={() => closeWrapper(false)}>
+        <div className="main-wrapper-fixed-position">
             <div className="asa-main-wrapper-right" onClick={(e) => e.stopPropagation()}>
                 <RxCross2 className="asa-cross-icon" size={20} onClick={() => closeWrapper(false)} />
                 <div className="asa-header-design">{data?._id ? "Update Mood" : "Add Mood"}</div>
@@ -213,11 +214,6 @@ function AddMood({ closeWrapper, appendDataInAdd, data }) {
                                                         size={20}
                                                     />
                                                 </div>
-                                                {errors?.image && (
-                                                    <div className="error-message">
-                                                        {errors?.image}
-                                                    </div>
-                                                )}
                                             </div>
                                         </>
                                     ) : (
@@ -243,12 +239,12 @@ function AddMood({ closeWrapper, appendDataInAdd, data }) {
                                                     Upload Image
                                                 </label>
                                             </button>
-                                            {errors?.image && (
-                                                <div className="error-message">
-                                                    {errors?.image}
-                                                </div>
-                                            )}
                                         </>
+                                    )}
+                                    {errors?.image && (
+                                        <div className="error-message">
+                                            {errors?.image}
+                                        </div>
                                     )}
                                 </div>
 

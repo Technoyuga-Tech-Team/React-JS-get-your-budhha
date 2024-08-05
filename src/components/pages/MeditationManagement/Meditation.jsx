@@ -39,6 +39,7 @@ function Meditation() {
     const [searchText, setSearchText] = useState("")
     const [themeDropDown, setThemeDropDown] = useState([]);
     const [moodDropDown, setMoodDropDown] = useState([]);
+    const [expandedDescriptions, setExpandedDescriptions] = useState({});
     const [filter, setFilter] = useState({
         theme: "",
         moods: ""
@@ -83,7 +84,7 @@ function Meditation() {
             theme: filter?.theme?.value?.toString(),
             mood: filter?.moods?.value?.toString(),
         }
-        const data = await getMeditationApi(paginateData,"theme")
+        const data = await getMeditationApi(paginateData, "theme")
         if (data?.success) {
             let paginateData = data?.data?.updateResult
             paginateData?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
@@ -107,7 +108,7 @@ function Meditation() {
             theme: filter?.theme?.value?.toString(),
             mood: filter?.moods?.value?.toString(),
         }
-        const data = await getMeditationApi(paginateData,"theme")
+        const data = await getMeditationApi(paginateData, "theme")
         if (data?.success) {
             let paginateData = data?.data?.updateResult;
             paginateData?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
@@ -130,7 +131,7 @@ function Meditation() {
                 size: numberPerPage,
                 search: searchText,
             }
-            const data = await getMeditationApi(paginateData,"theme")
+            const data = await getMeditationApi(paginateData, "theme")
             if (data?.success) {
                 let paginateData = data?.data?.updateResult;
                 paginateData?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
@@ -153,7 +154,7 @@ function Meditation() {
     const clearAllStateData = () => {
         setSelectedPage(1)
         setSearchText("")
-      }
+    }
 
     useEffect(() => {
         setLoader(true)
@@ -179,7 +180,7 @@ function Meditation() {
             confirmButtonText: 'Yes, delete it!'
         }).then(async (result) => {
             if (result.isConfirmed) {
-                const object ={};
+                const object = {};
                 object.meditationId = data?._id;
 
                 await deleteMeditation(object).then(async (submit) => {
@@ -257,6 +258,13 @@ function Meditation() {
             })
         }
     }
+
+    const toggleDescription = (id) => {
+        setExpandedDescriptions((prev) => ({
+            ...prev,
+            [id]: !prev[id],
+        }));
+    };
 
     useEffect(() => {
         if (filter.moods !== "" || filter.theme !== "") {
@@ -364,8 +372,8 @@ function Meditation() {
                                                             <tr>
                                                                 <th>#</th>
                                                                 <th style={{ maxWidth: "100px" }}>Image</th>
-                                                                <th>Name</th>
-                                                                <th style={{ maxWidth: "100px" }}>Description</th>
+                                                                <th style={{ maxWidth: "150px" }}>Name</th>
+                                                                <th style={{ maxWidth: "200px" }}>Description</th>
                                                                 <th>Moods</th>
                                                                 <th>Theme</th>
                                                                 <th>Rating</th>
@@ -377,12 +385,25 @@ function Meditation() {
                                                         <tbody>
                                                             {loader ? <tr><td colSpan={4}>Loading ...</td></tr> : Meditation?.length > 0 ?
                                                                 Meditation?.map((elem, index) => {
+                                                                    const isExpanded = expandedDescriptions[elem?._id];
+                                                                    const description = elem?.description?.length > 100
+                                                                        ? isExpanded
+                                                                            ? elem?.description
+                                                                            : `${elem?.description?.substring(0, 100)}...`
+                                                                        : elem?.description;
                                                                     return (
                                                                         <tr key={elem?._id}>
                                                                             <td>{(numberPerPage * (selectedPage - 1)) + (index + 1)}</td>
                                                                             <td style={{ maxWidth: "100px", alignContent: 'center', whiteSpace: 'normal' }}>{<div className="d-flex flex-row justify-content-center"><img loading="lazy" src={elem?.meditationImage} style={{ height: "100px", width: "100px", objectFit: 'cover', overflow: 'hidden', cursor: "pointer" }} onClick={() => { handleImageModal(elem?.meditationImage) }} /></div>}</td>
-                                                                            <td>{elem?.meditationName}</td>
-                                                                            <td style={{ maxWidth: "100px" }}>{elem?.description}</td>
+                                                                            <td style={{ maxWidth: "150px" }}>{elem?.meditationName}</td>
+                                                                            <td style={{ maxWidth: "200px" }}>
+                                                                                {description}
+                                                                                {elem?.description?.length > 100 && (
+                                                                                    <span onClick={() => toggleDescription(elem?._id)} style={{ color: "blue", cursor: "pointer" }}>
+                                                                                        {isExpanded ? " See less" : " See more"}
+                                                                                    </span>
+                                                                                )}
+                                                                            </td>
                                                                             <td>{elem?.moods?.length > 0 ? elem?.moods.map(mood => mood.name).join(", ") : "-"}</td>
                                                                             <td>{elem?.theme?.name ? elem?.theme?.name : "-"}</td>
                                                                             <td className="d-flex flex-row justify-content-center">{elem?.overallRating}</td>

@@ -11,9 +11,9 @@ export const manageMenidation = async (data) => {
     }
 };
 
-export const getMeditationApi = async (paginateData, type, id) => {
+export const getMeditationApi = async (paginateData, type, id,sort) => {
     try {
-        const catagory = await api_services.get(`admin/v1/get-audio-with-filter?type=${type}&stage=${id}&page=${paginateData?.number}&limit=${paginateData?.size}&search=${paginateData?.search}&theme=${paginateData?.theme}&mood=${paginateData?.mood}`);
+        const catagory = await api_services.get(`admin/v1/get-audio-with-filter?sortBy=${sort ?? "createdAt"}&type=${type}&stage=${id}&page=${paginateData?.number}&limit=${paginateData?.size}&search=${paginateData?.search}&theme=${paginateData?.theme}&mood=${paginateData?.mood}`);
         return catagory.data;
     } catch (err) {
         const data = await errorHandlerFunctionCatchBlock(err);

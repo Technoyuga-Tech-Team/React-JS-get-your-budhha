@@ -42,6 +42,8 @@ function Meditation2() {
     const [searchText, setSearchText] = useState("")
     const [originalOrder, setOriginalOrder] = useState([]);
     const [isOrderChanged, setIsOrderChanged] = useState(false);
+    const [expandedDescriptions, setExpandedDescriptions] = useState({});
+
 
     const navigate = useNavigate()
 
@@ -58,7 +60,7 @@ function Meditation2() {
             size: numberPerPage,
             search: searchText,
         }
-        const data = await getMeditationApi(paginateData, "course", stage._id)
+        const data = await getMeditationApi(paginateData, "course", stage._id, "index")
         if (data?.success) {
             let paginateData = data?.data?.updateResult
             // paginateData?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
@@ -81,7 +83,7 @@ function Meditation2() {
             size: numberPerPage,
             search: search
         }
-        const data = await getMeditationApi(paginateData, "course", stage._id)
+        const data = await getMeditationApi(paginateData, "course", stage._id, "index")
         if (data?.success) {
             let paginateData = data?.data?.updateResult;
             setTotalPage(data?.data?.totalPages)
@@ -104,7 +106,7 @@ function Meditation2() {
                 size: numberPerPage,
                 search: searchText,
             }
-            const data = await getMeditationApi(paginateData, "course", stage._id)
+            const data = await getMeditationApi(paginateData, "course", stage._id, "index")
             if (data?.success) {
                 let paginateData = data?.data?.updateResult;
                 setTotalPage(data?.data?.totalPages)
@@ -241,6 +243,13 @@ function Meditation2() {
         setUrl(aud)
     }
 
+    const toggleDescription = (id) => {
+        setExpandedDescriptions((prev) => ({
+            ...prev,
+            [id]: !prev[id],
+        }));
+    };
+
     return (
         <>
             <div data-sidebar="dark">
@@ -315,8 +324,8 @@ function Meditation2() {
                                                                         <tr>
                                                                             <th>#</th>
                                                                             <th style={{ maxWidth: "100px" }}>Image</th>
-                                                                            <th>Name</th>
-                                                                            <th style={{ maxWidth: "110px" }}>Description</th>
+                                                                            <th style={{ maxWidth: "100px" }}>Name</th>
+                                                                            <th style={{ maxWidth: "200px" }}>Description</th>
                                                                             <th>Course</th>
                                                                             <th>Stage</th>
                                                                             <th>Rating</th>
@@ -328,14 +337,27 @@ function Meditation2() {
                                                                     <tbody>
                                                                         {loader ? <tr><td colSpan={4}>Loading ...</td></tr> : Meditation?.length > 0 ?
                                                                             Meditation?.map((elem, index) => {
+                                                                                const isExpanded = expandedDescriptions[elem?._id];
+                                                                                const description = elem?.description?.length > 100
+                                                                                    ? isExpanded
+                                                                                        ? elem?.description
+                                                                                        : `${elem?.description?.substring(0, 100)}...`
+                                                                                    : elem?.description;
                                                                                 return (
                                                                                     <Draggable key={elem?._id} draggableId={elem?._id.toString()} index={index}>
                                                                                         {(provided) => (
                                                                                             <tr ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
                                                                                                 <td>{(numberPerPage * (selectedPage - 1)) + (index + 1)}</td>
                                                                                                 <td style={{ maxWidth: "100px", alignContent: 'center', whiteSpace: 'normal' }}>{<div className="d-flex flex-row justify-content-center"><img loading="lazy" src={elem?.meditationImage} style={{ height: "100px", width: "100px", objectFit: 'cover', overflow: 'hidden', cursor: "pointer" }} onClick={() => { handleImageModal(elem?.meditationImage) }} /></div>}</td>
-                                                                                                <td>{elem?.meditationName}</td>
-                                                                                                <td style={{ maxWidth: "100px" }}>{elem?.description}</td>
+                                                                                                <td style={{ maxWidth: "100px" }}>{elem?.meditationName}</td>
+                                                                                                <td style={{ maxWidth: "200px" }}>
+                                                                                                    {description}
+                                                                                                    {elem?.description?.length > 100 && (
+                                                                                                        <span onClick={() => toggleDescription(elem?._id)} style={{ color: "blue", cursor: "pointer" }}>
+                                                                                                            {isExpanded ? " See less" : " See more"}
+                                                                                                        </span>
+                                                                                                    )}
+                                                                                                </td>
                                                                                                 <td>{elem?.course ? elem?.course?.name : "-"}</td>
                                                                                                 <td>{elem?.stage ? elem?.stage?.title : "-"}</td>
                                                                                                 <td className="d-flex flex-row justify-content-center">{elem?.overallRating}</td>

@@ -12,8 +12,10 @@ export const managemood = async (data) => {
 };
 
 export const getmoodApi = async (paginateData) => {
+    console.log(paginateData)
+    console.log(paginateData?.sortOrder ? paginateData?.sortOrder == "1" ? 'asc' : 'desc' : 'desc')
     try {
-        const catagory = await api_services.post(`admin/v1/get-mood-list?page=${paginateData?.number}&limit=${paginateData?.size}&search=${paginateData?.search ? paginateData?.search : ''}`);
+        const catagory = await api_services.post(`admin/v1/get-mood-list?page=${paginateData?.number}&limit=${paginateData?.size}&sortBy=${paginateData?.sortBy ? paginateData?.sortBy : 'createdAt'}&sortOrder=${paginateData?.sortOrder ? paginateData?.sortOrder == "1" ? 'asc' : 'desc' : 'desc'}&search=${paginateData?.search ? paginateData?.search : ''}`);
         return catagory.data;
     } catch (err) {
         const data = await errorHandlerFunctionCatchBlock(err);

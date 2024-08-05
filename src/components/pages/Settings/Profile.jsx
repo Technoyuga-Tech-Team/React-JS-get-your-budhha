@@ -86,7 +86,7 @@ function Profile() {
 
         if (typeof (data.image) === "object") {
             if (data.image.type.includes("video")) {
-                newErrors.image = "Only image(jpeg) is allowed";
+                newErrors.image = "Only image should allowed";
                 isValid = false;
             }
         }

@@ -111,13 +111,13 @@ function AddCategory({ closeWrapper, appendDataInAdd, data }) {
         }
 
         if (!data.image) {
-            newErrors.image = "image is required";
+            newErrors.image = "Image is required";
             isValid = false;
         }
 
         if (typeof (data.image) === "object") {
             if (data.image.type.includes("video")) {
-                newErrors.image = "Only image(jpeg) is allowed";
+                newErrors.image = "Only image should allowed";
                 isValid = false;
             }
         }
@@ -129,7 +129,7 @@ function AddCategory({ closeWrapper, appendDataInAdd, data }) {
 
         if (typeof (data.logoImage) === "object") {
             if (data.logoImage.type.includes("video")) {
-                newErrors.logoImage = "Only image(jpeg) is allowed";
+                newErrors.logoImage = "Only image should allowed";
                 isValid = false;
             }
         }
@@ -139,14 +139,15 @@ function AddCategory({ closeWrapper, appendDataInAdd, data }) {
     };
 
     const onChangeInputFeild = (e) => {
-        const { name, value } = e.target
+        const { name, value } = e.target;
+        const newValue = value.replace(/\s+/g, ' '); // Replace multiple spaces with a single space
         if (submitForm) {
-            validateForm({ ...formData, [name]: value.trimStart() })
+            validateForm({ ...formData, [name]: newValue.trimStart() });
         }
         setFormData({
-            ...formData, [name]: value.trimStart()
-        })
-    }
+            ...formData, [name]: newValue.trimStart()
+        });
+    };
 
     const onClickCrossIcon = (type) => {
         if (type === "img") {
@@ -161,6 +162,7 @@ function AddCategory({ closeWrapper, appendDataInAdd, data }) {
     const onClickPhoto = async (e, type) => {
         const file = e.target.files[0];
         const reader = new FileReader();
+        console.log("====================",type)
 
         reader.onloadend = () => {
             if (type === "img") {
@@ -183,7 +185,7 @@ function AddCategory({ closeWrapper, appendDataInAdd, data }) {
 
 
     return (
-        <div className="main-wrapper-fixed-position" onClick={() => closeWrapper(false)}>
+        <div className="main-wrapper-fixed-position">
             <div className="asa-main-wrapper-right" onClick={(e) => e.stopPropagation()}>
                 <RxCross2 className="asa-cross-icon" size={20} onClick={() => closeWrapper(false)} />
                 <div className="asa-header-design">{data?._id ? "Update Theme" : "Add Theme"}</div>
@@ -224,7 +226,7 @@ function AddCategory({ closeWrapper, appendDataInAdd, data }) {
                                         <>
                                             <label
                                                 className="form-label"
-                                                htmlFor="photo"
+                                                htmlFor="photo1"
                                                 style={{ marginBottom: "0px" }}
                                             >
                                                 Logo
@@ -259,8 +261,8 @@ function AddCategory({ closeWrapper, appendDataInAdd, data }) {
                                         <>
                                             <input
                                                 accept="image/*"
-                                                id="photo"
-                                                name="photo"
+                                                id="photo1"
+                                                name="photo1"
                                                 type="file"
                                                 onChange={(event) =>
                                                     onClickPhoto(event, "logo")
@@ -273,7 +275,7 @@ function AddCategory({ closeWrapper, appendDataInAdd, data }) {
                                             >
                                                 <label
                                                     style={{ marginBottom: "0px" }}
-                                                    htmlFor="photo"
+                                                    htmlFor="photo1"
                                                 >
                                                     Upload Logo
                                                 </label>

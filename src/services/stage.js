@@ -30,3 +30,13 @@ export const UpdateIndexingApi = async (data) => {
         return data;
     }
 }
+
+export const deleteStageApi = async (data) => {
+    try {
+        const response = await api_services.post(`admin/v1/delete-stage`,data);
+        return response.data;
+    } catch (err) {
+        const data = await errorHandlerFunctionCatchBlock(err);
+        return data;
+    }
+}

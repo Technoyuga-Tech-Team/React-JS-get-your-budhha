@@ -3,7 +3,7 @@ import Header from "../../../layout/Header"
 import Sidebar from "../../../layout/Sidebar"
 import AddCourse from "./AddCourse"
 import "./Course.css"
-import { getCourseApi, manageCourseApi } from "../../../../services/course"
+import { getCourseApi, deleteCourseApi } from "../../../../services/course"
 import { displayErrorToast, displaySuccessToast } from "../../../../Utills/displayToasts"
 import { Tooltip as ReactTooltip } from 'react-tooltip'
 import { MdDelete, MdEdit, MdFeedback } from "react-icons/md"
@@ -143,11 +143,10 @@ function Course() {
             confirmButtonText: 'Yes, delete it!'
         }).then(async (result) => {
             if (result.isConfirmed) {
-                const object = new FormData();
-                object.append("courseId", data?._id);
-                object.append("deleteCourse", "delete");
+                const object = {};
+                object.courseId = data?._id;
 
-                await manageCourseApi(object).then(async (submit) => {
+                await deleteCourseApi(object).then(async (submit) => {
                     if (submit?.success) {
                         if (Course.length === 1 && selectedPage > 1) {
                             setSelectedPage(selectedPage - 1)

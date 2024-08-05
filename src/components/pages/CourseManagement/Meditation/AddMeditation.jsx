@@ -151,7 +151,7 @@ function AddMeditation({ closeWrapper, appendDataInAdd, data, id }) {
 
         if (typeof (data.image) === "object") {
             if (!data.image.type.includes("image")) {
-                newErrors.image = "Only image(jpeg) is allowed";
+                newErrors.image = "Only image should allowed";
                 isValid = false;
             }
         }

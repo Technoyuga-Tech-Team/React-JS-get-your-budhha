@@ -3,12 +3,8 @@ import Header from "../../layout/Header"
 import Sidebar from "../../layout/Sidebar"
 import AddMood from "./AddMood"
 import "./Mood.css"
-import { getmoodApi, managemood, deletemood } from "../../../services/mood"
+import { getmoodApi, deletemood } from "../../../services/mood"
 import { displayErrorToast, displaySuccessToast } from "../../../Utills/displayToasts"
-import { TiTick } from "react-icons/ti";
-import { TiTimes } from "react-icons/ti";
-// import { numberPerPage, userRoleTypeForSuper } from "../../../constant/constanant"
-import { useSelector } from "react-redux"
 import { Tooltip as ReactTooltip } from 'react-tooltip'
 import { MdDelete, MdEdit } from "react-icons/md"
 import ReactPaginate from "react-paginate"
@@ -20,8 +16,10 @@ import { RxCross2 } from "react-icons/rx";
 const PIE_API_URL = import.meta.env.VITE_REACT_IMAGE_URL;
 import Swal from "sweetalert2"
 import SearchComponent from "../../../component/Search/Search"
+import { IoMdArrowRoundDown, IoMdArrowRoundUp } from "react-icons/io"
+// import Select from "react-select";
 
-const numberPerPage = 10;
+// const recordsPerPage = 10;
 
 function Mood() {
 
@@ -35,6 +33,9 @@ function Mood() {
     const [url, setUrl] = useState("");
     const [data, setData] = useState({})
     const [searchText, setSearchText] = useState("")
+    const [recordsPerPage, setRecordsPerPage] = useState(10);
+    const [sortField, setSortField] = useState('name'); // Default sort field
+    const [sortOrder, setSortOrder] = useState(1); // Default sort order: 1 for ascending, -1 for descending
 
     const onClickAddMood = (data) => {
         setopenMood(data)
@@ -46,13 +47,15 @@ function Mood() {
         setSelectedPage(1)
         const paginateData = {
             number: 1,
-            size: numberPerPage,
-            search: searchText
+            size: recordsPerPage,
+            search: searchText,
+            sortOrder,
+            sortBy: sortField
         }
         const data = await getmoodApi(paginateData)
         if (data?.success) {
             let paginateData = data?.data?.moods
-            paginateData?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            // paginateData?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
             setTotalPage(data?.data?.totalPages)
             const mergeData = { [1]: paginateData }
             setMainArrayMood(mergeData)
@@ -64,17 +67,20 @@ function Mood() {
         setLoader(false)
     }
 
-    const getMoodList2 = async (select, search) => {
+    const getMoodList2 = async (select, size, search) => {
         setLoader(true)
         const paginateData = {
             number: select,
-            size: numberPerPage,
-            search: search
+            size: size,
+            search: search,
+            sortOrder,
+            sortBy: sortField
         }
         const data = await getmoodApi(paginateData)
+        console.log(data?.data?.moods)
         if (data?.success) {
             let paginateData = data?.data?.moods;
-            paginateData?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            // paginateData?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
             setTotalPage(data?.data?.totalPages)
             const mergeData = { ...mainArrayMood, [select || selectedPage]: paginateData }
             setMainArrayMood(mergeData)
@@ -91,13 +97,15 @@ function Mood() {
         if (!mainArrayMood[select || selectedPage]) {
             const paginateData = {
                 number: select || selectedPage,
-                size: numberPerPage,
-                search: searchText
+                size: recordsPerPage,
+                search: searchText,
+                sortOrder,
+                sortBy: sortField
             }
             const data = await getmoodApi(paginateData)
             if (data?.success) {
                 let paginateData = data?.data?.moods;
-                paginateData?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                // paginateData?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                 setTotalPage(data?.data?.totalPages)
                 const mergeData = { ...mainArrayMood, [select || selectedPage]: paginateData }
                 setMainArrayMood(mergeData)
@@ -131,7 +139,7 @@ function Mood() {
             confirmButtonText: 'Yes, delete it!'
         }).then(async (result) => {
             if (result.isConfirmed) {
-                const object ={};
+                const object = {};
                 object.moodId = data?._id;
 
                 await deletemood(object).then(async (submit) => {
@@ -184,14 +192,29 @@ function Mood() {
     const onClickCloseIcon = async () => {
         setSelectedPage(1)
         setSearchText("")
-        await getMoodList2(1, "")
+        await getMoodList2(1, recordsPerPage, "")
     }
 
     const onChangeSearchComponent = async (e) => {
         setSearchText(e?.target?.value)
         setSelectedPage(1)
-        await getMoodList2(1, e?.target?.value)
+        await getMoodList2(1, recordsPerPage, e?.target?.value)
     }
+
+    const handleRecordsPerPageChange = async (value) => {
+        const newRecordsPerPage = parseInt(value, 10);
+        setRecordsPerPage(newRecordsPerPage);
+        setSelectedPage(1); // Reset to the first page
+        await getMoodList2(1, parseInt(value, 10), searchText); // Fetch new data based on the new records per page
+    };
+
+    const handleSort = async (field) => {
+        const newSortOrder = (sortField === field && sortOrder === 1) ? -1 : 1;
+        setSortField(field);
+        setSortOrder(newSortOrder);
+        await getMoodList2(selectedPage, recordsPerPage, searchText);
+    };
+
 
     return (
         <>
@@ -248,7 +271,11 @@ function Mood() {
                                                         <thead>
                                                             <tr>
                                                                 <th>#</th>
-                                                                <th>Name</th>
+                                                                <th onClick={() => handleSort('name')} style={{ cursor: "pointer" }}>
+                                                                    <div className="d-flex flex-row justify-content-between">
+                                                                        Name {sortField === 'name' && (sortOrder === 1 ? <IoMdArrowRoundUp fontSize={20} /> : <IoMdArrowRoundDown fontSize={20} />)}
+                                                                    </div>
+                                                                </th>
                                                                 <th style={{ maxWidth: "100px" }}>Image</th>
                                                                 <th>Actions</th>
                                                             </tr>
@@ -258,7 +285,7 @@ function Mood() {
                                                                 Mood?.map((elem, index) => {
                                                                     return (
                                                                         <tr key={elem?._id}>
-                                                                            <td>{(numberPerPage * (selectedPage - 1)) + (index + 1)}</td>
+                                                                            <td>{(recordsPerPage * (selectedPage - 1)) + (index + 1)}</td>
                                                                             <td>{elem?.name}</td>
                                                                             <td style={{ maxWidth: "100px", alignContent: 'center', whiteSpace: 'normal' }}>{<div className="d-flex flex-row justify-content-center"><img loading="lazy" src={elem?.image} style={{ height: "100px", width: "100px", objectFit: 'cover', overflow: 'hidden', cursor: "pointer" }} onClick={() => { handleImageModal(elem?.image) }} /></div>}</td>
                                                                             <td style={{ display: "flex", cursor: "pointer" }}>
@@ -296,7 +323,7 @@ function Mood() {
                                         </div>
                                     </div>
                                 </div>
-                                <div style={{ justifyContent: "center", width: "100%", alignItems: "center", display: "flex" }}>
+                                {/* <div style={{ justifyContent: "center", width: "100%", alignItems: "center", display: "flex" }}>
                                     <ReactPaginate
                                         previousLabel={<GrPrevious style={{ color: "black" }} />}
                                         nextLabel={<GrNext style={{ color: "black" }} />}
@@ -309,6 +336,46 @@ function Mood() {
                                         forcePage={selectedPage - 1}
                                         pageLinkClassName={"list-item-paginate-class-name"}
                                     />
+                                </div>
+                                <div className="d-grid">
+                                    <select
+                                        className="form-select"
+                                        value={recordsPerPage}
+                                        onChange={(e) => handleRecordsPerPageChange(e.target.value)}
+                                        style={{ height: '40px', marginLeft: '10px' }}
+                                    >
+                                        <option value={10}>10</option>
+                                        <option value={20}>20</option>
+                                        <option value={50}>50</option>
+                                    </select>
+                                </div> */}
+                                <div className="pagination-container">
+                                    <div className="pagination-wrapper">
+                                        <ReactPaginate
+                                            previousLabel={<GrPrevious style={{ color: "black" }} />}
+                                            nextLabel={<GrNext style={{ color: "black" }} />}
+                                            pageCount={totalPage || 1}
+                                            marginPagesDisplayed={2}
+                                            pageRangeDisplayed={5}
+                                            onPageChange={handlePageClick}
+                                            containerClassName={"pagination"}
+                                            activeClassName={"active-pagination bg-primary"}
+                                            forcePage={selectedPage - 1}
+                                            pageLinkClassName={"list-item-paginate-class-name"}
+                                        />
+                                    </div>
+                                    <div className="dropdown-wrapper">
+                                        <select
+                                            className="form-select"
+                                            value={recordsPerPage}
+                                            onChange={(e) => handleRecordsPerPageChange(e.target.value)}
+                                            style={{ height: '40px' }}
+                                        >
+                                            <option value={10}>10</option>
+                                            <option value={20}>20</option>
+                                            <option value={50}>50</option>
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
                         </div>

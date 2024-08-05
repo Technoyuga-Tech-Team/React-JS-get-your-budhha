@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { GrPrevious, GrNext } from "react-icons/gr";
 import { AiOutlineUser, AiOutlineDollarCircle, AiOutlineUsergroupAdd } from "react-icons/ai";
 import { FiUsers } from "react-icons/fi";
@@ -7,6 +7,7 @@ import { Bar, Line } from "react-chartjs-2";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title, Tooltip, Legend } from 'chart.js';
 import Header from "../../layout/Header";
 import Sidebar from "../../layout/Sidebar";
+import { getDashboard } from "../../../services/dashboard";
 
 // Register the necessary components
 ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title, Tooltip, Legend);
@@ -14,6 +15,7 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, PointEleme
 
 const Dashboard = () => {
     const [totalPage] = useState(10); // Static total pages
+    const [dashboardData, setDashboardData] = useState([]);
 
     const handlePageClick = (data) => {
         const pageNo = data.selected + 1;
@@ -21,41 +23,50 @@ const Dashboard = () => {
         // Fetch new page data based on pageNo (Static data so no fetching here)
     };
 
+    const getData = async () => {
+        const data = await getDashboard();
+        setDashboardData(data?.data);
+    }
+
+    useEffect(() => {
+        getData();
+    }, []);
+
     const stats = [
-        { title: "Total Users", value: 1000, icon: <AiOutlineUser fontSize={30} />, color: "bg-primary" },
-        { title: "Total Paid Users", value: 300, icon: <AiOutlineDollarCircle fontSize={30} />, color: "bg-success" },
-        { title: "Total Free Users", value: 700, icon: <FiUsers fontSize={30} />, color: "bg-warning" },
-        { title: "Total Revenue", value: "$34,245", icon: <AiOutlineDollarCircle fontSize={30} />, color: "bg-info" },
-        { title: "Total Active Users", value: 800, icon: <AiOutlineUsergroupAdd fontSize={30} />, color: "bg-danger" }
+        { title: "Total Users", value: dashboardData?.totalUsers, icon: <AiOutlineUser fontSize={30} />, color: "bg-primary" },
+        { title: "Total Paid Users", value: dashboardData?.paidUsers, icon: <AiOutlineDollarCircle fontSize={30} />, color: "bg-success" },
+        { title: "Total Free Users", value: dashboardData?.freeUsers, icon: <FiUsers fontSize={30} />, color: "bg-warning" },
+        { title: "Total Revenue", value: "$"+dashboardData?.revenue, icon: <AiOutlineDollarCircle fontSize={30} />, color: "bg-info" },
+        { title: "Total Active Users", value: dashboardData?.activeUser, icon: <AiOutlineUsergroupAdd fontSize={30} />, color: "bg-danger" }
     ];
 
-    const barData = {
-        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-        datasets: [
-            {
-                label: 'Website Views',
-                backgroundColor: 'rgba(75,192,192,1)',
-                borderColor: 'rgba0,0,0,1)',
-                borderWidth: 2,
-                data: [65, 59, 80, 81, 56, 55, 40, 70, 60, 90, 75, 80]
-            }
-        ]
-    };
+    // const barData = {
+    //     labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+    //     datasets: [
+    //         {
+    //             label: 'Website Views',
+    //             backgroundColor: 'rgba(75,192,192,1)',
+    //             borderColor: 'rgba0,0,0,1)',
+    //             borderWidth: 2,
+    //             data: [65, 59, 80, 81, 56, 55, 40, 70, 60, 90, 75, 80]
+    //         }
+    //     ]
+    // };
 
-    const lineData = {
-        labels: ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
-        datasets: [
-            {
-                label: 'Daily Earnings',
-                fill: false,
-                lineTension: 0.5,
-                backgroundColor: 'rgba(75,192,192,1)',
-                borderColor: 'rgba(75,192,192,1)',
-                borderWidth: 2,
-                data: [2000, 4000, 3000, 5000, 7000, 8000, 10000]
-            }
-        ]
-    };
+    // const lineData = {
+    //     labels: ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
+    //     datasets: [
+    //         {
+    //             label: 'Daily Earnings',
+    //             fill: false,
+    //             lineTension: 0.5,
+    //             backgroundColor: 'rgba(75,192,192,1)',
+    //             borderColor: 'rgba(75,192,192,1)',
+    //             borderWidth: 2,
+    //             data: [2000, 4000, 3000, 5000, 7000, 8000, 10000]
+    //         }
+    //     ]
+    // };
 
     return (
         <div data-sidebar="dark">
@@ -93,7 +104,7 @@ const Dashboard = () => {
                                 ))}
                             </div>
 
-                            <div className="row">
+                            {/* <div className="row">
                                 <div className="col-xl-6">
                                     <div className="card">
                                         <div className="card-body">
@@ -111,7 +122,7 @@ const Dashboard = () => {
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </div> */}
                         </div>
                     </div>
                 </div>

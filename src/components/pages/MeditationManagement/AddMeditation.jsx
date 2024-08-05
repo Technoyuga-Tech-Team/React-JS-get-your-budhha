@@ -196,7 +196,7 @@ function AddMeditation({ closeWrapper, appendDataInAdd, data }) {
 
         if (typeof (data.image) === "object") {
             if (!data.image.type.includes("image")) {
-                newErrors.image = "Only image(jpeg) is allowed";
+                newErrors.image = "Only image should allowed";
                 isValid = false;
             }
         }
@@ -240,14 +240,15 @@ function AddMeditation({ closeWrapper, appendDataInAdd, data }) {
     };
 
     const onChangeInputFeild = (e) => {
-        const { name, value } = e.target
+        const { name, value } = e.target;
+        const newValue = value.replace(/\s+/g, ' '); // Replace multiple spaces with a single space
         if (submitForm) {
-            validateForm({ ...formData, [name]: value.trimStart() })
+            validateForm({ ...formData, [name]: newValue.trimStart() });
         }
         setFormData({
-            ...formData, [name]: value.trimStart()
-        })
-    }
+            ...formData, [name]: newValue.trimStart()
+        });
+    };
 
     const onClickCrossIcon = (type) => {
         if (type === "img") {
@@ -417,7 +418,7 @@ function AddMeditation({ closeWrapper, appendDataInAdd, data }) {
                                         <>
                                             <label
                                                 className="form-label"
-                                                htmlFor="photo"
+                                                htmlFor="photo1"
                                                 style={{ marginBottom: "0px" }}
                                             >
                                                 Female Audio
@@ -437,19 +438,14 @@ function AddMeditation({ closeWrapper, appendDataInAdd, data }) {
                                                         size={20}
                                                     />
                                                 </div>
-                                                {errors?.femaleAudio && (
-                                                    <div className="error-message">
-                                                        {errors?.femaleAudio}
-                                                    </div>
-                                                )}
                                             </div>
                                         </>
                                     ) : (
                                         <>
                                             <input
                                                 accept="audio/*"
-                                                id="photo"
-                                                name="photo"
+                                                id="photo1"
+                                                name="photo1"
                                                 type="file"
                                                 onChange={(event) =>
                                                     onClickPhoto(event, "female")
@@ -462,17 +458,18 @@ function AddMeditation({ closeWrapper, appendDataInAdd, data }) {
                                             >
                                                 <label
                                                     style={{ marginBottom: "0px" }}
-                                                    htmlFor="photo"
+                                                    htmlFor="photo1"
                                                 >
                                                     Upload Female Audio
                                                 </label>
                                             </button>
-                                            {errors?.femaleAudio && (
-                                                <div className="error-message">
-                                                    {errors?.femaleAudio}
-                                                </div>
-                                            )}
+
                                         </>
+                                    )}
+                                    {errors?.femaleAudio && (
+                                        <div className="error-message">
+                                            {errors?.femaleAudio}
+                                        </div>
                                     )}
                                 </div>
 
@@ -481,7 +478,7 @@ function AddMeditation({ closeWrapper, appendDataInAdd, data }) {
                                         <>
                                             <label
                                                 className="form-label"
-                                                htmlFor="photo"
+                                                htmlFor="photo2"
                                                 style={{ marginBottom: "0px" }}
                                             >
                                                 Male Audio
@@ -501,19 +498,14 @@ function AddMeditation({ closeWrapper, appendDataInAdd, data }) {
                                                         size={20}
                                                     />
                                                 </div>
-                                                {errors?.maleAudio && (
-                                                    <div className="error-message">
-                                                        {errors?.maleAudio}
-                                                    </div>
-                                                )}
                                             </div>
                                         </>
                                     ) : (
                                         <>
                                             <input
                                                 accept="audio/*"
-                                                id="photo"
-                                                name="photo"
+                                                id="photo2"
+                                                name="photo2"
                                                 type="file"
                                                 onChange={(event) =>
                                                     onClickPhoto(event, "male")
@@ -526,17 +518,17 @@ function AddMeditation({ closeWrapper, appendDataInAdd, data }) {
                                             >
                                                 <label
                                                     style={{ marginBottom: "0px" }}
-                                                    htmlFor="photo"
+                                                    htmlFor="photo2"
                                                 >
                                                     Upload Male Audio
                                                 </label>
                                             </button>
-                                            {errors?.maleAudio && (
-                                                <div className="error-message">
-                                                    {errors?.maleAudio}
-                                                </div>
-                                            )}
                                         </>
+                                    )}
+                                    {errors?.maleAudio && (
+                                        <div className="error-message">
+                                            {errors?.maleAudio}
+                                        </div>
                                     )}
                                 </div>
 
@@ -545,7 +537,7 @@ function AddMeditation({ closeWrapper, appendDataInAdd, data }) {
                                         <>
                                             <label
                                                 className="form-label"
-                                                htmlFor="photo"
+                                                htmlFor="photo3"
                                                 style={{ marginBottom: "0px" }}
                                             >
                                                 Image
@@ -568,19 +560,14 @@ function AddMeditation({ closeWrapper, appendDataInAdd, data }) {
                                                         size={20}
                                                     />
                                                 </div>
-                                                {errors?.image && (
-                                                    <div className="error-message">
-                                                        {errors?.image}
-                                                    </div>
-                                                )}
                                             </div>
                                         </>
                                     ) : (
                                         <>
                                             <input
                                                 accept="image/*"
-                                                id="photo"
-                                                name="photo"
+                                                id="photo3"
+                                                name="photo3"
                                                 type="file"
                                                 onChange={(event) =>
                                                     onClickPhoto(event, "img")
@@ -593,17 +580,17 @@ function AddMeditation({ closeWrapper, appendDataInAdd, data }) {
                                             >
                                                 <label
                                                     style={{ marginBottom: "0px" }}
-                                                    htmlFor="photo"
+                                                    htmlFor="photo3"
                                                 >
                                                     Upload Image
                                                 </label>
                                             </button>
-                                            {errors?.image && (
-                                                <div className="error-message">
-                                                    {errors?.image}
-                                                </div>
-                                            )}
                                         </>
+                                    )}
+                                    {errors?.image && (
+                                        <div className="error-message">
+                                            {errors?.image}
+                                        </div>
                                     )}
                                 </div>
 

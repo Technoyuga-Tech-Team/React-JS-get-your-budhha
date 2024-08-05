@@ -117,7 +117,7 @@ function AddBackGroundMusic({ closeWrapper, appendDataInAdd, data }) {
 
         if (typeof (data.image) === "object") {
             if (!data.image.type.includes("image")) {
-                newErrors.image = "Only image(jpeg) is allowed";
+                newErrors.image = "Only image should allowed";
                 isValid = false;
             }
         }
@@ -139,14 +139,15 @@ function AddBackGroundMusic({ closeWrapper, appendDataInAdd, data }) {
     };
 
     const onChangeInputFeild = (e) => {
-        const { name, value } = e.target
+        const { name, value } = e.target;
+        const newValue = value.replace(/\s+/g, ' '); // Replace multiple spaces with a single space
         if (submitForm) {
-            validateForm({ ...formData, [name]: value.trimStart() })
+            validateForm({ ...formData, [name]: newValue.trimStart() });
         }
         setFormData({
-            ...formData, [name]: value.trimStart()
-        })
-    }
+            ...formData, [name]: newValue.trimStart()
+        });
+    };
 
     const onClickCrossIcon = (type) => {
         if (type === "img") {

@@ -3,7 +3,7 @@ import Header from "../../../layout/Header"
 import Sidebar from "../../../layout/Sidebar"
 import AddStage from "./AddStage"
 import "./Stage.css"
-import { getStageApi, manageStageApi, UpdateIndexingApi } from "../../../../services/stage"
+import { getStageApi, manageStageApi, UpdateIndexingApi, deleteStageApi } from "../../../../services/stage"
 import { displayErrorToast, displaySuccessToast } from "../../../../Utills/displayToasts"
 import { Tooltip as ReactTooltip } from 'react-tooltip'
 import { MdDelete, MdEdit } from "react-icons/md"
@@ -25,8 +25,7 @@ function Stage() {
     const location = useLocation()
     let { course } = location.state;
 
-    if(!course)
-    {
+    if (!course) {
         course = JSON.parse(localStorage.getItem("course"))
     }
 
@@ -148,11 +147,10 @@ function Stage() {
             confirmButtonText: 'Yes, delete it!'
         }).then(async (result) => {
             if (result.isConfirmed) {
-                const object = new FormData();
-                object.append("stageId", data?._id);
-                object.append("deleteStage", "delete");
+                const object = {};
+                object.stageId = data?._id;
 
-                await manageStageApi(object).then(async (submit) => {
+                await deleteStageApi(object).then(async (submit) => {
                     if (submit?.success) {
                         if (Stage.length === 1 && selectedPage > 1) {
                             setSelectedPage(selectedPage - 1)
@@ -331,8 +329,9 @@ function Stage() {
                                                                                                             size={20}
                                                                                                             onClick={() => {
                                                                                                                 localStorage.setItem("course", JSON.stringify(course))
-                                                                                                                navigate("/course-meditation", { state: { stage: elem, selectedPage } })}
-                                                                                                        }
+                                                                                                                navigate("/course-meditation", { state: { stage: elem, selectedPage } })
+                                                                                                            }
+                                                                                                            }
                                                                                                         />
                                                                                                     </>
                                                                                                     <>

@@ -132,7 +132,7 @@ function AddCourse({ closeWrapper, appendDataInAdd, data }) {
 
         if (typeof (data.image) === "object") {
             if (!data.image.type.includes("image")) {
-                newErrors.image = "Only image(jpeg) is allowed";
+                newErrors.image = "Only image should allowed";
                 isValid = false;
             }
         }
@@ -147,15 +147,16 @@ function AddCourse({ closeWrapper, appendDataInAdd, data }) {
     };
 
     const onChangeInputField = (e) => {
-        const { name, value } = e.target
-        const newValue = name === "is_free" ? (value === "true") : value.trimStart();
+        const { name, value } = e.target;
+        const newValue1 = name === "is_free" ? (value === "true") : value.trimStart();
+        const newValue = newValue1.replace(/\s+/g, ' '); // Replace multiple spaces with a single space
         if (submitForm) {
-            validateForm({ ...formData, [name]: newValue })
+            validateForm({ ...formData, [name]: newValue.trimStart() });
         }
         setFormData({
-            ...formData, [name]: newValue
-        })
-    }
+            ...formData, [name]: newValue.trimStart()
+        });
+    };
 
     const onClickCrossIcon = () => {
         setPreviewImage(null);

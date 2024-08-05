@@ -18,8 +18,9 @@ import { MdEmail } from "react-icons/md";
 import { IoLogoAppleAppstore } from "react-icons/io5";
 import { AiFillGoogleCircle } from "react-icons/ai";
 import ImageModal from "../../layout/ImageModal";
+import { IoMdArrowRoundUp, IoMdArrowRoundDown } from "react-icons/io";
 
-const numberPerPage = 10;
+// const recordsPerPage = 10;
 
 function UserList() {
 
@@ -31,8 +32,11 @@ function UserList() {
   const [url, setUrl] = useState("");
   const [imageModal, setImageModal] = useState(false);
   const [loader, setLoader] = useState(false)
+  const [sortField, setSortField] = useState('firstName'); // Default sort field
+  const [sortOrder, setSortOrder] = useState(1); // Default sort order: 1 for ascending, -1 for descending
   const location = useLocation()
   const navigate = useNavigate()
+  const [recordsPerPage, setRecordsPerPage] = useState(10);
 
   const getUserList = async (page, size, search) => {
     setLoader(true)
@@ -41,6 +45,8 @@ function UserList() {
         number: page || selectedPage,
         size,
         search: search,
+        sortOrder,
+        sortBy: sortField
       }
       const response = await getUserApi(paginateData)
       if (response?.success) {
@@ -65,8 +71,11 @@ function UserList() {
       number: page || selectedPage,
       size,
       search: search,
+      sortOrder,
+      sortBy: sortField
     }
     const response = await getUserApi(paginateData)
+    console.log(response?.data?.users)
     if (response?.success) {
       setUserList(response?.data?.users)
       setTotalPage(response?.data?.totalPages)
@@ -86,10 +95,10 @@ function UserList() {
   useEffect(() => {
     if (location?.state?.activePage) {
       setSelectedPage(location?.state?.activePage)
-      getUserList(location?.state?.activePage, numberPerPage, "")
+      getUserList(location?.state?.activePage, recordsPerPage, "")
 
     } else {
-      getUserList(1, numberPerPage, "")
+      getUserList(1, recordsPerPage, "")
       clearAllStateData()
     }
   }, [location.pathname])
@@ -98,7 +107,7 @@ function UserList() {
 
     const pageNo = data.selected + 1;
     setSelectedPage(pageNo)
-    await getUserList(pageNo, numberPerPage, searchText)
+    await getUserList(pageNo, recordsPerPage, searchText)
   };
 
   const onPressDeleteIcon = (data) => {
@@ -109,12 +118,13 @@ function UserList() {
       cancelButtonColor: '#d33',
       confirmButtonText: 'Yes',
       showCancelButton: true,
+      showCloseButton: true,
     }).then(async (res) => {
       if (res.isConfirmed) {
         const response = await updateUserStatus(data?._id, "delete");
         if (response?.success) {
           await updateUserStatusLocally(data?._id, 2);
-          // getUserList(selectedPage, numberPerPage, searchText)
+          // getUserList(selectedPage, recordsPerPage, searchText)
         }
       }
     })
@@ -123,11 +133,12 @@ function UserList() {
   const onPressBlockIcon = (data) => {
     Swal.fire({
       title: data?.status === 0 ? "Block User" : "Unblock User",
-      text: `Are you sure you want to ${data?.status === 0 ? "block" : "unblock"} ${data?.firstName + " " + data?.lastName}?`,
+      html: `Are you sure you want to ${data?.status === 0 ? "block" : "unblock"} <b><span>${data?.firstName} ${data?.lastName}</span></b>?`,
       confirmButtonColor: '#127139',
       cancelButtonColor: '#d33',
       confirmButtonText: 'Yes',
       showCancelButton: true,
+      showCloseButton: true,
     }).then(async (res) => {
       if (res.isConfirmed) {
         const response = await updateUserStatus(data?._id, data?.status === 0 ? "block" : "unblock");
@@ -148,13 +159,13 @@ function UserList() {
   const onClickCloseIcon = async () => {
     setSelectedPage(1)
     setSearchText("")
-    await getUserList2(1, numberPerPage, "")
+    await getUserList2(1, recordsPerPage, "")
   }
 
   const onChangeSearchComponent = async (e) => {
     setSearchText(e?.target?.value)
     setSelectedPage(1)
-    await getUserList2(1, numberPerPage, e?.target?.value)
+    await getUserList2(1, recordsPerPage, e?.target?.value)
   }
 
   const handleImageModal = (img) => {
@@ -175,6 +186,20 @@ function UserList() {
     }
     return response;
   }
+
+  const handleSort = async (field) => {
+    const newSortOrder = (sortField === field && sortOrder === 1) ? -1 : 1;
+    setSortField(field);
+    setSortOrder(newSortOrder);
+    await getUserList2(selectedPage, recordsPerPage, searchText);
+  };
+
+  const handleRecordsPerPageChange = async (value) => {
+    const newRecordsPerPage = parseInt(value, 10);
+    setRecordsPerPage(newRecordsPerPage);
+    setSelectedPage(1); // Reset to the first page
+    await getUserList2(1, parseInt(value, 10), searchText); // Fetch new data based on the new records per page
+  };
 
   return (
     <div data-sidebar="dark">
@@ -222,10 +247,19 @@ function UserList() {
                           <thead>
                             <tr>
                               <th>#</th>
-                              <th>Profile Pic</th>
-                              <th>Name</th>
+                              <th>Profile Picture</th>
+                              <th onClick={() => handleSort('firstName')} style={{ cursor: "pointer" }}>
+                                <div className="d-flex flex-row justify-content-between">
+                                  Name {sortField === 'firstName' && (sortOrder === 1 ? <IoMdArrowRoundUp fontSize={20} /> : <IoMdArrowRoundDown fontSize={20} />)}
+                                </div>
+                              </th>
                               <th>Email</th>
-                              <th>Login Type</th>
+                              <th>Subscription Plan</th>
+                              <th onClick={() => handleSort('registerType')} style={{ cursor: "pointer" }}>
+                                <div className="d-flex flex-row justify-content-between">
+                                  Login Type {sortField === 'registerType' && (sortOrder === 1 ? <IoMdArrowRoundUp fontSize={20} /> : <IoMdArrowRoundDown fontSize={20} />)}
+                                </div>
+                              </th>
                               <th>Actions</th>
                             </tr>
                           </thead>
@@ -234,20 +268,21 @@ function UserList() {
                               userList?.map((elem, index) => {
                                 return (
                                   <tr key={elem?._id} className="text-container">
-                                    <td>{(numberPerPage * (selectedPage - 1)) + (index + 1)}</td>
+                                    <td>{(recordsPerPage * (selectedPage - 1)) + (index + 1)}</td>
                                     {(elem?.profilePic === "") ?
-                                      <td style={{ maxWidth: "100px", alignContent: 'center', whiteSpace: 'normal' }}>{<div className="d-flex flex-row justify-content-center"><img loading="lazy" style={{height:"50px"}} src={"/images/users/user.png"} /></div>}</td>
-                                    :
-                                    <td style={{ maxWidth: "100px", alignContent: 'center', whiteSpace: 'normal' }}>{<div className="d-flex flex-row justify-content-center"><img loading="lazy" src={elem?.profilePic} style={{ height: "100px", width: "100px", objectFit: 'cover', overflow: 'hidden', cursor: "pointer" }} onClick={() => { handleImageModal(elem?.profilePic) }} /></div>}</td>}
+                                      <td style={{ maxWidth: "100px", alignContent: 'center', whiteSpace: 'normal' }}>{<div className="d-flex flex-row justify-content-center"><img loading="lazy" style={{ height: "50px" }} src={"/images/users/user.png"} /></div>}</td>
+                                      :
+                                      <td style={{ maxWidth: "100px", alignContent: 'center', whiteSpace: 'normal' }}>{<div className="d-flex flex-row justify-content-center"><img loading="lazy" src={elem?.profilePic} style={{ height: "100px", width: "100px", objectFit: 'cover', overflow: 'hidden', cursor: "pointer" }} onClick={() => { handleImageModal(elem?.profilePic) }} /></div>}</td>}
                                     <td style={{ maxWidth: "200px" }}>
                                       <div className="two-line-text">
                                         {elem?.firstName}{" "} {elem?.lastName}
                                       </div>
                                     </td>
                                     <td>{elem?.email ? elem?.email : "-"}</td>
-                                    <td style={{ textAlign: 'center' }} >{elem?.registerType === 0 ? <MdEmail fontSize={20} /> : <><AiFillGoogleCircle fontSize={20} /> / <IoLogoAppleAppstore fontSize={20} /></>}</td>
+                                    <td>{elem?.planName ? elem?.planName : "-"}</td>
+                                    <td>{elem?.registerType === 0 ? <MdEmail fontSize={20} /> : <><AiFillGoogleCircle fontSize={20} /> / <IoLogoAppleAppstore fontSize={20} /></>}</td>
 
-                                    <td style={{ display: "flex", cursor: "pointer", justifyContent: 'center' }}>
+                                    <td style={{ display: "flex flex-start", cursor: "pointer", justifyContent: 'center' }}>
                                       {elem?.status === 2 ? <span style={{ color: 'red', cursor: 'default' }}>User Deleted</span> :
                                         elem?.status === 0 ?
                                           <>
@@ -300,7 +335,7 @@ function UserList() {
                   </div>
                 </div>
               </div>
-              <div style={{ justifyContent: "center", width: "100%", alignItems: "center", display: "flex" }}>
+              {/* <div style={{ justifyContent: "center", width: "100%", alignItems: "center", display: "flex" }}>
                 <ReactPaginate
                   previousLabel={<GrPrevious style={{ color: "black" }} />}
                   nextLabel={<GrNext style={{ color: "black" }} />}
@@ -313,6 +348,34 @@ function UserList() {
                   forcePage={selectedPage - 1}
                   pageLinkClassName={"list-item-paginate-class-name"}
                 />
+              </div> */}
+              <div className="pagination-container">
+                <div className="pagination-wrapper">
+                  <ReactPaginate
+                    previousLabel={<GrPrevious style={{ color: "black" }} />}
+                    nextLabel={<GrNext style={{ color: "black" }} />}
+                    pageCount={totalPage || 1}
+                    marginPagesDisplayed={2}
+                    pageRangeDisplayed={5}
+                    onPageChange={handlePageClick}
+                    containerClassName={"pagination"}
+                    activeClassName={"active-pagination bg-primary"}
+                    forcePage={selectedPage - 1}
+                    pageLinkClassName={"list-item-paginate-class-name"}
+                  />
+                </div>
+                <div className="dropdown-wrapper">
+                  <select
+                    className="form-select"
+                    value={recordsPerPage}
+                    onChange={(e) => handleRecordsPerPageChange(e.target.value)}
+                    style={{ height: '40px' }}
+                  >
+                    <option value={10}>10</option>
+                    <option value={20}>20</option>
+                    <option value={50}>50</option>
+                  </select>
+                </div>
               </div>
             </div>
           </div>

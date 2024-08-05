@@ -20,3 +20,13 @@ export const manageCourseApi = async (data) => {
         return data;
     }
 }
+
+export const deleteCourseApi = async (data) => {
+    try {
+        const response = await api_services.post(`admin/v1/delete-course`,data);
+        return response.data;
+    } catch (err) {
+        const data = await errorHandlerFunctionCatchBlock(err);
+        return data;
+    }
+}
