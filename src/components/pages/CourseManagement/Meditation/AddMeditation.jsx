@@ -242,7 +242,7 @@ function AddMeditation({ closeWrapper, appendDataInAdd, data, id }) {
     }, [formData])
 
     return (
-        <div className="main-wrapper-fixed-position" onClick={() => closeWrapper(false)}>
+        <div className="main-wrapper-fixed-position">
             <div className="asa-main-wrapper-right" onClick={(e) => e.stopPropagation()}>
                 <RxCross2 className="asa-cross-icon" size={20} onClick={() => closeWrapper(false)} />
                 <div className="asa-header-design">{data?._id ? "Update Meditation" : "Add Meditation"}</div>

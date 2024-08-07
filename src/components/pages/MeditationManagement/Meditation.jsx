@@ -22,7 +22,7 @@ import SearchComponent from "../../../component/Search/Search"
 import { MdFeedback } from "react-icons/md";
 import { useLocation, useNavigate } from "react-router-dom"
 
-const numberPerPage = 10;
+// const numberPerPage = 10;
 
 function Meditation() {
 
@@ -31,6 +31,7 @@ function Meditation() {
     const [Meditation, setMeditation] = useState([])
     const [totalPage, setTotalPage] = useState(0)
     const [selectedPage, setSelectedPage] = useState(1);
+    const [recordsPerPage, setRecordsPerPage] = useState(10);
     const [mainArrayMeditation, setMainArrayMeditation] = useState({})
     const [imageModal, setImageModal] = useState(false);
     const [audioModal, setAudioModal] = useState(false);
@@ -79,7 +80,7 @@ function Meditation() {
         setSelectedPage(1)
         const paginateData = {
             number: 1,
-            size: numberPerPage,
+            size: recordsPerPage,
             search: searchText,
             theme: filter?.theme?.value?.toString(),
             mood: filter?.moods?.value?.toString(),
@@ -99,11 +100,11 @@ function Meditation() {
         setLoader(false)
     }
 
-    const getMeditationList2 = async (select, search) => {
+    const getMeditationList2 = async (select, size, search) => {
         setLoader(true)
         const paginateData = {
             number: select || selectedPage,
-            size: numberPerPage,
+            size: size || recordsPerPage,
             search: search,
             theme: filter?.theme?.value?.toString(),
             mood: filter?.moods?.value?.toString(),
@@ -128,7 +129,7 @@ function Meditation() {
         if (!mainArrayMeditation[select || selectedPage]) {
             const paginateData = {
                 number: select || selectedPage,
-                size: numberPerPage,
+                size: recordsPerPage,
                 search: searchText,
             }
             const data = await getMeditationApi(paginateData, "theme")
@@ -266,6 +267,13 @@ function Meditation() {
         }));
     };
 
+    const handleRecordsPerPageChange = async (value) => {
+        const newRecordsPerPage = parseInt(value, 10);
+        setRecordsPerPage(newRecordsPerPage);
+        setSelectedPage(1); // Reset to the first page
+        await getMeditationList2(1, parseInt(value, 10), searchText); // Fetch new data based on the new records per page
+    };
+
     useEffect(() => {
         if (filter.moods !== "" || filter.theme !== "") {
             getMeditationList2()
@@ -320,11 +328,20 @@ function Meditation() {
                                                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingBottom: "15px" }}>
                                                     <h4 className="card-title">List of Meditation</h4>
                                                     <div className="d-flex flex-row">
-                                                        <div style={{ display: "flex", flexDirection: 'row', justifyContent: "space-between" }}>
+                                                        <div style={{ marginRight: "10px", marginTop: "15px" }}>
+                                                            <select
+                                                                className="form-select"
+                                                                value={recordsPerPage}
+                                                                onChange={(e) => handleRecordsPerPageChange(e.target.value)}
+                                                                style={{ height: '40px' }}
+                                                            >
+                                                                <option value={10}>10</option>
+                                                                <option value={20}>20</option>
+                                                                <option value={50}>50</option>
+                                                            </select>
+                                                        </div>
+                                                        <div style={{ display: "flex", marginTop: "15px", flexDirection: 'row', justifyContent: "space-between" }}>
                                                             <div className="ul-dashboard-drop-down">
-                                                                <label>
-                                                                    Select Mood
-                                                                </label>
                                                                 <DropdownComponent
                                                                     width={"170px"}
                                                                     options={moodDropDown}
@@ -339,9 +356,6 @@ function Meditation() {
                                                             </div>
 
                                                             <div className="ul-dashboard-drop-down" style={{ marginLeft: '20px' }}>
-                                                                <label>
-                                                                    Select Theme
-                                                                </label>
                                                                 <DropdownComponent
                                                                     width={"170px"}
                                                                     options={themeDropDown}
@@ -355,14 +369,14 @@ function Meditation() {
                                                                 />
                                                             </div>
                                                         </div>
-                                                        <div style={{ marginTop: '28px', marginLeft: '10px' }}>
+                                                        <div style={{ marginTop: '15px', marginLeft: '10px' }}>
                                                             <SearchComponent
                                                                 data={searchText}
                                                                 onChange={(data) => onChangeSearchComponent(data)}
                                                                 onClickCloseIcon={onClickCloseIcon} />
                                                         </div>
                                                         <div className="d-grid">
-                                                            <button className="btn btn-primary waves-effect waves-light" type="buttom" style={{ height: '40px', marginTop: '27px', marginLeft: '10px' }} onClick={() => onClickAddMeditation(true)} >Add Meditation</button>
+                                                            <button className="btn btn-primary waves-effect waves-light" type="buttom" style={{ height: '40px', marginTop: '15px', marginLeft: '10px' }} onClick={() => onClickAddMeditation(true)} >Add Meditation</button>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -393,7 +407,7 @@ function Meditation() {
                                                                         : elem?.description;
                                                                     return (
                                                                         <tr key={elem?._id}>
-                                                                            <td>{(numberPerPage * (selectedPage - 1)) + (index + 1)}</td>
+                                                                            <td>{(recordsPerPage * (selectedPage - 1)) + (index + 1)}</td>
                                                                             <td style={{ maxWidth: "100px", alignContent: 'center', whiteSpace: 'normal' }}>{<div className="d-flex flex-row justify-content-center"><img loading="lazy" src={elem?.meditationImage} style={{ height: "100px", width: "100px", objectFit: 'cover', overflow: 'hidden', cursor: "pointer" }} onClick={() => { handleImageModal(elem?.meditationImage) }} /></div>}</td>
                                                                             <td style={{ maxWidth: "150px" }}>{elem?.meditationName}</td>
                                                                             <td style={{ maxWidth: "200px" }}>

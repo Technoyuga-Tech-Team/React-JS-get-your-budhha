@@ -16,8 +16,6 @@ import { RxCross2 } from "react-icons/rx";
 import Swal from "sweetalert2"
 import SearchComponent from "../../../component/Search/Search"
 
-const numberPerPage = 10;
-
 function BackGroundMusic() {
 
     const [openBackGroundMusic, setopenBackGroundMusic] = useState(false)
@@ -30,6 +28,7 @@ function BackGroundMusic() {
     const [url, setUrl] = useState("");
     const [data, setData] = useState({})
     const [searchText, setSearchText] = useState("")
+    const [recordsPerPage, setRecordsPerPage] = useState(10);
 
     const onClickAddBackGroundMusic = (data) => {
         setopenBackGroundMusic(data)
@@ -41,7 +40,7 @@ function BackGroundMusic() {
         setSelectedPage(1)
         const paginateData = {
             number: 1,
-            size: numberPerPage,
+            size: recordsPerPage,
             search: searchText
         }
         const data = await getBackGroundMusicApi(paginateData)
@@ -58,11 +57,11 @@ function BackGroundMusic() {
         setLoader(false)
     }
 
-    const getBackGroundMusicList2 = async (select, search) => {
+    const getBackGroundMusicList2 = async (select, size, search) => {
         setLoader(true)
         const paginateData = {
             number: select || selectedPage,
-            size: numberPerPage,
+            size: size || recordsPerPage,
             search: search,
         }
         const data = await getBackGroundMusicApi(paginateData)
@@ -84,7 +83,7 @@ function BackGroundMusic() {
         if (!mainArrayBackGroundMusic[select || selectedPage]) {
             const paginateData = {
                 number: select || selectedPage,
-                size: numberPerPage,
+                size: recordsPerPage,
                 search: searchText,
             }
             const data = await getBackGroundMusicApi(paginateData)
@@ -124,7 +123,7 @@ function BackGroundMusic() {
             confirmButtonText: 'Yes, delete it!'
         }).then(async (result) => {
             if (result.isConfirmed) {
-                const object ={};
+                const object = {};
                 object.backGroundAudioId = data?._id;
 
                 await deleteBackGroundMusic(object).then(async (submit) => {
@@ -186,6 +185,13 @@ function BackGroundMusic() {
         await getBackGroundMusicList2(1, e?.target?.value?.trimStart())
     }
 
+    const handleRecordsPerPageChange = async (value) => {
+        const newRecordsPerPage = parseInt(value, 10);
+        setRecordsPerPage(newRecordsPerPage);
+        setSelectedPage(1); // Reset to the first page
+        await getBackGroundMusicList2(1, parseInt(value, 10), searchText); // Fetch new data based on the new records per page
+    };
+
 
     return (
         <>
@@ -228,6 +234,18 @@ function BackGroundMusic() {
                                                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingBottom: "15px" }}>
                                                     <h4 className="card-title">List of Background Music</h4>
                                                     <div className="d-flex flex-row">
+                                                        <div style={{ marginRight: "10px" }}>
+                                                            <select
+                                                                className="form-select"
+                                                                value={recordsPerPage}
+                                                                onChange={(e) => handleRecordsPerPageChange(e.target.value)}
+                                                                style={{ height: '40px' }}
+                                                            >
+                                                                <option value={10}>10</option>
+                                                                <option value={20}>20</option>
+                                                                <option value={50}>50</option>
+                                                            </select>
+                                                        </div>
                                                         <div>
                                                             <SearchComponent
                                                                 data={searchText}
@@ -256,7 +274,7 @@ function BackGroundMusic() {
                                                                 BackGroundMusic?.map((elem, index) => {
                                                                     return (
                                                                         <tr key={elem?._id}>
-                                                                            <td>{(numberPerPage * (selectedPage - 1)) + (index + 1)}</td>
+                                                                            <td>{(recordsPerPage * (selectedPage - 1)) + (index + 1)}</td>
                                                                             <td style={{ maxWidth: "100px", alignContent: 'center', whiteSpace: 'normal' }}>{<div className="d-flex flex-row justify-content-center"><img loading={lazy} src={elem?.bgImage} style={{ height: "100px", width: "100px", objectFit: 'cover', overflow: 'hidden', cursor: "pointer" }} onClick={() => { handleImageModal(elem?.bgImage) }} /></div>}</td>
                                                                             <td>{elem?.name}</td>
                                                                             <td style={{ maxWidth: "200px", alignContent: 'center', whiteSpace: 'normal' }}>

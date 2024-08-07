@@ -168,7 +168,7 @@ function ViewFeedback() {
                                                             <thead>
                                                                 <tr>
                                                                     <th>#</th>
-                                                                    <th>User Name</th>
+                                                                    <th>Name</th>
                                                                     <th>Review</th>
                                                                     <th>Rating</th>
                                                                     <th>Helped Become</th>

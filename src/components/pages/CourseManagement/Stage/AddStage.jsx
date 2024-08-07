@@ -3,7 +3,7 @@ import { RxCross2 } from "react-icons/rx";
 import { displayErrorToast, displaySuccessToast } from "../../../../Utills/displayToasts";
 import { manageStageApi } from "../../../../services/stage";
 
-function AddStage({ closeWrapper, appendDataInAdd, data,id }) {
+function AddStage({ closeWrapper, appendDataInAdd, data, id }) {
 
     const [formData, setFormData] = useState({
         name: "",
@@ -146,7 +146,7 @@ function AddStage({ closeWrapper, appendDataInAdd, data,id }) {
     }, [formData])
 
     return (
-        <div className="main-wrapper-fixed-position" onClick={() => closeWrapper(false)}>
+        <div className="main-wrapper-fixed-position">
             <div className="asa-main-wrapper-right" onClick={(e) => e.stopPropagation()}>
                 <RxCross2 className="asa-cross-icon" size={20} onClick={() => closeWrapper(false)} />
                 <div className="asa-header-design">{data?._id ? "Update Stage" : "Add Stage"}</div>
