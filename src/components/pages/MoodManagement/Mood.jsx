@@ -257,6 +257,18 @@ function Mood() {
                                                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingBottom: "15px" }}>
                                                     <h4 className="card-title">List of Mood</h4>
                                                     <div className="d-flex flex-row">
+                                                        <div style={{ marginRight: "10px" }}>
+                                                            <select
+                                                                className="form-select"
+                                                                value={recordsPerPage}
+                                                                onChange={(e) => handleRecordsPerPageChange(e.target.value)}
+                                                                style={{ height: '40px' }}
+                                                            >
+                                                                <option value={10}>10</option>
+                                                                <option value={20}>20</option>
+                                                                <option value={50}>50</option>
+                                                            </select>
+                                                        </div>
                                                         <SearchComponent
                                                             data={searchText}
                                                             onChange={(data) => onChangeSearchComponent(data)}
@@ -323,7 +335,7 @@ function Mood() {
                                         </div>
                                     </div>
                                 </div>
-                                {/* <div style={{ justifyContent: "center", width: "100%", alignItems: "center", display: "flex" }}>
+                                <div style={{ justifyContent: "center", width: "100%", alignItems: "center", display: "flex" }}>
                                     <ReactPaginate
                                         previousLabel={<GrPrevious style={{ color: "black" }} />}
                                         nextLabel={<GrNext style={{ color: "black" }} />}
@@ -337,19 +349,7 @@ function Mood() {
                                         pageLinkClassName={"list-item-paginate-class-name"}
                                     />
                                 </div>
-                                <div className="d-grid">
-                                    <select
-                                        className="form-select"
-                                        value={recordsPerPage}
-                                        onChange={(e) => handleRecordsPerPageChange(e.target.value)}
-                                        style={{ height: '40px', marginLeft: '10px' }}
-                                    >
-                                        <option value={10}>10</option>
-                                        <option value={20}>20</option>
-                                        <option value={50}>50</option>
-                                    </select>
-                                </div> */}
-                                <div className="pagination-container">
+                                {/* <div className="pagination-container">
                                     <div className="pagination-wrapper">
                                         <ReactPaginate
                                             previousLabel={<GrPrevious style={{ color: "black" }} />}
@@ -376,7 +376,7 @@ function Mood() {
                                             <option value={50}>50</option>
                                         </select>
                                     </div>
-                                </div>
+                                </div> */}
                             </div>
                         </div>
                     </div>

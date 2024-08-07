@@ -99,7 +99,7 @@ function AddMood({ closeWrapper, appendDataInAdd, data }) {
         }
 
         if (!data.image) {
-            newErrors.image = "image is required";
+            newErrors.image = "Image is required";
             isValid = false;
         }
 
@@ -189,13 +189,15 @@ function AddMood({ closeWrapper, appendDataInAdd, data }) {
                                 <div className="mb-4">
                                     {previewImage ? (
                                         <>
-                                            <label
-                                                className="form-label"
-                                                htmlFor="photo"
-                                                style={{ marginBottom: "0px" }}
-                                            >
-                                                Image
-                                            </label>
+                                            <div>
+                                                <label
+                                                    className="form-label"
+                                                    htmlFor="photo"
+                                                    style={{ marginBottom: "0px" }}
+                                                >
+                                                    Image
+                                                </label>
+                                            </div>
                                             <div className="image-container">
                                                 <img
                                                     src={previewImage}

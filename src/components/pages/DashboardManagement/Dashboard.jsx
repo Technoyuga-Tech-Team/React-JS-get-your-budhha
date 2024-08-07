@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { GrPrevious, GrNext } from "react-icons/gr";
 import { AiOutlineUser, AiOutlineDollarCircle, AiOutlineUsergroupAdd } from "react-icons/ai";
 import { FiUsers } from "react-icons/fi";
-import ReactPaginate from "react-paginate";
-import { Bar, Line } from "react-chartjs-2";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title, Tooltip, Legend } from 'chart.js';
 import Header from "../../layout/Header";
 import Sidebar from "../../layout/Sidebar";
@@ -14,14 +11,7 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, PointEleme
 
 
 const Dashboard = () => {
-    const [totalPage] = useState(10); // Static total pages
     const [dashboardData, setDashboardData] = useState([]);
-
-    const handlePageClick = (data) => {
-        const pageNo = data.selected + 1;
-        console.log(`User requested page number ${pageNo}`);
-        // Fetch new page data based on pageNo (Static data so no fetching here)
-    };
 
     const getData = async () => {
         const data = await getDashboard();
@@ -33,11 +23,11 @@ const Dashboard = () => {
     }, []);
 
     const stats = [
-        { title: "Total Users", value: dashboardData?.totalUsers, icon: <AiOutlineUser fontSize={30} />, color: "bg-primary" },
-        { title: "Total Paid Users", value: dashboardData?.paidUsers, icon: <AiOutlineDollarCircle fontSize={30} />, color: "bg-success" },
-        { title: "Total Free Users", value: dashboardData?.freeUsers, icon: <FiUsers fontSize={30} />, color: "bg-warning" },
-        { title: "Total Revenue", value: "$"+dashboardData?.revenue, icon: <AiOutlineDollarCircle fontSize={30} />, color: "bg-info" },
-        { title: "Total Active Users", value: dashboardData?.activeUser, icon: <AiOutlineUsergroupAdd fontSize={30} />, color: "bg-danger" }
+        { title: "Total Users", value: dashboardData?.totalUsers || 0, icon: <AiOutlineUser fontSize={30} />, color: "bg-primary" },
+        { title: "Total Paid Users", value: dashboardData?.paidUsers || 0, icon: <AiOutlineDollarCircle fontSize={30} />, color: "bg-success" },
+        { title: "Total Free Users", value: dashboardData?.freeUsers || 0, icon: <FiUsers fontSize={30} />, color: "bg-warning" },
+        { title: "Total Revenue", value: "$"+dashboardData?.revenue || 0, icon: <AiOutlineDollarCircle fontSize={30} />, color: "bg-info" },
+        { title: "Total Active Users", value: dashboardData?.activeUser || 0, icon: <AiOutlineUsergroupAdd fontSize={30} />, color: "bg-danger" }
     ];
 
     // const barData = {

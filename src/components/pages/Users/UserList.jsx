@@ -32,7 +32,7 @@ function UserList() {
   const [url, setUrl] = useState("");
   const [imageModal, setImageModal] = useState(false);
   const [loader, setLoader] = useState(false)
-  const [sortField, setSortField] = useState('firstName'); // Default sort field
+  const [sortField, setSortField] = useState('createdAt'); // Default sort field
   const [sortOrder, setSortOrder] = useState(1); // Default sort order: 1 for ascending, -1 for descending
   const location = useLocation()
   const navigate = useNavigate()
@@ -65,14 +65,14 @@ function UserList() {
     setLoader(false)
   }
 
-  const getUserList2 = async (page, size, search) => {
+  const getUserList2 = async (page, size, search, field, order) => {
     setLoader(true)
     const paginateData = {
       number: page || selectedPage,
       size,
       search: search,
-      sortOrder,
-      sortBy: sortField
+      sortOrder: order || sortOrder,
+      sortBy: field || sortField
     }
     const response = await getUserApi(paginateData)
     console.log(response?.data?.users)
@@ -191,7 +191,7 @@ function UserList() {
     const newSortOrder = (sortField === field && sortOrder === 1) ? -1 : 1;
     setSortField(field);
     setSortOrder(newSortOrder);
-    await getUserList2(selectedPage, recordsPerPage, searchText);
+    await getUserList2(selectedPage, recordsPerPage, searchText, field, newSortOrder);
   };
 
   const handleRecordsPerPageChange = async (value) => {
@@ -237,10 +237,24 @@ function UserList() {
                     <div className="card-body">
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingBottom: "15px" }}>
                         <h4 className="card-title">List of User</h4>
-                        <SearchComponent
-                          data={searchText}
-                          onChange={(data) => onChangeSearchComponent(data)}
-                          onClickCloseIcon={onClickCloseIcon} />
+                        <div style={{display:'flex'}}>
+                          <div style={{marginRight:"10px"}}>
+                            <select
+                              className="form-select"
+                              value={recordsPerPage}
+                              onChange={(e) => handleRecordsPerPageChange(e.target.value)}
+                              style={{ height: '40px' }}
+                            >
+                              <option value={10}>10</option>
+                              <option value={20}>20</option>
+                              <option value={50}>50</option>
+                            </select>
+                          </div>
+                          <SearchComponent
+                            data={searchText}
+                            onChange={(data) => onChangeSearchComponent(data)}
+                            onClickCloseIcon={onClickCloseIcon} />
+                        </div>
                       </div>
                       <div style={{ overflow: "auto" }}>
                         <table id="datatable" className="table table-bordered dt-responsive nowrap" style={{ borderCollapse: "collapse", borderSpacing: "0", width: "100%" }}>
@@ -335,7 +349,7 @@ function UserList() {
                   </div>
                 </div>
               </div>
-              {/* <div style={{ justifyContent: "center", width: "100%", alignItems: "center", display: "flex" }}>
+              <div style={{ justifyContent: "center", width: "100%", alignItems: "center", display: "flex" }}>
                 <ReactPaginate
                   previousLabel={<GrPrevious style={{ color: "black" }} />}
                   nextLabel={<GrNext style={{ color: "black" }} />}
@@ -348,8 +362,8 @@ function UserList() {
                   forcePage={selectedPage - 1}
                   pageLinkClassName={"list-item-paginate-class-name"}
                 />
-              </div> */}
-              <div className="pagination-container">
+              </div>
+              {/* <div className="pagination-container">
                 <div className="pagination-wrapper">
                   <ReactPaginate
                     previousLabel={<GrPrevious style={{ color: "black" }} />}
@@ -376,7 +390,7 @@ function UserList() {
                     <option value={50}>50</option>
                   </select>
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
