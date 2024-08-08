@@ -298,7 +298,7 @@ function Mood() {
                                                                     return (
                                                                         <tr key={elem?._id}>
                                                                             <td>{(recordsPerPage * (selectedPage - 1)) + (index + 1)}</td>
-                                                                            <td>{elem?.name}</td>
+                                                                            <td style={{maxWidth:'250px'}}>{elem?.name}</td>
                                                                             <td style={{ maxWidth: "100px", alignContent: 'center', whiteSpace: 'normal' }}>{<div className="d-flex flex-row justify-content-center"><img loading="lazy" src={elem?.image} style={{ height: "100px", width: "100px", objectFit: 'cover', overflow: 'hidden', cursor: "pointer" }} onClick={() => { handleImageModal(elem?.image) }} /></div>}</td>
                                                                             <td style={{ display: "flex", cursor: "pointer" }}>
                                                                                 <>

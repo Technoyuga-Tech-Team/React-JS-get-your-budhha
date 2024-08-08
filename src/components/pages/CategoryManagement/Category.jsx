@@ -18,6 +18,7 @@ import _ from "lodash";
 import ImageModal from "../../layout/ImageModal"
 const PIE_API_URL = import.meta.env.VITE_REACT_IMAGE_URL;
 import Swal from "sweetalert2"
+import { IoMdArrowRoundDown, IoMdArrowRoundUp } from "react-icons/io"
 
 const numberPerPage = 10;
 
@@ -32,7 +33,9 @@ function Category() {
     const [imageModal, setImageModal] = useState(false);
     const [url, setUrl] = useState("");
     const [data, setData] = useState({})
-    const [searchText, setSearchText] = useState("")
+    const [sortField, setSortField] = useState('createdAt'); // Default sort field
+    const [sortOrder, setSortOrder] = useState(-1); // Default sort order: 1 for ascending, -1 for descending
+    // const [searchText, setSearchText] = useState("")
 
     const onClickAddCategory = (data) => {
         setopenCategory(data)
@@ -44,12 +47,14 @@ function Category() {
         setSelectedPage(1)
         const paginateData = {
             number: 1,
-            size: numberPerPage
+            size: numberPerPage,
+            sortBy: sortField,
+            sortOrder: sortOrder
         }
         const data = await getthemeApi(paginateData)
         if (data?.success) {
             let paginateData = data?.data?.themes
-            paginateData?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            // paginateData?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
             setTotalPage(data?.data?.totalPages)
             const mergeData = { [1]: paginateData }
             setMainArrayCategory(mergeData)
@@ -61,16 +66,18 @@ function Category() {
         setLoader(false)
     }
 
-    const getCategoryList2 = async (select) => {
+    const getCategoryList2 = async (select, field, order) => {
         setLoader(true)
         const paginateData = {
             number: select || selectedPage,
-            size: numberPerPage
+            size: numberPerPage,
+            sortBy: field || sortField,
+            sortOrder: order || sortOrder
         }
         const data = await getthemeApi(paginateData)
         if (data?.success) {
             let paginateData = data?.data?.themes;
-            paginateData?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            // paginateData?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
             setTotalPage(data?.data?.totalPages)
             const mergeData = { ...mainArrayCategory, [select || selectedPage]: paginateData }
             setMainArrayCategory(mergeData)
@@ -87,12 +94,14 @@ function Category() {
         if (!mainArrayCategory[select || selectedPage]) {
             const paginateData = {
                 number: select || selectedPage,
-                size: numberPerPage
+                size: numberPerPage,
+                sortBy: sortField,
+                sortOrder: sortOrder
             }
             const data = await getthemeApi(paginateData)
             if (data?.success) {
                 let paginateData = data?.data?.themes;
-                paginateData?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                // paginateData?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                 setTotalPage(data?.data?.totalPages)
                 const mergeData = { ...mainArrayCategory, [select || selectedPage]: paginateData }
                 setMainArrayCategory(mergeData)
@@ -126,7 +135,7 @@ function Category() {
             confirmButtonText: 'Yes, delete it!'
         }).then(async (result) => {
             if (result.isConfirmed) {
-                const object ={};
+                const object = {};
                 object.themeId = data?._id;
 
                 await deletetheme(object).then(async (submit) => {
@@ -174,6 +183,13 @@ function Category() {
         onClickAddCategory(true);
         setData(temp)
     }
+
+    const handleSort = async (field) => {
+        const newSortOrder = (sortField === field && sortOrder === 1) ? -1 : 1;
+        setSortField(field);
+        setSortOrder(newSortOrder);
+        await getCategoryList2(selectedPage, field, newSortOrder);
+    };
 
     return (
         <>
@@ -233,7 +249,11 @@ function Category() {
                                                         <thead>
                                                             <tr>
                                                                 <th>#</th>
-                                                                <th>Name</th>
+                                                                <th onClick={() => handleSort('name')} style={{ cursor: "pointer" }}>
+                                                                    <div className="d-flex flex-row justify-content-between">
+                                                                        Name {sortField === 'name' && (sortOrder === 1 ? <IoMdArrowRoundUp fontSize={20} /> : <IoMdArrowRoundDown fontSize={20} />)}
+                                                                    </div>
+                                                                </th>
                                                                 <th>Logo</th>
                                                                 <th style={{ maxWidth: "100px" }}>Image</th>
                                                                 <th>Actions</th>

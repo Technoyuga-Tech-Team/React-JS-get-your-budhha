@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { RxCross2 } from "react-icons/rx";
 import { displayErrorToast, displaySuccessToast } from "../../../Utills/displayToasts";
 import { manageMenidation } from "../../../services/meditation"
@@ -38,6 +38,9 @@ function AddMeditation({ closeWrapper, appendDataInAdd, data }) {
     const [moodDropDown, setMoodDropDown] = useState([]);
     const [loader, setLoader] = useState(false)
     const [errors, setErrors] = useState({})
+    const femaleAudioRef = useRef(null);
+    const maleAudioRef = useRef(null);
+    const [currentAudio, setCurrentAudio] = useState(null);
 
     const getTheme = async () => {
         const themeData = await getthemeApi()
@@ -309,6 +312,18 @@ function AddMeditation({ closeWrapper, appendDataInAdd, data }) {
         }
     }
 
+    const handleAudioPlay = (audioType) => {
+        const audioElement = audioType === "female" ? femaleAudioRef.current : maleAudioRef.current;
+
+        if (currentAudio && currentAudio !== audioElement) {
+            currentAudio.pause();
+            currentAudio.currentTime = 0;
+        }
+
+        setCurrentAudio(audioElement);
+        audioElement.play();
+    };
+
 
 
     return (
@@ -424,10 +439,7 @@ function AddMeditation({ closeWrapper, appendDataInAdd, data }) {
                                                 Female Audio
                                             </label>
                                             <div className="image-container">
-                                                <audio controls style={{ width: '265px' }}>
-                                                    <source src={previewFemaleAudio} type="audio/ogg" />
-                                                    <source src={previewFemaleAudio} type="audio/mpeg" />
-                                                </audio>
+                                                <audio ref={femaleAudioRef} style={{ width: '265px' }} src={previewFemaleAudio} controls onPlay={() => handleAudioPlay("female")} />
                                                 <div
                                                     onClick={() => onClickCrossIcon("female")}
                                                     className="cross-icon bg-primary"
@@ -484,10 +496,7 @@ function AddMeditation({ closeWrapper, appendDataInAdd, data }) {
                                                 Male Audio
                                             </label>
                                             <div className="image-container">
-                                                <audio controls style={{ width: '265px' }}>
-                                                    <source src={previewMaleAudio} type="audio/ogg" />
-                                                    <source src={previewMaleAudio} type="audio/mpeg" />
-                                                </audio>
+                                                <audio ref={maleAudioRef} src={previewMaleAudio} controls style={{ width: '265px' }} onPlay={() => handleAudioPlay("male")} />
                                                 <div
                                                     onClick={() => onClickCrossIcon("male")}
                                                     style={{ marginTop: '-20px' }}
