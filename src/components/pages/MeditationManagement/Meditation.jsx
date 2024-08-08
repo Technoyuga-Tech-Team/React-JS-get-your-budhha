@@ -239,13 +239,13 @@ function Meditation() {
     const onClickCloseIcon = async () => {
         setSelectedPage(1)
         setSearchText("")
-        await getMeditationList2(1, "")
+        await getMeditationList2(1, recordsPerPage, "")
     }
 
     const onChangeSearchComponent = async (e) => {
         setSearchText(e?.target?.value?.trimStart())
         setSelectedPage(1)
-        await getMeditationList2(1, e?.target?.value?.trimStart())
+        await getMeditationList2(1, recordsPerPage, e?.target?.value?.trimStart())
     }
 
     const onChangeDropDownValue = (data, type) => {

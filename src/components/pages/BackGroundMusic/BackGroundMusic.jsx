@@ -176,13 +176,13 @@ function BackGroundMusic() {
     const onClickCloseIcon = async () => {
         setSelectedPage(1)
         setSearchText("")
-        await getBackGroundMusicList(1)
+        await getBackGroundMusicList(1, recordsPerPage, "")
     }
 
     const onChangeSearchComponent = async (e) => {
         setSearchText(e?.target?.value?.trimStart())
         setSelectedPage(1)
-        await getBackGroundMusicList2(1, e?.target?.value?.trimStart())
+        await getBackGroundMusicList2(1, recordsPerPage, e?.target?.value?.trimStart())
     }
 
     const handleRecordsPerPageChange = async (value) => {
