@@ -65,6 +65,12 @@ function ViewFeedback() {
         await getFeedbackList(1, "")
     }
 
+    const onChangeSearchComponent = async (e) => {
+        setSearchText(e?.target?.value)
+        setSelectedPage(1)
+        await getFeedbackList(1, e?.target?.value)
+    }
+
     useEffect(() => {
         getFeedbackList()
     }, [])

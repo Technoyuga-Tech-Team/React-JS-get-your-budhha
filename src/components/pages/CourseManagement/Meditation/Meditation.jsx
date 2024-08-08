@@ -360,7 +360,7 @@ function Meditation2() {
                                                                                                 </td>
                                                                                                 <td>{elem?.course ? elem?.course?.name : "-"}</td>
                                                                                                 <td>{elem?.stage ? elem?.stage?.title : "-"}</td>
-                                                                                                <td className="d-flex flex-row justify-content-center">{elem?.overallRating}</td>
+                                                                                                <td className="d-flex flex-row justify-content-center">{elem?.overallRating?.toFixed(2)}</td>
                                                                                                 <td>
                                                                                                     <div className="d-flex flex-row justify-content-center">
                                                                                                         <FaPlayCircle color="black" size={20} style={{ cursor: 'pointer', marginRight: '5px', marginTop: '3px' }} onClick={() => { handleAudioModal(elem?.femaleAudio) }} />

@@ -420,7 +420,7 @@ function Meditation() {
                                                                             </td>
                                                                             <td>{elem?.moods?.length > 0 ? elem?.moods.map(mood => mood.name).join(", ") : "-"}</td>
                                                                             <td>{elem?.theme?.name ? elem?.theme?.name : "-"}</td>
-                                                                            <td className="d-flex flex-row justify-content-center">{elem?.overallRating}</td>
+                                                                            <td className="d-flex flex-row justify-content-center">{elem?.overallRating?.toFixed(2)}</td>
                                                                             <td>
                                                                                 <div className="d-flex flex-row justify-content-center">
                                                                                     <FaPlayCircle color="black" size={20} style={{ cursor: 'pointer', marginRight: '5px', marginTop: '3px' }} onClick={() => { handleAudioModal(elem?.femaleAudio) }} />

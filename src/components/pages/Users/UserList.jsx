@@ -34,6 +34,7 @@ function UserList() {
   const [loader, setLoader] = useState(false)
   const [sortField, setSortField] = useState('createdAt'); // Default sort field
   const [sortOrder, setSortOrder] = useState(1); // Default sort order: 1 for ascending, -1 for descending
+  const [plan, setPlan] = useState("All");
   const location = useLocation()
   const navigate = useNavigate()
   const [recordsPerPage, setRecordsPerPage] = useState(10);
@@ -46,7 +47,8 @@ function UserList() {
         size,
         search: search,
         sortOrder,
-        sortBy: sortField
+        sortBy: sortField,
+        planName: plan
       }
       const response = await getUserApi(paginateData)
       if (response?.success) {
@@ -65,17 +67,18 @@ function UserList() {
     setLoader(false)
   }
 
-  const getUserList2 = async (page, size, search, field, order) => {
+  const getUserList2 = async (page, size, search, field, order, subscription) => {
     setLoader(true)
     const paginateData = {
       number: page || selectedPage,
       size,
       search: search,
       sortOrder: order || sortOrder,
-      sortBy: field || sortField
+      sortBy: field || sortField,
+      planName: subscription || plan
     }
     const response = await getUserApi(paginateData)
-    console.log(response?.data?.users)
+    // console.log(response?.data)
     if (response?.success) {
       setUserList(response?.data?.users)
       setTotalPage(response?.data?.totalPages)
@@ -201,6 +204,12 @@ function UserList() {
     await getUserList2(1, parseInt(value, 10), searchText); // Fetch new data based on the new records per page
   };
 
+  const handlePlanChange = async (value) => {
+    setPlan(value);
+    setSelectedPage(1); // Reset to the first page
+    await getUserList2(1, recordsPerPage, searchText, sortField, sortOrder, value); // Fetch new data based on the new records per page
+  };
+
   return (
     <div data-sidebar="dark">
       <div id="layout-wrapper">
@@ -237,8 +246,8 @@ function UserList() {
                     <div className="card-body">
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingBottom: "15px" }}>
                         <h4 className="card-title">List of User</h4>
-                        <div style={{display:'flex'}}>
-                          <div style={{marginRight:"10px"}}>
+                        <div style={{ display: 'flex' }}>
+                          <div style={{ marginRight: "10px" }}>
                             <select
                               className="form-select"
                               value={recordsPerPage}
@@ -248,6 +257,19 @@ function UserList() {
                               <option value={10}>10</option>
                               <option value={20}>20</option>
                               <option value={50}>50</option>
+                            </select>
+                          </div>
+                          <div style={{ marginRight: "10px" }}>
+                            <select
+                              className="form-select"
+                              value={plan}
+                              onChange={(e) => handlePlanChange(e.target.value)}
+                              style={{ height: '40px' }}
+                            >
+                              <option value="All">Select Plan</option>
+                              <option value="Ease Free Trial">Ease Free Trial</option>
+                              <option value="Ease Silver">Ease Silver</option>
+                              <option value="Ease Golden">Ease Golden</option>
                             </select>
                           </div>
                           <SearchComponent
