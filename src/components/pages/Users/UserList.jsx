@@ -33,7 +33,7 @@ function UserList() {
   const [imageModal, setImageModal] = useState(false);
   const [loader, setLoader] = useState(false)
   const [sortField, setSortField] = useState('createdAt'); // Default sort field
-  const [sortOrder, setSortOrder] = useState(1); // Default sort order: 1 for ascending, -1 for descending
+  const [sortOrder, setSortOrder] = useState(-1); // Default sort order: 1 for ascending, -1 for descending
   const [plan, setPlan] = useState("All");
   const location = useLocation()
   const navigate = useNavigate()
