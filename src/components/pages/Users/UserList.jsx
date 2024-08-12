@@ -19,6 +19,7 @@ import { IoLogoAppleAppstore } from "react-icons/io5";
 import { AiFillGoogleCircle } from "react-icons/ai";
 import ImageModal from "../../layout/ImageModal";
 import { IoMdArrowRoundUp, IoMdArrowRoundDown } from "react-icons/io";
+import moment from "moment/moment";
 
 // const recordsPerPage = 10;
 
@@ -291,6 +292,11 @@ function UserList() {
                               </th>
                               <th>Email</th>
                               <th>Subscription Plan</th>
+                              <th onClick={() => handleSort('createdAt')} style={{ cursor: "pointer" }}>
+                                <div className="d-flex flex-row justify-content-between">
+                                  Date {sortField === 'createdAt' && (sortOrder === 1 ? <IoMdArrowRoundUp fontSize={20} /> : <IoMdArrowRoundDown fontSize={20} />)}
+                                </div>
+                              </th>
                               <th onClick={() => handleSort('registerType')} style={{ cursor: "pointer" }}>
                                 <div className="d-flex flex-row justify-content-between">
                                   Login Type {sortField === 'registerType' && (sortOrder === 1 ? <IoMdArrowRoundUp fontSize={20} /> : <IoMdArrowRoundDown fontSize={20} />)}
@@ -316,6 +322,7 @@ function UserList() {
                                     </td>
                                     <td>{elem?.email ? elem?.email : "-"}</td>
                                     <td>{elem?.planName ? elem?.planName : "-"}</td>
+                                    <td>{moment(elem?.createdAt).format('MMMM Do YYYY')}</td>
                                     <td>{elem?.registerType === 0 ? <MdEmail fontSize={20} /> : <><AiFillGoogleCircle fontSize={20} /> / <IoLogoAppleAppstore fontSize={20} /></>}</td>
 
                                     <td style={{ display: "flex flex-start", cursor: "pointer", justifyContent: 'center' }}>
