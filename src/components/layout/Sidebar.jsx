@@ -28,7 +28,7 @@ const navBarConst = [
         key: 3,
         value: "Theme",
         icon: <MdCategory className="sidebar-icons" />,
-        route: "/category"
+        route: "/theme"
     },
     {
         key: 4,
