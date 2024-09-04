@@ -111,8 +111,8 @@ const Login = () => {
                                 <div className="card-body p-4">
                                     <div className>
                                         <div className="text-center">
-                                            <img src="/images/buddha.png" alt height={50} className="auth-logo logo-dark mx-auto" />
-                                            <b><p>Ease</p></b>
+                                            <img src="/images/EASE_SVG_LOGO.svg" alt height={50} className="auth-logo logo-dark mx-auto" />
+                                            {/* <b><p>Ease</p></b> */}
                                         </div>
                                         {/* <h4 className="font-size-18 text-muted mt-2 text-center">Welcome Back !</h4> */}
                                         <form className="form-horizontal" style={{ marginTop: '35px' }} onSubmit={handleSubmit}>
