@@ -48,19 +48,19 @@ const Header = () => {
                     <div className="navbar-brand-box text-center">
                         <Link className="logo logo-dark" to={"/dashboard"}>
                             <span className="logo-sm">
-                                <img src="/images/buddha.png" alt="logo-sm-dark" height={40} />
+                                <img src="/images/EASE_SVG_LOGO.svg" alt="logo-sm-dark" height={40} />
                             </span>
                             <span className="logo-lg">
-                                <img src="/images/buddha.png" alt="logo-dark" height={40} />
-                                <b style={{color:'#343a40',fontSize:"19px"}}>Ease</b>
+                                <img src="/images/EASE_SVG_LOGO.svg" alt="logo-dark" height={40} />
+                                {/* <b style={{color:'#343a40',fontSize:"19px"}}>Ease</b> */}
                             </span>
                         </Link>
                         <Link className="logo logo-light" to={"/dashboard"}>
                             <span className="logo-sm">
-                                <img src="/images/buddha.png" alt="logo-sm-light" height={22} />
+                                <img src="/images/EASE_SVG_LOGO.svg" alt="logo-sm-light" height={22} />
                             </span>
                             <span className="logo-lg">
-                                <img src="/images/buddha.png" alt="logo-light" height={24} />
+                                <img src="/images/EASE_SVG_LOGO.svg" alt="logo-light" height={24} />
                             </span>
                         </Link>
                     </div>
