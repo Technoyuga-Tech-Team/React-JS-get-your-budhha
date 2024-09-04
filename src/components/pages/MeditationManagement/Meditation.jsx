@@ -16,7 +16,7 @@ import Swal from "sweetalert2"
 import AudioModal from "../../layout/AudioModal"
 import DropdownComponent from "../../../component/DropDown/Dropdown"
 import { getthemeApi } from "../../../services/theme"
-import { getmoodApi } from "../../../services/mood"
+// import { getmoodApi } from "../../../services/mood"
 import { FaPlayCircle } from "react-icons/fa";
 import SearchComponent from "../../../component/Search/Search"
 import { MdFeedback } from "react-icons/md";
@@ -57,17 +57,17 @@ function Meditation() {
         }
     }
 
-    const getMoods = async () => {
-        const moodData = await getmoodApi()
-        if (moodData?.success) {
-            setMoodDropDown(moodData.data.moods)
-            // setMoodDropDown(moodData.data.moods.map(mood => ({ value: mood._id, label: mood.name })));
-        }
-    }
+    // const getMoods = async () => {
+    //     const moodData = await getmoodApi()
+    //     if (moodData?.success) {
+    //         setMoodDropDown(moodData.data.moods)
+    //         // setMoodDropDown(moodData.data.moods.map(mood => ({ value: mood._id, label: mood.name })));
+    //     }
+    // }
 
     useEffect(() => {
         getTheme()
-        getMoods()
+        // getMoods()
     }, [])
 
     const onClickAddMeditation = (data) => {
@@ -83,7 +83,7 @@ function Meditation() {
             size: recordsPerPage,
             search: searchText,
             theme: filter?.theme?.value?.toString(),
-            mood: filter?.moods?.value?.toString(),
+            // mood: filter?.moods?.value?.toString(),
         }
         const data = await getMeditationApi(paginateData, "theme")
         if (data?.success) {
@@ -107,7 +107,7 @@ function Meditation() {
             size: size || recordsPerPage,
             search: search,
             theme: filter?.theme?.value?.toString(),
-            mood: filter?.moods?.value?.toString(),
+            // mood: filter?.moods?.value?.toString(),
         }
         const data = await getMeditationApi(paginateData, "theme")
         if (data?.success) {
@@ -254,9 +254,9 @@ function Meditation() {
                 ...filter, theme: data
             })
         } else {
-            setFilter({
-                ...filter, moods: data
-            })
+            // setFilter({
+            //     ...filter, moods: data
+            // })
         }
     }
 
@@ -341,7 +341,7 @@ function Meditation() {
                                                             </select>
                                                         </div>
                                                         <div style={{ display: "flex", marginTop: "15px", flexDirection: 'row', justifyContent: "space-between" }}>
-                                                            <div className="ul-dashboard-drop-down">
+                                                            {/* <div className="ul-dashboard-drop-down">
                                                                 <DropdownComponent
                                                                     width={"170px"}
                                                                     options={moodDropDown}
@@ -353,7 +353,7 @@ function Meditation() {
                                                                     isMulti={false}
                                                                     isClear={true}
                                                                 />
-                                                            </div>
+                                                            </div> */}
 
                                                             <div className="ul-dashboard-drop-down" style={{ marginLeft: '20px' }}>
                                                                 <DropdownComponent
@@ -388,7 +388,7 @@ function Meditation() {
                                                                 <th style={{ maxWidth: "100px" }}>Image</th>
                                                                 <th style={{ maxWidth: "150px" }}>Name</th>
                                                                 <th style={{ maxWidth: "200px" }}>Description</th>
-                                                                <th>Moods</th>
+                                                                {/* <th>Moods</th> */}
                                                                 <th>Theme</th>
                                                                 <th>Rating</th>
                                                                 <th>Female Audio</th>
@@ -418,7 +418,7 @@ function Meditation() {
                                                                                     </span>
                                                                                 )}
                                                                             </td>
-                                                                            <td>{elem?.moods?.length > 0 ? elem?.moods.map(mood => mood.name).join(", ") : "-"}</td>
+                                                                            {/* <td>{elem?.moods?.length > 0 ? elem?.moods.map(mood => mood.name).join(", ") : "-"}</td> */}
                                                                             <td>{elem?.theme?.name ? elem?.theme?.name : "-"}</td>
                                                                             <td className="d-flex flex-row justify-content-center">{elem?.overallRating?.toFixed(2)}</td>
                                                                             <td>

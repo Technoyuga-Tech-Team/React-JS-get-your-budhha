@@ -12,7 +12,7 @@ function AddMeditation({ closeWrapper, appendDataInAdd, data }) {
         name: "",
         description: "",
         theme: "",
-        moods: "",
+        // moods: "",
         image: "",
         femaleAudio: "",
         maleAudio: "",
@@ -23,7 +23,7 @@ function AddMeditation({ closeWrapper, appendDataInAdd, data }) {
         name: "",
         description: "",
         theme: "",
-        moods: "",
+        // moods: "",
         image: "",
         femaleAudio: "",
         maleAudio: "",
@@ -35,7 +35,7 @@ function AddMeditation({ closeWrapper, appendDataInAdd, data }) {
     const [previewMaleAudio, setPreviewMaleAudio] = useState(null);
     const [previewFemaleAudio, setPreviewFemaleAudio] = useState(null);
     const [themeDropDown, setThemeDropDown] = useState([]);
-    const [moodDropDown, setMoodDropDown] = useState([]);
+    // const [moodDropDown, setMoodDropDown] = useState([]);
     const [loader, setLoader] = useState(false)
     const [errors, setErrors] = useState({})
     const femaleAudioRef = useRef(null);
@@ -50,17 +50,17 @@ function AddMeditation({ closeWrapper, appendDataInAdd, data }) {
         }
     }
 
-    const getMoods = async () => {
-        const moodData = await getmoodApi()
-        if (moodData?.success) {
-            setMoodDropDown(moodData.data.moods)
-            // setMoodDropDown(moodData.data.moods.map(mood => ({ value: mood._id, label: mood.name })));
-        }
-    }
+    // const getMoods = async () => {
+    //     const moodData = await getmoodApi()
+    //     if (moodData?.success) {
+    //         setMoodDropDown(moodData.data.moods)
+    //         // setMoodDropDown(moodData.data.moods.map(mood => ({ value: mood._id, label: mood.name })));
+    //     }
+    // }
 
     useEffect(() => {
         getTheme()
-        getMoods()
+        // getMoods()
     }, [])
 
     const handleSubmit = async (e) => {
@@ -92,7 +92,7 @@ function AddMeditation({ closeWrapper, appendDataInAdd, data }) {
                     object.append("description", formData?.description);
                     object.append("meditationId", data._id);
                     object.append("theme", formData?.theme?.value?.toString());
-                    object.append("moods", JSON.stringify(formData?.moods?.map(mood => mood.value)));
+                    // object.append("moods", JSON.stringify(formData?.moods?.map(mood => mood.value)));
                     object.append("type", "theme");
                     const submit = await manageMenidation(object)
                     if (submit?.success) {
@@ -117,7 +117,7 @@ function AddMeditation({ closeWrapper, appendDataInAdd, data }) {
                 object.append("femaleAudioDuration", formData?.femaleAudioDuration);
                 object.append("maleAudioDuration", formData?.maleAudioDuration);
                 object.append("theme", formData?.theme?.value?.toString());
-                object.append("moods", JSON.stringify(formData?.moods?.map(mood => mood.value)));
+                // object.append("moods", JSON.stringify(formData?.moods?.map(mood => mood.value)));
                 object.append("type", "theme");
                 const submit = await manageMenidation(object)
                 if (submit?.success) {
@@ -146,7 +146,7 @@ function AddMeditation({ closeWrapper, appendDataInAdd, data }) {
                 femaleAudio: data.femaleAudio,
                 maleAudio: data.maleAudio,
                 theme: { value: data.theme._id, label: data.theme.name },
-                moods: data.moods.map(mood => ({ value: mood._id, label: mood.name })),
+                // moods: data.moods.map(mood => ({ value: mood._id, label: mood.name })),
                 // femaleAudioDuration: data.femaleAudioDuration,
                 // maleAudioDuration: data.maleAudioDuration
             })
@@ -157,7 +157,7 @@ function AddMeditation({ closeWrapper, appendDataInAdd, data }) {
                 femaleAudio: data.femaleAudio,
                 maleAudio: data.maleAudio,
                 theme: { value: data.theme._id, label: data.theme.name },
-                moods: data.moods.map(mood => ({ value: mood._id, label: mood.name })),
+                // moods: data.moods.map(mood => ({ value: mood._id, label: mood.name })),
                 // femaleAudioDuration: data.femaleAudioDuration,
                 // maleAudioDuration: data.maleAudioDuration
             })
@@ -209,10 +209,10 @@ function AddMeditation({ closeWrapper, appendDataInAdd, data }) {
             isValid = false;
         }
 
-        if (data?.moods?.length < 1) {
-            newErrors.moods = "Mood is required";
-            isValid = false;
-        }
+        // if (data?.moods?.length < 1) {
+        //     newErrors.moods = "Mood is required";
+        //     isValid = false;
+        // }
 
         if (!data.femaleAudio) {
             newErrors.femaleAudio = "Female Audio is required";
@@ -306,9 +306,9 @@ function AddMeditation({ closeWrapper, appendDataInAdd, data }) {
                 ...formData, theme: data
             })
         } else {
-            setFormData({
-                ...formData, moods: data
-            })
+            // setFormData({
+            //     ...formData, moods: data
+            // })
         }
     }
 
@@ -407,7 +407,7 @@ function AddMeditation({ closeWrapper, appendDataInAdd, data }) {
                                     )}
                                 </div>
 
-                                <div className="mb-4">
+                                {/* <div className="mb-4">
                                     <label className="form-label" htmlFor="username">
                                         Select Mood
                                     </label>
@@ -426,7 +426,7 @@ function AddMeditation({ closeWrapper, appendDataInAdd, data }) {
                                             {errors?.moods}
                                         </div>
                                     )}
-                                </div>
+                                </div> */}
 
                                 <div className="mb-4">
                                     {previewFemaleAudio ? (
