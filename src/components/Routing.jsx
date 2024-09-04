@@ -33,7 +33,7 @@ const Routing = () => {
           <Route path="/setting" element={<Setting />} />
           <Route path="/cms-management" element={<CMSMangement />} />
           <Route path="/theme" element={<Category />} />
-          <Route path="/mood" element={<Mood />} />
+          {/* <Route path="/mood" element={<Mood />} /> */}
           <Route path="/meditation" element={<Meditation />} />
           <Route path="/feedback-list" element={<ViewFeedback />} />
           <Route path="/backgroundMusic" element={<BackGroundMusic />} />

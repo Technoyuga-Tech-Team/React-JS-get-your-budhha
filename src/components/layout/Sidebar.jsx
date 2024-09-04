@@ -30,12 +30,12 @@ const navBarConst = [
         icon: <MdCategory className="sidebar-icons" />,
         route: "/theme"
     },
-    {
-        key: 4,
-        value: "Mood",
-        icon: <TbMoodPlus className="sidebar-icons" />,
-        route: "/mood"
-    },
+    // {
+    //     key: 4,
+    //     value: "Mood",
+    //     icon: <TbMoodPlus className="sidebar-icons" />,
+    //     route: "/mood"
+    // },
     {
         key: 5,
         value: "Meditation",
