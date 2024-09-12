@@ -116,7 +116,7 @@ function AddCategory({ closeWrapper, appendDataInAdd, data }) {
         }
 
         if (typeof (data.image) === "object") {
-            if (data.image.type.includes("video")) {
+            if (!data.image.type.includes("image")) {
                 newErrors.image = "Only image should allowed";
                 isValid = false;
             }
@@ -126,9 +126,9 @@ function AddCategory({ closeWrapper, appendDataInAdd, data }) {
             newErrors.logoImage = "Logo is required";
             isValid = false;
         }
-
+        
         if (typeof (data.logoImage) === "object") {
-            if (data.logoImage.type.includes("video")) {
+            if (!data.logoImage.type.includes("image")) {
                 newErrors.logoImage = "Only image should allowed";
                 isValid = false;
             }

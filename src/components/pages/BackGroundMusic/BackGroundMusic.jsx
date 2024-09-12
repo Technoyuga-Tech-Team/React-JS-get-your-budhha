@@ -220,7 +220,7 @@ function BackGroundMusic() {
                                             <h4 className="mb-sm-0">Background Music Management</h4>
                                             <div className="page-title-right">
                                                 <ol className="breadcrumb m-0">
-                                                    <li className="breadcrumb-item"><a href="/dashboard">Home</a></li>
+                                                    <li className="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
                                                     <li className="breadcrumb-item active">Background Music Management</li>
                                                 </ol>
                                             </div>

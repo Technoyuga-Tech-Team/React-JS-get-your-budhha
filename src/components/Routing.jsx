@@ -14,6 +14,7 @@ import ViewFeedback from "./pages/MeditationManagement/viewFeedback";
 import Course from "./pages/CourseManagement/Course/Course";
 import Stage from "./pages/CourseManagement/Stage/Stage";
 import Meditation2 from "./pages/CourseManagement/Meditation/Meditation";
+import Notification from "./pages/Notification/Notification";
 
 const Routing = () => {
   return (
@@ -40,6 +41,7 @@ const Routing = () => {
           <Route path="/course" element={<Course />} />
           <Route path="/stage" element={<Stage />} />
           <Route path="/course-meditation" element={<Meditation2 />} />
+          <Route path="/notification" element={<Notification />} />
         </Routes>
       }
     </>

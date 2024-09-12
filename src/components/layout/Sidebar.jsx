@@ -9,7 +9,8 @@ import { useSelector } from "react-redux";
 import { ImMusic } from "react-icons/im";
 import { FaUser } from "react-icons/fa";
 import { GiBrain } from "react-icons/gi";
-import { SiDecapcms } from "react-icons/si"
+import { SiDecapcms } from "react-icons/si";
+import { IoIosNotifications } from "react-icons/io";
 
 const navBarConst = [
     {
@@ -56,12 +57,18 @@ const navBarConst = [
     },
     {
         key: 8,
+        value: "Notification",
+        icon: <IoIosNotifications className="sidebar-icons" />,
+        route: "/notification"
+    },
+    {
+        key: 9,
         value: "CMS",
         icon: <SiDecapcms className="sidebar-icons" />,
         route: "/cms-management"
     },
     {
-        key: 9,
+        key: 10,
         value: "Setting",
         icon: <IoMdSettings className="sidebar-icons" />,
         route: "/setting"

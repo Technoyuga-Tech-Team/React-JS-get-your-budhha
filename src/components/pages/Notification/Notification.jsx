@@ -1,62 +1,50 @@
-import { lazy, useEffect, useState } from "react"
-import Header from "../../../layout/Header"
-import Sidebar from "../../../layout/Sidebar"
-import AddCourse from "./AddCourse"
-import "./Course.css"
-import { getCourseApi, deleteCourseApi } from "../../../../services/course"
-import { displayErrorToast, displaySuccessToast } from "../../../../Utills/displayToasts"
+import { useEffect, useState } from "react"
+import Header from "../../layout/Header"
+import Sidebar from "../../layout/Sidebar"
+import AddNotification from "./AddNotification"
+import "./Notification.css"
+import { getNotification, deleteNotification } from "../../../services/notification"
+import { displayErrorToast, displaySuccessToast } from "../../../Utills/displayToasts"
 import { Tooltip as ReactTooltip } from 'react-tooltip'
-import { MdDelete, MdEdit, MdFeedback } from "react-icons/md"
+import { MdDelete } from "react-icons/md"
 import ReactPaginate from "react-paginate"
 import { GrPrevious, GrNext } from "react-icons/gr";
-import { getLoggedinUserProfile } from "../../../../services/profile"
+import { getLoggedinUserProfile } from "../../../services/profile"
 import _ from "lodash";
-import ImageModal from "../../../layout/ImageModal"
 import Swal from "sweetalert2"
-import { FaPlayCircle } from "react-icons/fa";
-import SearchComponent from "../../../../component/Search/Search"
-import { IoIosInformationCircle } from "react-icons/io";
-import { useLocation, useNavigate } from "react-router-dom"
+import SearchComponent from "../../../component/Search/Search"
 
-const numberPerPage = 10;
+function Notification() {
 
-function Course() {
-
-    const [openCourse, setopenCourse] = useState(false)
+    const [openNotification, setopenNotification] = useState(false)
     const [loader, setLoader] = useState(true)
-    const [Course, setCourse] = useState([])
+    const [Notification, setNotification] = useState([])
     const [totalPage, setTotalPage] = useState(0)
     const [selectedPage, setSelectedPage] = useState(1);
-    const [mainArrayCourse, setMainArrayCourse] = useState({})
-    const [imageModal, setImageModal] = useState(false);
-    const [url, setUrl] = useState("");
-    const [data, setData] = useState({})
+    const [mainArrayNotification, setMainArrayNotification] = useState({})
     const [searchText, setSearchText] = useState("")
+    const [recordsPerPage, setRecordsPerPage] = useState(10);
 
-    const navigate = useNavigate()
-    const location = useLocation()
-
-    const onClickAddCourse = (data) => {
-        setopenCourse(data)
-        setData({});
+    const onClickAddNotification = (data) => {
+        setopenNotification(data)
     }
 
     const appendDataInAdd = async () => {
         setLoader(true)
         setSelectedPage(1)
         const paginateData = {
-            number: 1,
-            size: numberPerPage,
+            page: 1,
+            limit: recordsPerPage,
             search: searchText,
         }
-        const data = await getCourseApi(paginateData)
+        const data = await getNotification(paginateData)
         if (data?.success) {
-            let paginateData = data?.data?.courses
+            let paginateData = data?.data?.notification
             // paginateData?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
             setTotalPage(data?.data?.totalPages)
             const mergeData = { [1]: paginateData }
-            setMainArrayCourse(mergeData)
-            setCourse(paginateData)
+            setMainArrayNotification(mergeData)
+            setNotification(paginateData)
         }
         else {
             displayErrorToast(data?.message || "something went wrong while fetching data")
@@ -64,21 +52,21 @@ function Course() {
         setLoader(false)
     }
 
-    const getCourseList2 = async (select, search) => {
+    const getNotificationList2 = async (select, size, search) => {
         setLoader(true)
         const paginateData = {
-            number: select || selectedPage,
-            size: numberPerPage,
-            search: search
+            page: select,
+            limit: size || recordsPerPage,
+            search: search,
         }
-        const data = await getCourseApi(paginateData)
+        const data = await getNotification(paginateData)
         if (data?.success) {
-            let paginateData = data?.data?.courses;
+            let paginateData = data?.data?.notification;
             // paginateData?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
             setTotalPage(data?.data?.totalPages)
-            const mergeData = { ...mainArrayCourse, [select || selectedPage]: paginateData }
-            setMainArrayCourse(mergeData)
-            setCourse(paginateData)
+            const mergeData = { ...mainArrayNotification, [select || selectedPage]: paginateData }
+            setMainArrayNotification(mergeData)
+            setNotification(paginateData)
         }
         else {
             displayErrorToast(data?.message || "something went wrong while fetching data")
@@ -86,22 +74,22 @@ function Course() {
         setLoader(false)
     }
 
-    const getCourseList = async (select) => {
+    const getNotificationList = async (select) => {
         setLoader(true)
-        if (!mainArrayCourse[select || selectedPage]) {
+        if (!mainArrayNotification[select || selectedPage]) {
             const paginateData = {
-                number: select || selectedPage,
-                size: numberPerPage,
+                page: select || selectedPage,
+                limit: recordsPerPage,
                 search: searchText,
             }
-            const data = await getCourseApi(paginateData)
+            const data = await getNotification(paginateData)
             if (data?.success) {
-                let paginateData = data?.data?.courses;
+                let paginateData = data?.data?.notification;
                 // paginateData?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                 setTotalPage(data?.data?.totalPages)
-                const mergeData = { ...mainArrayCourse, [select || selectedPage]: paginateData }
-                setMainArrayCourse(mergeData)
-                setCourse(paginateData)
+                const mergeData = { ...mainArrayNotification, [select || selectedPage]: paginateData }
+                setMainArrayNotification(mergeData)
+                setNotification(paginateData)
             }
             else {
                 displayErrorToast(data?.message || "something went wrong while fetching data")
@@ -109,33 +97,21 @@ function Course() {
             setLoader(false)
         }
         else {
-            setCourse(mainArrayCourse[select || selectedPage])
+            setNotification(mainArrayNotification[select || selectedPage])
         }
         setLoader(false)
     }
 
-    const clearAllStateData = () => {
-        setSelectedPage(1)
-        setSearchText("")
-    }
-
     useEffect(() => {
         setLoader(true)
-        if (location?.state?.activePage) {
-            setSelectedPage(location?.state?.activePage)
-            getCourseList(location?.state?.activePage)
-
-        } else {
-            getCourseList(1)
-            clearAllStateData()
-        }
+        getNotificationList()
         getUserProfile()
     }, [])
 
     const onPressDeleteIcon = async (data) => {
         Swal.fire({
             title: 'Are you sure?',
-            text: `You want to delete ${data?.name}`,
+            text: `You want to delete this notification`,
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
@@ -144,21 +120,22 @@ function Course() {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 const object = {};
-                object.courseId = data?._id;
+                object.id = data?._id;
 
-                await deleteCourseApi(object).then(async (submit) => {
+                await deleteNotification(object).then(async (submit) => {
                     if (submit?.success) {
-                        if (Course.length === 1 && selectedPage > 1) {
+                        displaySuccessToast(submit.message || "Deleted successfully")
+                        if (Notification.length === 1 && selectedPage > 1) {
                             setSelectedPage(selectedPage - 1)
-                            await getCourseList2(selectedPage - 1)
+                            await getNotificationList2(selectedPage - 1)
+
                         }
                         else {
-                            await getCourseList2()
+                            await getNotificationList2(selectedPage)
                         }
-                        displaySuccessToast("Deleted successfully")
                     }
                     else {
-                        displayErrorToast(submit?.message || "something went wrong while adding data")
+                        displayErrorToast(submit?.message || "something went wrong while deleteing data")
                     }
                 });
             }
@@ -168,7 +145,7 @@ function Course() {
     const handlePageClick = async (data) => {
         setLoader(true)
         const pageNo = data.selected + 1;
-        await getCourseList(pageNo)
+        await getNotificationList(pageNo)
         setSelectedPage(pageNo);
     };
 
@@ -181,57 +158,55 @@ function Course() {
         }
     }
 
-    const handleImageModal = (img) => {
-        setImageModal(true);
-        setUrl(img)
-    }
-
-    const handleEdit = (temp) => {
-        onClickAddCourse(true);
-        setData(temp)
-    }
-
     const onClickCloseIcon = async () => {
         setSelectedPage(1)
         setSearchText("")
-        await getCourseList2(1, "")
+        await getNotificationList2(1, recordsPerPage, "")
     }
 
     const onChangeSearchComponent = async (e) => {
-        setSearchText(e?.target?.value?.trimStart())
+        setSearchText(e?.target?.value)
         setSelectedPage(1)
-        await getCourseList2(1, e?.target?.value?.trimStart())
+        await getNotificationList2(1, recordsPerPage, e?.target?.value)
     }
+
+    const handleRecordsPerPageChange = async (value) => {
+        const newRecordsPerPage = parseInt(value, 10);
+        setRecordsPerPage(newRecordsPerPage);
+        setSelectedPage(1); // Reset to the first page
+        await getNotificationList2(1, parseInt(value, 10), searchText); // Fetch new data based on the new records per page
+    };
+
+    // const handleSort = async (field) => {
+    //     const newSortOrder = (sortField === field && sortOrder === 1) ? -1 : 1;
+    //     setSortField(field);
+    //     setSortOrder(newSortOrder);
+    //     await getNotificationList2(selectedPage, recordsPerPage, searchText);
+    // };
+
 
     return (
         <>
             <div data-sidebar="dark">
                 {
-                    openCourse && <AddCourse
+                    openNotification && <AddNotification
                         appendDataInAdd={appendDataInAdd}
-                        closeWrapper={onClickAddCourse}
-                        data={data} />
+                        closeWrapper={onClickAddNotification} />
                 }
                 <div id="layout-wrapper">
                     <Header />
                     <Sidebar />
-                    {imageModal && <ImageModal
-                        activeModal={imageModal}
-                        setActiveModal={() => { setImageModal(false); setUrl(""); }}
-                        img={url}
-                        flag="Course Image"
-                    />}
                     <div className="main-content" style={{ minHeight: "100vh" }}>
                         <div className="page-content">
                             <div className="container-fluid">
                                 <div className="row">
                                     <div className="col-12">
                                         <div className="page-title-box d-sm-flex align-items-center justify-content-between">
-                                            <h4 className="mb-sm-0">Course Management</h4>
+                                            <h4 className="mb-sm-0">Notification Management</h4>
                                             <div className="page-title-right">
                                                 <ol className="breadcrumb m-0">
                                                     <li className="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
-                                                    <li className="breadcrumb-item active">Course Management</li>
+                                                    <li className="breadcrumb-item active">Notification Management</li>
                                                 </ol>
                                             </div>
                                         </div>
@@ -242,16 +217,26 @@ function Course() {
                                         <div className="card">
                                             <div className="card-body">
                                                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingBottom: "15px" }}>
-                                                    <h4 className="card-title">List of Course</h4>
+                                                    <h4 className="card-title">List of Notification</h4>
                                                     <div className="d-flex flex-row">
-                                                        <div style={{ marginRight: '10px' }}>
-                                                            <SearchComponent
-                                                                data={searchText}
-                                                                onChange={(data) => onChangeSearchComponent(data)}
-                                                                onClickCloseIcon={onClickCloseIcon} />
+                                                        <div style={{ marginRight: "10px" }}>
+                                                            <select
+                                                                className="form-select"
+                                                                value={recordsPerPage}
+                                                                onChange={(e) => handleRecordsPerPageChange(e.target.value)}
+                                                                style={{ height: '40px' }}
+                                                            >
+                                                                <option value={10}>10</option>
+                                                                <option value={20}>20</option>
+                                                                <option value={50}>50</option>
+                                                            </select>
                                                         </div>
+                                                        <SearchComponent
+                                                            data={searchText}
+                                                            onChange={(data) => onChangeSearchComponent(data)}
+                                                            onClickCloseIcon={onClickCloseIcon} />
                                                         <div className="d-grid">
-                                                            <button className="btn btn-primary waves-effect waves-light" type="buttom" onClick={() => onClickAddCourse(true)} >Add Course</button>
+                                                            <button className="btn btn-primary waves-effect waves-light" type="buttom" style={{ height: '40px', marginLeft: '10px' }} onClick={() => onClickAddNotification(true)} >Add Notification</button>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -260,46 +245,20 @@ function Course() {
                                                         <thead>
                                                             <tr>
                                                                 <th>#</th>
-                                                                <th style={{ maxWidth: "100px" }}>Image</th>
-                                                                <th>Name</th>
-                                                                <th style={{ maxWidth: "100px" }}>Description</th>
-                                                                <th>Type</th>
+                                                                <th style={{ maxWidth: "200px" }}>Title</th>
+                                                                <th style={{ maxWidth: "200px" }}>Description</th>
                                                                 <th>Actions</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            {loader ? <tr><td colSpan={6}>Loading ...</td></tr> : Course?.length > 0 ?
-                                                                Course?.map((elem, index) => {
+                                                            {loader ? <tr style={{ textAlign: 'center' }}><td colSpan={4}>Loading ...</td></tr> : Notification?.length > 0 ?
+                                                                Notification?.map((elem, index) => {
                                                                     return (
                                                                         <tr key={elem?._id}>
-                                                                            <td>{(numberPerPage * (selectedPage - 1)) + (index + 1)}</td>
-                                                                            <td style={{ maxWidth: "100px", alignContent: 'center', whiteSpace: 'normal' }}>{<div className="d-flex flex-row justify-content-center"><img loading={lazy} src={elem?.courseImage} style={{ height: "100px", width: "100px", objectFit: 'cover', overflow: 'hidden', cursor: "pointer" }} onClick={() => { handleImageModal(elem?.courseImage) }} /></div>}</td>
-                                                                            <td>{elem?.name}</td>
-                                                                            <td style={{ maxWidth: "100px" }}>{elem?.description}</td>
-                                                                            <td>{elem?.is_free ? "Free" : "Paid"}</td>
+                                                                            <td>{(recordsPerPage * (selectedPage - 1)) + (index + 1)}</td>
+                                                                            <td style={{ maxWidth: '200px' }}>{elem?.title}</td>
+                                                                            <td style={{ maxWidth: '200px' }}>{elem?.description}</td>
                                                                             <td style={{ display: "flex", cursor: "pointer" }}>
-                                                                                <>
-                                                                                    <ReactTooltip id="User-info" />
-                                                                                    <IoIosInformationCircle
-                                                                                        style={{ marginRight: "10px" }}
-                                                                                        data-tooltip-place="bottom"
-                                                                                        data-tooltip-id="User-info"
-                                                                                        data-tooltip-content="Stage"
-                                                                                        size={20}
-                                                                                        onClick={() => navigate("/stage", { state: { course: elem, selectedPage } })}
-                                                                                    />
-                                                                                </>
-                                                                                <>
-                                                                                    <ReactTooltip id="edit-comm" />
-                                                                                    <MdEdit
-                                                                                        data-tooltip-place="bottom"
-                                                                                        data-tooltip-id="edit-comm"
-                                                                                        data-tooltip-content="Edit"
-                                                                                        style={{ marginRight: "10px" }}
-                                                                                        onClick={() => handleEdit(elem)}
-                                                                                        size={20}
-                                                                                    />
-                                                                                </>
                                                                                 <>
                                                                                     <ReactTooltip id="delete-comm" />
                                                                                     <MdDelete data-tooltip-place="bottom"
@@ -310,11 +269,12 @@ function Course() {
                                                                                     />
                                                                                 </>
                                                                             </td>
+
                                                                         </tr>
                                                                     )
                                                                 }
                                                                 )
-                                                                : <tr><td colSpan={6}>Course not found</td></tr>}
+                                                                : <tr style={{ textAlign: 'center' }}><td colSpan={4}>Notification not found</td></tr>}
                                                         </tbody>
                                                     </table>
                                                 </div>
@@ -336,6 +296,34 @@ function Course() {
                                         pageLinkClassName={"list-item-paginate-class-name"}
                                     />
                                 </div>
+                                {/* <div className="pagination-container">
+                                    <div className="pagination-wrapper">
+                                        <ReactPaginate
+                                            previousLabel={<GrPrevious style={{ color: "black" }} />}
+                                            nextLabel={<GrNext style={{ color: "black" }} />}
+                                            pageCount={totalPage || 1}
+                                            marginPagesDisplayed={2}
+                                            pageRangeDisplayed={5}
+                                            onPageChange={handlePageClick}
+                                            containerClassName={"pagination"}
+                                            activeClassName={"active-pagination bg-primary"}
+                                            forcePage={selectedPage - 1}
+                                            pageLinkClassName={"list-item-paginate-class-name"}
+                                        />
+                                    </div>
+                                    <div className="dropdown-wrapper">
+                                        <select
+                                            className="form-select"
+                                            value={recordsPerPage}
+                                            onChange={(e) => handleRecordsPerPageChange(e.target.value)}
+                                            style={{ height: '40px' }}
+                                        >
+                                            <option value={10}>10</option>
+                                            <option value={20}>20</option>
+                                            <option value={50}>50</option>
+                                        </select>
+                                    </div>
+                                </div> */}
                             </div>
                         </div>
                     </div>
@@ -344,4 +332,4 @@ function Course() {
         </>)
 }
 
-export default Course
+export default Notification

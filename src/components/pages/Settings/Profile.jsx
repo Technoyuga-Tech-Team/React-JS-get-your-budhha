@@ -75,17 +75,17 @@ function Profile() {
         const newErrors = {};
 
         if (!data.name) {
-            newErrors.name = "name is required";
+            newErrors.name = "Name is required";
             isValid = false;
         }
 
         if (!data.image) {
-            newErrors.image = "image is required";
+            newErrors.image = "Image is required";
             isValid = false;
         }
 
         if (typeof (data.image) === "object") {
-            if (data.image.type.includes("video")) {
+            if (!data.image.type.includes("image")) {
                 newErrors.image = "Only image should allowed";
                 isValid = false;
             }

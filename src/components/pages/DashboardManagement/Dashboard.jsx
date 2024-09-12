@@ -26,7 +26,7 @@ const Dashboard = () => {
         { title: "Total Users", value: dashboardData?.totalUsers || 0, icon: <AiOutlineUser fontSize={30} />, color: "bg-primary" },
         { title: "Total Paid Users", value: dashboardData?.paidUsers || 0, icon: <AiOutlineDollarCircle fontSize={30} />, color: "bg-success" },
         { title: "Total Free Users", value: dashboardData?.freeUsers || 0, icon: <FiUsers fontSize={30} />, color: "bg-warning" },
-        { title: "Total Revenue", value: "$"+dashboardData?.revenue || 0, icon: <AiOutlineDollarCircle fontSize={30} />, color: "bg-info" },
+        { title: "Total Revenue", value: dashboardData?.revenue ? "$" + dashboardData?.revenue : "$" + 0, icon: <AiOutlineDollarCircle fontSize={30} />, color: "bg-info" },
         { title: "Total Active Users", value: dashboardData?.activeUser || 0, icon: <AiOutlineUsergroupAdd fontSize={30} />, color: "bg-danger" }
     ];
 
