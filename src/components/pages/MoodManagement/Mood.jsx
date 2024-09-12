@@ -77,7 +77,7 @@ function Mood() {
             sortBy: sortField
         }
         const data = await getmoodApi(paginateData)
-        console.log(data?.data?.moods)
+        // console.log(data?.data?.moods)
         if (data?.success) {
             let paginateData = data?.data?.moods;
             // paginateData?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));

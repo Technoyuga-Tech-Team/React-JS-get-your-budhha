@@ -162,7 +162,7 @@ function AddCategory({ closeWrapper, appendDataInAdd, data }) {
     const onClickPhoto = async (e, type) => {
         const file = e.target.files[0];
         const reader = new FileReader();
-        console.log("====================",type)
+        // console.log("====================",type)
 
         reader.onloadend = () => {
             if (type === "img") {
