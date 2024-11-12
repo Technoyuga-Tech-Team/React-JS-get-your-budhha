@@ -148,14 +148,23 @@ function AddCourse({ closeWrapper, appendDataInAdd, data }) {
 
     const onChangeInputField = (e) => {
         const { name, value } = e.target;
-        const newValue1 = name === "is_free" ? (value === "true") : value.trimStart();
-        const newValue = newValue1.replace(/\s+/g, ' '); // Replace multiple spaces with a single space
-        if (submitForm) {
-            validateForm({ ...formData, [name]: newValue.trimStart() });
+        if (name === "is_free") {
+            if (submitForm) {
+                validateForm({ ...formData, [name]: value === "true" });
+            }
+            setFormData({
+                ...formData, [name]: value === "true"
+            });
+        } else {
+            const newValue1 = value.trimStart();
+            const newValue = newValue1.replace(/\s+/g, ' '); // Replace multiple spaces with a single space
+            if (submitForm) {
+                validateForm({ ...formData, [name]: newValue.trimStart() });
+            }
+            setFormData({
+                ...formData, [name]: newValue.trimStart()
+            });
         }
-        setFormData({
-            ...formData, [name]: newValue.trimStart()
-        });
     };
 
     const onClickCrossIcon = () => {
