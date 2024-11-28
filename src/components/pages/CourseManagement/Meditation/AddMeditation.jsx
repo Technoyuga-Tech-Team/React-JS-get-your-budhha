@@ -45,11 +45,11 @@ function AddMeditation({ closeWrapper, appendDataInAdd, data, id }) {
                     object.append("meditationImage", formData?.image);
                 }
                 if (maleAudioChanged) {
-                    object.append("maleAudio", formData?.maleAudio);
+                    formData?.maleAudio ? object.append("maleAudio", formData?.maleAudio) : object.append("isDeleteMaleAudio", true);
                     // object.append("maleAudioDuration", formData?.maleAudioDuration);
                 }
                 if (femaleAudioChanged) {
-                    object.append("femaleAudio", formData?.femaleAudio);
+                    formData?.femaleAudio ? object.append("femaleAudio", formData?.femaleAudio) : object.append("isDeleteFemaleAudio", true);
                     // object.append("femaleAudioDuration", formData?.femaleAudioDuration);
                 }
 
@@ -74,8 +74,8 @@ function AddMeditation({ closeWrapper, appendDataInAdd, data, id }) {
             else {
                 const object = new FormData();
                 object.append("meditationImage", formData?.image);
-                object.append("maleAudio", formData?.maleAudio);
-                object.append("femaleAudio", formData?.femaleAudio);
+                object.append("maleAudio", formData?.maleAudio || null);
+                object.append("femaleAudio", formData?.femaleAudio || null);
                 object.append("description", formData?.description);
                 object.append("meditationName", formData?.name);
                 object.append("type", "course");
@@ -159,28 +159,34 @@ function AddMeditation({ closeWrapper, appendDataInAdd, data, id }) {
             }
         }
 
-        if (!data.femaleAudio) {
-            newErrors.femaleAudio = "Female Audio is required";
-            isValid = false;
-        }
+        // if (!data.femaleAudio) {
+        //     newErrors.femaleAudio = "Female Audio is required";
+        //     isValid = false;
+        // }
 
-        if (!data.maleAudio) {
-            newErrors.maleAudio = "Male Audio is required";
-            isValid = false;
-        }
+        // if (!data.maleAudio) {
+        //     newErrors.maleAudio = "Male Audio is required";
+        //     isValid = false;
+        // }
 
-        if (typeof (data.femaleAudio) === "object") {
+        if (data.femaleAudio && typeof (data.femaleAudio) === "object") {
             if (!data.femaleAudio.type.includes("audio")) {
                 newErrors.femaleAudio = "Only audio(mp3) is allowed";
                 isValid = false;
             }
         }
 
-        if (typeof (data.maleAudio) === "object") {
+        if (data.maleAudio && typeof (data.maleAudio) === "object") {
             if (!data.maleAudio.type.includes("audio")) {
                 newErrors.maleAudio = "Only audio(mp3) is allowed";
                 isValid = false;
             }
+        }
+
+        if(!data.femaleAudio && !data.maleAudio){
+            newErrors.maleAudio = "Atleast one audio is required";
+            newErrors.femaleAudio = "Atleast one audio is required";
+            isValid = false;
         }
 
         setErrors(newErrors);
@@ -321,7 +327,7 @@ function AddMeditation({ closeWrapper, appendDataInAdd, data, id }) {
                                         <>
                                             <label
                                                 className="form-label"
-                                                htmlFor="photo"
+                                                htmlFor="photo1"
                                                 style={{ marginBottom: "0px" }}
                                             >
                                                 Female Audio
@@ -349,8 +355,8 @@ function AddMeditation({ closeWrapper, appendDataInAdd, data, id }) {
                                         <>
                                             <input
                                                 accept="audio/*"
-                                                id="photo"
-                                                name="photo"
+                                                id="photo1"
+                                                name="photo1"
                                                 type="file"
                                                 onChange={(event) =>
                                                     onClickPhoto(event, "female")
@@ -363,7 +369,7 @@ function AddMeditation({ closeWrapper, appendDataInAdd, data, id }) {
                                             >
                                                 <label
                                                     style={{ marginBottom: "0px" }}
-                                                    htmlFor="photo"
+                                                    htmlFor="photo1"
                                                 >
                                                     Upload Female Audio
                                                 </label>
@@ -382,7 +388,7 @@ function AddMeditation({ closeWrapper, appendDataInAdd, data, id }) {
                                         <>
                                             <label
                                                 className="form-label"
-                                                htmlFor="photo"
+                                                htmlFor="photo2"
                                                 style={{ marginBottom: "0px" }}
                                             >
                                                 Male Audio
@@ -410,8 +416,8 @@ function AddMeditation({ closeWrapper, appendDataInAdd, data, id }) {
                                         <>
                                             <input
                                                 accept="audio/*"
-                                                id="photo"
-                                                name="photo"
+                                                id="photo2"
+                                                name="photo2"
                                                 type="file"
                                                 onChange={(event) =>
                                                     onClickPhoto(event, "male")
@@ -424,7 +430,7 @@ function AddMeditation({ closeWrapper, appendDataInAdd, data, id }) {
                                             >
                                                 <label
                                                     style={{ marginBottom: "0px" }}
-                                                    htmlFor="photo"
+                                                    htmlFor="photo2"
                                                 >
                                                     Upload Male Audio
                                                 </label>
@@ -443,7 +449,7 @@ function AddMeditation({ closeWrapper, appendDataInAdd, data, id }) {
                                         <>
                                             <label
                                                 className="form-label"
-                                                htmlFor="photo"
+                                                htmlFor="photo3"
                                                 style={{ marginBottom: "0px" }}
                                             >
                                                 Image
@@ -477,8 +483,8 @@ function AddMeditation({ closeWrapper, appendDataInAdd, data, id }) {
                                         <>
                                             <input
                                                 accept="image/*"
-                                                id="photo"
-                                                name="photo"
+                                                id="photo3"
+                                                name="photo3"
                                                 type="file"
                                                 onChange={(event) =>
                                                     onClickPhoto(event, "img")
@@ -491,7 +497,7 @@ function AddMeditation({ closeWrapper, appendDataInAdd, data, id }) {
                                             >
                                                 <label
                                                     style={{ marginBottom: "0px" }}
-                                                    htmlFor="photo"
+                                                    htmlFor="photo3"
                                                 >
                                                     Upload Image
                                                 </label>

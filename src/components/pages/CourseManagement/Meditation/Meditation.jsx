@@ -335,7 +335,7 @@ function Meditation2() {
                                                                         </tr>
                                                                     </thead>
                                                                     <tbody>
-                                                                        {loader ? <tr><td colSpan={4}>Loading ...</td></tr> : Meditation?.length > 0 ?
+                                                                        {loader ? <tr><td colSpan={9}>Loading ...</td></tr> : Meditation?.length > 0 ?
                                                                             Meditation?.map((elem, index) => {
                                                                                 const isExpanded = expandedDescriptions[elem?._id];
                                                                                 const description = elem?.description?.length > 100
@@ -363,15 +363,23 @@ function Meditation2() {
                                                                                                 <td className="d-flex flex-row justify-content-center">{elem?.overallRating?.toFixed(2)}</td>
                                                                                                 <td>
                                                                                                     <div className="d-flex flex-row justify-content-center">
-                                                                                                        <FaPlayCircle color="black" size={20} style={{ cursor: 'pointer', marginRight: '5px', marginTop: '3px' }} onClick={() => { handleAudioModal(elem?.femaleAudio) }} />
-                                                                                                        <p style={{ fontSize: '18px' }}>Play</p>
+                                                                                                        {elem?.femaleAudio ?
+                                                                                                            <>
+                                                                                                                <FaPlayCircle color="black" size={20} style={{ cursor: 'pointer', marginRight: '5px', marginTop: '3px' }} onClick={() => { handleAudioModal(elem?.femaleAudio) }} />
+                                                                                                                <p style={{ fontSize: '18px' }}>Play</p>
+                                                                                                            </>
+                                                                                                            : "No Audio"}
                                                                                                         {/* <button style={{borderRadius:'50px'}} type="button" class="btn btn-primary" onClick={() => { handleAudioModal(elem?.femaleAudio) }}>Play</button> */}
                                                                                                     </div>
                                                                                                 </td>
                                                                                                 <td>
                                                                                                     <div className="d-flex flex-row justify-content-center">
-                                                                                                        <FaPlayCircle color="black" size={20} style={{ cursor: 'pointer', marginRight: '5px', marginTop: '3px' }} onClick={() => { handleAudioModal(elem?.maleAudio) }} />
-                                                                                                        <p style={{ fontSize: '18px' }}>Play</p>
+                                                                                                        {elem?.maleAudio ?
+                                                                                                            <>
+                                                                                                                <FaPlayCircle color="black" size={20} style={{ cursor: 'pointer', marginRight: '5px', marginTop: '3px' }} onClick={() => { handleAudioModal(elem?.maleAudio) }} />
+                                                                                                                <p style={{ fontSize: '18px' }}>Play</p>
+                                                                                                            </>
+                                                                                                            : "No Audio"}
                                                                                                         {/* <button style={{borderRadius:'50px'}} type="button" class="btn btn-primary" onClick={() => { handleAudioModal(elem?.maleAudio) }}>Play</button> */}
                                                                                                     </div>
                                                                                                 </td>
@@ -417,7 +425,7 @@ function Meditation2() {
                                                                                 )
                                                                             }
                                                                             )
-                                                                            : <tr><td colSpan={4}>Meditation not found</td></tr>}
+                                                                            : <tr><td colSpan={9}>Meditation not found</td></tr>}
                                                                         {provided.placeholder}
                                                                     </tbody>
                                                                 </table>

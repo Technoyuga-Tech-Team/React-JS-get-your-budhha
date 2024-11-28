@@ -48,19 +48,19 @@ const Header = () => {
                     <div className="navbar-brand-box text-center">
                         <Link className="logo logo-dark" to={"/dashboard"}>
                             <span className="logo-sm">
-                                <img src="/images/EASE_SVG_LOGO.svg" alt="logo-sm-dark" height={40} style={{ borderRadius: '10px' }} />
+                                <img src="/images/EASELOGO.svg" alt="logo-sm-dark" height={40} style={{ borderRadius: '10px' }} />
                             </span>
                             <span className="logo-lg">
-                                <img src="/images/EASE_SVG_LOGO.svg" alt="logo-dark" height={40} style={{ borderRadius: '10px', marginRight: '10px' }} />
+                                <img src="/images/EASELOGO.svg" alt="logo-dark" height={40} style={{ borderRadius: '10px', marginRight: '10px' }} />
                                 <b className="main_title" style={{ color: '#343a40', fontSize: "19px" }}>Ease</b>
                             </span>
                         </Link>
                         <Link className="logo logo-light" to={"/dashboard"}>
                             <span className="logo-sm">
-                                <img src="/images/EASE_SVG_LOGO.svg" alt="logo-sm-light" height={22} style={{ borderRadius: '10px' }} />
+                                <img src="/images/EASELOGO.svg" alt="logo-sm-light" height={22} style={{ borderRadius: '10px' }} />
                             </span>
                             <span className="logo-lg">
-                                <img src="/images/EASE_SVG_LOGO.svg" alt="logo-light" height={24} style={{ borderRadius: '10px' }} />
+                                <img src="/images/EASELOGO.svg" alt="logo-light" height={24} style={{ borderRadius: '10px' }} />
                                 <b className="main_title" style={{ color: '#343a40', fontSize: "19px" }}>Ease</b>
                             </span>
                         </Link>
