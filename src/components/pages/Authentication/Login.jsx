@@ -111,7 +111,7 @@ const Login = () => {
                                 <div className="card-body p-4">
                                     <div className>
                                         <div className="text-center">
-                                            <img src="/images/EASE_SVG_LOGO.svg" alt height={50} style={{borderRadius:'10px'}} className="auth-logo logo-dark mx-auto" />
+                                            <img src="/images/EASELOGO.svg" alt height={50} style={{borderRadius:'10px'}} className="auth-logo logo-dark mx-auto" />
                                             {/* <b><p>Ease</p></b> */}
                                         </div>
                                         {/* <h4 className="font-size-18 text-muted mt-2 text-center">Welcome Back !</h4> */}

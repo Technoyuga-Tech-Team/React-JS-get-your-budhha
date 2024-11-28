@@ -79,11 +79,11 @@ function AddMeditation({ closeWrapper, appendDataInAdd, data }) {
                     object.append("meditationImage", formData?.image);
                 }
                 if (maleAudioChanged) {
-                    object.append("maleAudio", formData?.maleAudio);
+                    formData?.maleAudio ? object.append("maleAudio", formData?.maleAudio) : object.append("isDeleteMaleAudio", true);
                     // object.append("maleAudioDuration", formData?.maleAudioDuration);
                 }
                 if (femaleAudioChanged) {
-                    object.append("femaleAudio", formData?.femaleAudio);
+                    formData?.femaleAudio ? object.append("femaleAudio", formData?.femaleAudio) : object.append("isDeleteFemaleAudio", true);
                     // object.append("femaleAudioDuration", formData?.femaleAudioDuration);
                 }
 
@@ -94,6 +94,7 @@ function AddMeditation({ closeWrapper, appendDataInAdd, data }) {
                     object.append("theme", formData?.theme?.value?.toString());
                     // object.append("moods", JSON.stringify(formData?.moods?.map(mood => mood.value)));
                     object.append("type", "theme");
+
                     const submit = await manageMenidation(object)
                     if (submit?.success) {
                         displaySuccessToast(submit?.message || "Data Updated successfully");
@@ -110,8 +111,8 @@ function AddMeditation({ closeWrapper, appendDataInAdd, data }) {
             else {
                 const object = new FormData();
                 object.append("meditationImage", formData?.image);
-                object.append("maleAudio", formData?.maleAudio);
-                object.append("femaleAudio", formData?.femaleAudio);
+                object.append("maleAudio", formData?.maleAudio || null);
+                object.append("femaleAudio", formData?.femaleAudio || null);
                 object.append("description", formData?.description);
                 object.append("meditationName", formData?.name);
                 object.append("femaleAudioDuration", formData?.femaleAudioDuration);
@@ -214,28 +215,34 @@ function AddMeditation({ closeWrapper, appendDataInAdd, data }) {
         //     isValid = false;
         // }
 
-        if (!data.femaleAudio) {
-            newErrors.femaleAudio = "Female Audio is required";
-            isValid = false;
-        }
+        // if (!data.femaleAudio) {
+        //     newErrors.femaleAudio = "Female Audio is required";
+        //     isValid = false;
+        // }
 
-        if (!data.maleAudio) {
-            newErrors.maleAudio = "Male Audio is required";
-            isValid = false;
-        }
+        // if (!data.maleAudio) {
+        //     newErrors.maleAudio = "Male Audio is required";
+        //     isValid = false;
+        // }
 
-        if (typeof (data.femaleAudio) === "object") {
+        if (data.femaleAudio && typeof (data.femaleAudio) === "object") {
             if (!data.femaleAudio.type.includes("audio")) {
                 newErrors.femaleAudio = "Only audio(mp3) is allowed";
                 isValid = false;
             }
         }
 
-        if (typeof (data.maleAudio) === "object") {
+        if (data.maleAudio && typeof (data.maleAudio) === "object") {
             if (!data.maleAudio.type.includes("audio")) {
                 newErrors.maleAudio = "Only audio(mp3) is allowed";
                 isValid = false;
             }
+        }
+
+        if (!data.femaleAudio && !data.maleAudio) {
+            newErrors.maleAudio = "Atleast one audio is required";
+            newErrors.femaleAudio = "Atleast one audio is required";
+            isValid = false;
         }
 
         setErrors(newErrors);
