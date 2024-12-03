@@ -1,9 +1,9 @@
 import { errorHandlerFunctionCatchBlock } from "./ErrorHandler";
 import { api_services } from "./httpClient";
 
-export const getFeedbackApi = async (paginateData,data) => {
+export const getFeedbackApi = async (paginateData) => {
     try {
-        const response = await api_services.get(`admin/v1/get-feedback?page=${paginateData?.number}&limit=${paginateData?.size}&search=${paginateData?.search}&meditation=${data}`);
+        const response = await api_services.get(`admin/v1/get-feedback?page=${paginateData?.number}&limit=${paginateData?.size}&search=${paginateData?.search}`);
         return response.data;
     } catch (err) {
         const data = await errorHandlerFunctionCatchBlock(err);

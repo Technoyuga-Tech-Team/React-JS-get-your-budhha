@@ -390,7 +390,7 @@ function Meditation() {
                                                                 <th style={{ maxWidth: "200px" }}>Description</th>
                                                                 {/* <th>Moods</th> */}
                                                                 <th>Theme</th>
-                                                                <th>Rating</th>
+                                                                {/* <th>Rating</th> */}
                                                                 <th>Female Audio</th>
                                                                 <th>Male Audio</th>
                                                                 <th>Actions</th>

@@ -1,7 +1,7 @@
 import { NavLink } from "react-router-dom"
 import { BiSolidDashboard } from "react-icons/bi";
 import { IoMdSettings } from "react-icons/io";
-import { MdCategory } from "react-icons/md";
+import { MdCategory, MdFeedback } from "react-icons/md";
 import { TbMoodPlus } from "react-icons/tb";
 import { PiFlowerLotusDuotone } from "react-icons/pi";
 import "./Sidebar.css"
@@ -63,12 +63,18 @@ const navBarConst = [
     },
     {
         key: 9,
+        value: "Feedback",
+        icon: <MdFeedback className="sidebar-icons" />,
+        route: "/feedback-list"
+    },
+    {
+        key: 10,
         value: "CMS",
         icon: <SiDecapcms className="sidebar-icons" />,
         route: "/cms-management"
     },
     {
-        key: 10,
+        key: 11,
         value: "Setting",
         icon: <IoMdSettings className="sidebar-icons" />,
         route: "/setting"
