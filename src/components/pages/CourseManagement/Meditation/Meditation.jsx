@@ -328,7 +328,7 @@ function Meditation2() {
                                                                             <th style={{ maxWidth: "200px" }}>Description</th>
                                                                             <th>Course</th>
                                                                             <th>Stage</th>
-                                                                            <th>Rating</th>
+                                                                            {/* <th>Rating</th> */}
                                                                             <th>Female Audio</th>
                                                                             <th>Male Audio</th>
                                                                             <th>Actions</th>
@@ -360,7 +360,7 @@ function Meditation2() {
                                                                                                 </td>
                                                                                                 <td>{elem?.course ? elem?.course?.name : "-"}</td>
                                                                                                 <td>{elem?.stage ? elem?.stage?.title : "-"}</td>
-                                                                                                <td className="d-flex flex-row justify-content-center">{elem?.overallRating?.toFixed(2)}</td>
+                                                                                                {/* <td className="d-flex flex-row justify-content-center">{elem?.overallRating?.toFixed(2)}</td> */}
                                                                                                 <td>
                                                                                                     <div className="d-flex flex-row justify-content-center">
                                                                                                         {elem?.femaleAudio ?
@@ -384,7 +384,7 @@ function Meditation2() {
                                                                                                     </div>
                                                                                                 </td>
                                                                                                 <td style={{ display: "flex", cursor: "pointer" }}>
-                                                                                                    <>
+                                                                                                    {/* <>
                                                                                                         <ReactTooltip id="User-info" />
                                                                                                         <MdFeedback
                                                                                                             style={{ marginRight: "10px" }}
@@ -397,7 +397,7 @@ function Meditation2() {
                                                                                                                 navigate("/feedback-list", { state: { data: elem, type: 'course', selectedPage, stage } })
                                                                                                             }}
                                                                                                         />
-                                                                                                    </>
+                                                                                                    </> */}
                                                                                                     <>
                                                                                                         <ReactTooltip id="edit-comm" />
                                                                                                         <MdEdit

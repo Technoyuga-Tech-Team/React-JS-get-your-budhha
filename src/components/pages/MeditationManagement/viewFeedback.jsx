@@ -15,7 +15,7 @@ const numberPerPage = 10;
 function ViewFeedback() {
     const location = useLocation()
 
-    const { data, type, stage } = location.state
+    // const { data, type, stage } = location.state
     const [loader, setLoader] = useState(true)
     const [selectedPage, setSelectedPage] = useState(1);
     const [Feedback, setFeedback] = useState([])
@@ -24,18 +24,6 @@ function ViewFeedback() {
     const [mainArrayFeedback, setMainArrayFeedback] = useState({})
 
     const navigate = useNavigate()
-    const onClickBackBtn = () => {
-        if (type === 'course') {
-            navigate('/course-meditation', {
-                state: { stage: stage, activePage: location?.state?.selectedPage }
-            })
-        }
-        else {
-            navigate('/meditation', {
-                state: { activePage: location?.state?.selectedPage }
-            })
-        }
-    }
 
     const getFeedbackList = async (select, search) => {
         setLoader(true)
@@ -44,7 +32,7 @@ function ViewFeedback() {
             size: numberPerPage,
             search: search,
         }
-        const res = await getFeedbackApi(paginateData, data._id)
+        const res = await getFeedbackApi(paginateData)
         if (res?.success) {
             let paginateData = res?.data?.feedbacks;
             paginateData?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
@@ -120,40 +108,31 @@ function ViewFeedback() {
                                             <div className="page-title-right">
                                                 <ol className="breadcrumb m-0">
                                                     <li className="breadcrumb-item" style={{ cursor: 'pointer' }} onClick={() => {
-                                                        if (type === 'course') {
-                                                            navigate('/course-meditation', {
-                                                                state: { activePage: location?.state?.selectedPage }
-                                                            })
-                                                        }
-                                                        else {
-                                                            navigate('/meditation', {
-                                                                state: { activePage: location?.state?.selectedPage }
-                                                            })
-                                                        }
-                                                    }}><a>Meditation Management</a></li>
+                                                        navigate('/dashboard')
+                                                    }}><a>Dashboard</a></li>
                                                     <li className="breadcrumb-item active">Feedback List</li>
                                                 </ol>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div
+                                {/* <div
                                     style={{
                                         backgroundColor: "white",
                                         padding: "20px",
                                         borderRadius: "20px",
                                         marginTop: "10px",
                                     }}
-                                >
-                                    <div className="row RestName" style={{ borderRadius: "20px" }}>
+                                > */}
+                                    {/* <div className="row RestName" style={{ borderRadius: "20px" }}>
                                         <div className="mx-auto ">
                                             <span style={{ fontSize: "18px", fontWeight: "700" }}>
                                                 <IoMdArrowRoundBack style={{ cursor: "pointer" }} onClick={() => onClickBackBtn()} /> Feedback of {data.meditationName}
                                             </span>
-                                            {/* <i className="fa fa-edit ml-2" onClick={()=>{navigate("/edit-guru-details", {state: data,})}}></i> */}
+                                            <i className="fa fa-edit ml-2" onClick={()=>{navigate("/edit-guru-details", {state: data,})}}></i>
                                         </div>
                                     </div>
-                                    <br />
+                                    <br /> */}
                                     <div className="row">
                                         <div className="col-12">
                                             <div className="card">
@@ -178,8 +157,8 @@ function ViewFeedback() {
                                                                     <th>Review</th>
                                                                     <th>Rating</th>
                                                                     <th>Helped Become</th>
-                                                                    <th>Like About Meditation</th>
-                                                                    <th>Improve Meditation</th>
+                                                                    <th>Like About Application</th>
+                                                                    <th>Improve Application</th>
                                                                     <th>Action</th>
                                                                 </tr>
                                                             </thead>
@@ -226,7 +205,7 @@ function ViewFeedback() {
                                             pageLinkClassName={"list-item-paginate-class-name"}
                                         />
                                     </div>
-                                </div>
+                                {/* </div> */}
                             </div>
                         </div>
                     </div>
