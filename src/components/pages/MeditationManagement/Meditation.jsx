@@ -131,6 +131,7 @@ function Meditation() {
                 number: select || selectedPage,
                 size: recordsPerPage,
                 search: searchText,
+                theme: filter?.theme?.value?.toString()
             }
             const data = await getMeditationApi(paginateData, "theme")
             if (data?.success) {
