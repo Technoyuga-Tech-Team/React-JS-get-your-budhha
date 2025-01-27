@@ -11,9 +11,35 @@ export const manageMenidation = async (data) => {
     }
 };
 
-export const getMeditationApi = async (paginateData, type, id,sort) => {
+export const getMeditationApi = async (paginateData, type, id, sort) => {
     try {
-        const catagory = await api_services.get(`admin/v1/get-audio-with-filter?sortBy=${sort ?? "createdAt"}&type=${type}&stage=${id}&page=${paginateData?.number}&limit=${paginateData?.size}&search=${paginateData?.search}&theme=${paginateData?.theme}&mood=${paginateData?.mood}`);
+        let query = `admin/v1/get-audio-with-filter?`;
+
+        if (paginateData?.number) {
+            query += `page=${paginateData?.number}&`;
+        }
+        if (paginateData?.size) {
+            query += `limit=${paginateData?.size}&`;
+        }
+        if (paginateData?.search) {
+            query += `search=${paginateData?.search}&`;
+        }
+        if (paginateData?.theme) {
+            query += `theme=${paginateData?.theme}&`;
+        }
+        if (paginateData?.mood) {
+            query += `mood=${paginateData?.mood}&`;
+        }
+        if (type) {
+            query += `type=${type}&`;
+        }
+        if (id) {
+            query += `stage=${id}&`;
+        }
+        if (sort) {
+            query += `sortBy=${sort}&`;
+        }
+        const catagory = await api_services.get(query);
         return catagory.data;
     } catch (err) {
         const data = await errorHandlerFunctionCatchBlock(err);
