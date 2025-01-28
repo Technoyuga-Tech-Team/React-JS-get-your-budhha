@@ -17,7 +17,8 @@ function AddMeditation({ closeWrapper, appendDataInAdd, data }) {
         femaleAudio: "",
         maleAudio: "",
         maleAudioDuration: "",
-        femaleAudioDuration: ""
+        femaleAudioDuration: "",
+        dailyMeditation: false
     })
     const [initialData, setInitialData] = useState({
         name: "",
@@ -28,7 +29,8 @@ function AddMeditation({ closeWrapper, appendDataInAdd, data }) {
         femaleAudio: "",
         maleAudio: "",
         maleAudioDuration: "",
-        femaleAudioDuration: ""
+        femaleAudioDuration: "",
+        dailyMeditation: false
     })
     const [submitForm, setSubmitForm] = useState(false)
     const [previewImage, setPreviewImage] = useState(null);
@@ -94,6 +96,7 @@ function AddMeditation({ closeWrapper, appendDataInAdd, data }) {
                     object.append("theme", formData?.theme?.value?.toString());
                     // object.append("moods", JSON.stringify(formData?.moods?.map(mood => mood.value)));
                     object.append("type", "theme");
+                    object.append("dailyMeditation", formData?.dailyMeditation);
 
                     const submit = await manageMenidation(object)
                     if (submit?.success) {
@@ -118,6 +121,7 @@ function AddMeditation({ closeWrapper, appendDataInAdd, data }) {
                 object.append("femaleAudioDuration", formData?.femaleAudioDuration);
                 object.append("maleAudioDuration", formData?.maleAudioDuration);
                 object.append("theme", formData?.theme?.value?.toString());
+                object.append("dailyMeditation", formData?.dailyMeditation);
                 // object.append("moods", JSON.stringify(formData?.moods?.map(mood => mood.value)));
                 object.append("type", "theme");
                 const submit = await manageMenidation(object)
@@ -147,6 +151,7 @@ function AddMeditation({ closeWrapper, appendDataInAdd, data }) {
                 femaleAudio: data.femaleAudio,
                 maleAudio: data.maleAudio,
                 theme: { value: data.theme._id, label: data.theme.name },
+                dailyMeditation: data.dailyMeditation,
                 // moods: data.moods.map(mood => ({ value: mood._id, label: mood.name })),
                 // femaleAudioDuration: data.femaleAudioDuration,
                 // maleAudioDuration: data.maleAudioDuration
@@ -158,6 +163,7 @@ function AddMeditation({ closeWrapper, appendDataInAdd, data }) {
                 femaleAudio: data.femaleAudio,
                 maleAudio: data.maleAudio,
                 theme: { value: data.theme._id, label: data.theme.name },
+                dailyMeditation: data.dailyMeditation,
                 // moods: data.moods.map(mood => ({ value: mood._id, label: mood.name })),
                 // femaleAudioDuration: data.femaleAudioDuration,
                 // maleAudioDuration: data.maleAudioDuration
@@ -412,6 +418,25 @@ function AddMeditation({ closeWrapper, appendDataInAdd, data }) {
                                             {errors?.theme}
                                         </div>
                                     )}
+                                </div>
+
+                                <div className="mb-4">
+                                    <label className="form-label" htmlFor="username">
+                                        Daily Calm Meditation
+                                    </label>
+                                    <div className="form-check form-switch">
+                                        <input
+                                            className="form-check-input"
+                                            type="checkbox"
+                                            role="switch"
+                                            id="SwitchCheck1"
+                                            checked={formData.dailyMeditation} // Checked if Automatic (1)
+                                            onChange={(e) => setFormData({ ...formData, dailyMeditation: e.target.checked })}
+                                        />
+                                        {/* <label className="form-check-label" htmlFor="SwitchCheck1">
+                                            { ? "Show" : "Hide"}
+                                        </label> */}
+                                    </div>
                                 </div>
 
                                 {/* <div className="mb-4">
