@@ -496,17 +496,13 @@ function AddMeditation({ closeWrapper, appendDataInAdd, data }) {
                                                 }
                                                 style={{ display: "none" }}
                                             />
-                                            <button
-                                                type="button"
-                                                className="btn btn-primary waves-effect waves-light"
-                                            >
-                                                <label
-                                                    style={{ marginBottom: "0px" }}
+                                            <label
+                                                    style={{ marginBottom: "0px",padding: '10px', background: '#1F1F1F', color: '#fff', borderRadius: '5px', cursor: 'pointer' }}
                                                     htmlFor="photo1"
-                                                >
+                                            >
                                                     Upload Female Audio
-                                                </label>
-                                            </button>
+                                            </label>
+                                            
 
                                         </>
                                     )}
@@ -553,17 +549,13 @@ function AddMeditation({ closeWrapper, appendDataInAdd, data }) {
                                                 }
                                                 style={{ display: "none" }}
                                             />
-                                            <button
-                                                type="button"
-                                                className="btn btn-primary waves-effect waves-light"
-                                            >
-                                                <label
-                                                    style={{ marginBottom: "0px" }}
+                                             <label
+                                                     style={{ marginBottom: "0px",padding: '10px', background: '#1F1F1F', color: '#fff', borderRadius: '5px', cursor: 'pointer' }}
+                                                
                                                     htmlFor="photo2"
-                                                >
+                                            >
                                                     Upload Male Audio
-                                                </label>
-                                            </button>
+                                            </label>
                                         </>
                                     )}
                                     {errors?.maleAudio && (
@@ -615,17 +607,12 @@ function AddMeditation({ closeWrapper, appendDataInAdd, data }) {
                                                 }
                                                 style={{ display: "none" }}
                                             />
-                                            <button
-                                                type="button"
-                                                className="btn btn-primary waves-effect waves-light"
+                                            <label
+                                                style={{ marginBottom: "0px",padding: '10px', background: '#1F1F1F', color: '#fff', borderRadius: '5px', cursor: 'pointer' }}
+                                                htmlFor="photo3"
                                             >
-                                                <label
-                                                    style={{ marginBottom: "0px" }}
-                                                    htmlFor="photo3"
-                                                >
                                                     Upload Image
-                                                </label>
-                                            </button>
+                                            </label>
                                         </>
                                     )}
                                     {errors?.image && (

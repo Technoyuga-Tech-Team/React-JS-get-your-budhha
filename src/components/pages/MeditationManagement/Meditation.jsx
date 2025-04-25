@@ -398,7 +398,7 @@ function Meditation() {
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            {loader ? <tr><td colSpan={9}>Loading ...</td></tr> : Meditation?.length > 0 ?
+                                                            {loader ? <tr><td colSpan={9} className="text-center">Loading ...</td></tr> : Meditation?.length > 0 ?
                                                                 Meditation?.map((elem, index) => {
                                                                     const isExpanded = expandedDescriptions[elem?._id];
                                                                     const description = elem?.description?.length > 100

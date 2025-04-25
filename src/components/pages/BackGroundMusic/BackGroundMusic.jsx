@@ -270,7 +270,7 @@ function BackGroundMusic() {
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            {loader ? <tr><td colSpan={4}>Loading ...</td></tr> : BackGroundMusic?.length > 0 ?
+                                                            {loader ? <tr><td colSpan={5} className="text-center">Loading ...</td></tr> : BackGroundMusic?.length > 0 ?
                                                                 BackGroundMusic?.map((elem, index) => {
                                                                     return (
                                                                         <tr key={elem?._id}>

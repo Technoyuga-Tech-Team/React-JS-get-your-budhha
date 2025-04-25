@@ -306,7 +306,7 @@ function UserList() {
                             </tr>
                           </thead>
                           <tbody>
-                            {loader ? <tr><td colSpan={6}>Loading ...</td></tr> : userList?.length > 0 ?
+                            {loader ? <tr><td colSpan={8} className="text-center">Loading ...</td></tr> : userList?.length > 0 ?
                               userList?.map((elem, index) => {
                                 return (
                                   <tr key={elem?._id} className="text-container">

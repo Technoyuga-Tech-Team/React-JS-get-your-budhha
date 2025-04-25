@@ -229,17 +229,12 @@ function AddStage({ closeWrapper, appendDataInAdd, data, id }) {
                                                 }
                                                 style={{ display: "none" }}
                                             />
-                                            <button
-                                                type="button"
-                                                className="btn btn-primary waves-effect waves-light"
-                                            >
-                                                <label
-                                                    style={{ marginBottom: "0px" }}
-                                                    htmlFor="photo"
-                                                >
+                                            <label
+                                                style={{ marginBottom: "0px",padding: '10px', background: '#1F1F1F', color: '#fff', borderRadius: '5px', cursor: 'pointer' }}
+                                                htmlFor="photo"
+                                             >
                                                     Upload Image
-                                                </label>
-                                            </button>
+                                             </label>
                                             {errors?.image && (
                                                 <div className="error-message">
                                                     {errors?.image}
@@ -250,7 +245,7 @@ function AddStage({ closeWrapper, appendDataInAdd, data, id }) {
                                 </div>
 
                                 <div className="d-grid mt-4">
-                                    <button className="btn btn-primary" type="submit" disabled={loader}>{loader ? 'Processing..' : data?._id ? 'Update Course' : 'Add Course'}</button>
+                                    <button className="btn btn-primary" type="submit" disabled={loader}>{loader ? 'Processing..' : data?._id ? 'Update Stage' : 'Add Stage'}</button>
                                 </div>
                             </div>
                         </div>

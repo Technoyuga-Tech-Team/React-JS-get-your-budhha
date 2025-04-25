@@ -30,6 +30,7 @@ function Course() {
     const [mainArrayCourse, setMainArrayCourse] = useState({})
     const [imageModal, setImageModal] = useState(false);
     const [url, setUrl] = useState("");
+    const [expandedDescriptions, setExpandedDescriptions] = useState({});
     const [data, setData] = useState({})
     const [searchText, setSearchText] = useState("")
 
@@ -197,6 +198,12 @@ function Course() {
         await getCourseList2(1, "")
     }
 
+    const toggleDescription = (id) => {
+        setExpandedDescriptions((prev) => ({
+            ...prev,
+            [id]: !prev[id],
+        }));
+    };
     const onChangeSearchComponent = async (e) => {
         setSearchText(e?.target?.value?.trimStart())
         setSelectedPage(1)
@@ -264,18 +271,31 @@ function Course() {
                                                                 <th>Name</th>
                                                                 <th style={{ maxWidth: "100px" }}>Description</th>
                                                                 <th>Type</th>
-                                                                <th>Actions</th>
+                                                                <th >Actions</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            {loader ? <tr><td colSpan={6}>Loading ...</td></tr> : Course?.length > 0 ?
+                                                            {loader ? <tr><td colSpan={6} className="text-center">Loading ...</td></tr> : Course?.length > 0 ?
                                                                 Course?.map((elem, index) => {
-                                                                    return (
+                                                                    const isExpanded = expandedDescriptions[elem?._id];
+                                                                    const description = elem?.description?.length > 100
+                                                                        ? isExpanded
+                                                                            ? elem?.description
+                                                                            : `${elem?.description?.substring(0, 100)}...`
+                                                                        : elem?.description;
+                                                                    return ( 
                                                                         <tr key={elem?._id}>
                                                                             <td>{(numberPerPage * (selectedPage - 1)) + (index + 1)}</td>
                                                                             <td style={{ maxWidth: "100px", alignContent: 'center', whiteSpace: 'normal' }}>{<div className="d-flex flex-row justify-content-center"><img loading={lazy} src={elem?.courseImage} style={{ height: "100px", width: "100px", objectFit: 'cover', overflow: 'hidden', cursor: "pointer" }} onClick={() => { handleImageModal(elem?.courseImage) }} /></div>}</td>
-                                                                            <td>{elem?.name}</td>
-                                                                            <td style={{ maxWidth: "100px" }}>{elem?.description}</td>
+                                                                            <td style={{ maxWidth: "100px" }}>{elem?.name}</td>
+                                                                            <td style={{ maxWidth: "250px" ,minWidth: "200px"}}>
+                                                                                {description}
+                                                                                {elem?.description?.length > 100 && (
+                                                                                    <span onClick={() => toggleDescription(elem?._id)} style={{ color: "blue", cursor: "pointer" }}>
+                                                                                        {isExpanded ? " See less" : " See more"}
+                                                                                    </span>
+                                                                                )}
+                                                                            </td>
                                                                             <td>{elem?.is_free ? "Free" : "Paid"}</td>
                                                                             <td style={{ display: "flex", cursor: "pointer" }}>
                                                                                 <>

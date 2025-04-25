@@ -309,7 +309,7 @@ function Stage() {
                                                                         </tr>
                                                                     </thead>
                                                                     <tbody ref={provided.innerRef} {...provided.droppableProps} >
-                                                                        {loader ? <tr><td colSpan={4}>Loading ...</td></tr> : Stage?.length > 0 ?
+                                                                        {loader ? <tr><td colSpan={4} className="text-center">Loading ...</td></tr> : Stage?.length > 0 ?
                                                                             Stage?.map((elem, index) => {
                                                                                 return (
                                                                                     <Draggable key={elem?._id} draggableId={elem?._id.toString()} index={index}>
@@ -317,7 +317,7 @@ function Stage() {
                                                                                             <tr ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
                                                                                                 <td>{(numberPerPage * (selectedPage - 1)) + (index + 1)}</td>
                                                                                                 <td style={{ maxWidth: "100px", alignContent: 'center', whiteSpace: 'normal' }}>{<div className="d-flex flex-row justify-content-center"><img loading={lazy} src={elem?.stageImage} style={{ height: "100px", width: "100px", objectFit: 'cover', overflow: 'hidden', cursor: "pointer" }} onClick={() => { handleImageModal(elem?.stageImage) }} /></div>}</td>
-                                                                                                <td>{elem?.title}</td>
+                                                                                                <td style={{ maxWidth: "250px", whiteSpace: 'normal' }}>{elem?.title}</td>
                                                                                                 <td style={{ display: "flex", cursor: "pointer" }}>
                                                                                                     <>
                                                                                                         <ReactTooltip id="User-info" />

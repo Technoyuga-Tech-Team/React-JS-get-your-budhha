@@ -260,7 +260,7 @@ function Category() {
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            {loader ? <tr><td colSpan={4}>Loading ...</td></tr> : Category?.length > 0 ?
+                                                            {loader ? <tr><td colSpan={5} className="text-center">Loading ...</td></tr> : Category?.length > 0 ?
                                                                 Category?.map((elem, index) => {
                                                                     return (
                                                                         <tr key={elem?._id}>

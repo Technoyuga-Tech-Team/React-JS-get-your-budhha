@@ -258,28 +258,24 @@ function AddCategory({ closeWrapper, appendDataInAdd, data }) {
                                             </div>
                                         </>
                                     ) : (
+
                                         <>
                                             <input
                                                 accept="image/*"
-                                                id="photo1"
-                                                name="photo1"
+                                                id="photo"
+                                                name="photo"
                                                 type="file"
                                                 onChange={(event) =>
                                                     onClickPhoto(event, "logo")
                                                 }
                                                 style={{ display: "none" }}
                                             />
-                                            <button
-                                                type="button"
-                                                className="btn btn-primary waves-effect waves-light"
-                                            >
-                                                <label
-                                                    style={{ marginBottom: "0px" }}
-                                                    htmlFor="photo1"
+                                            <label
+                                                    style={{ marginBottom: "0px",padding: '10px', background: '#1F1F1F', color: '#fff', borderRadius: '5px', cursor: 'pointer' }}
+                                                    htmlFor="photo"
                                                 >
-                                                    Upload Logo
-                                                </label>
-                                            </button>
+                                                    Upload Female Audio
+                                            </label>
                                             {errors?.logoImage && (
                                                 <div className="error-message">
                                                     {errors?.logoImage}
@@ -337,17 +333,12 @@ function AddCategory({ closeWrapper, appendDataInAdd, data }) {
                                                 }
                                                 style={{ display: "none" }}
                                             />
-                                            <button
-                                                type="button"
-                                                className="btn btn-primary waves-effect waves-light"
-                                            >
-                                                <label
-                                                    style={{ marginBottom: "0px" }}
+                                            <label
+                                                    style={{ marginBottom: "0px",padding: '10px', background: '#1F1F1F', color: '#fff', borderRadius: '5px', cursor: 'pointer' }}
                                                     htmlFor="photo"
                                                 >
                                                     Upload Image
-                                                </label>
-                                            </button>
+                                            </label>
                                             {errors?.image && (
                                                 <div className="error-message">
                                                     {errors?.image}

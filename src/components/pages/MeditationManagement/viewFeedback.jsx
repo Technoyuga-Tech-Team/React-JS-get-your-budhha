@@ -163,7 +163,7 @@ function ViewFeedback() {
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
-                                                                {loader ? <tr><td colSpan={4}>Loading ...</td></tr> : Feedback?.length > 0 ?
+                                                                {loader ? <tr><td colSpan={8} className="text-center">Loading ...</td></tr> : Feedback?.length > 0 ?
                                                                     Feedback?.map((elem, index) => {
                                                                         return (
                                                                             <tr key={elem?._id}>

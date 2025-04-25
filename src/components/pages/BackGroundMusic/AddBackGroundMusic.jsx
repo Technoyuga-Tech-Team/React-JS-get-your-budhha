@@ -265,25 +265,21 @@ function AddBackGroundMusic({ closeWrapper, appendDataInAdd, data }) {
                                         <>
                                             <input
                                                 accept="audio/*"
-                                                id="photo"
-                                                name="photo"
+                                                id="photo1"
+                                                name="photo1"
                                                 type="file"
                                                 onChange={(event) =>
                                                     onClickPhoto(event, "audio")
                                                 }
                                                 style={{ display: "none" }}
                                             />
-                                            <button
-                                                type="button"
-                                                className="btn btn-primary waves-effect waves-light"
-                                            >
-                                                <label
-                                                    style={{ marginBottom: "0px" }}
-                                                    htmlFor="photo"
+
+                                            <label
+                                                    style={{ marginBottom: "0px",padding: '10px', background: '#1F1F1F', color: '#fff', borderRadius: '5px', cursor: 'pointer' }}
+                                                    htmlFor="photo1"
                                                 >
                                                     Upload Backgroud Music
-                                                </label>
-                                            </button>
+                                            </label>
                                             {errors?.audio && (
                                                 <div className="error-message">
                                                     {errors?.audio}
@@ -340,17 +336,12 @@ function AddBackGroundMusic({ closeWrapper, appendDataInAdd, data }) {
                                                 }
                                                 style={{ display: "none" }}
                                             />
-                                            <button
-                                                type="button"
-                                                className="btn btn-primary waves-effect waves-light"
-                                            >
-                                                <label
-                                                    style={{ marginBottom: "0px" }}
-                                                    htmlFor="photo"
+                                            <label
+                                                    style={{ marginBottom: "0px",padding: '10px', background: '#1F1F1F', color: '#fff', borderRadius: '5px', cursor: 'pointer' }}
+                                                    htmlFor="photo1"
                                                 >
                                                     Upload Image
-                                                </label>
-                                            </button>
+                                            </label>
                                             {errors?.image && (
                                                 <div className="error-message">
                                                     {errors?.image}

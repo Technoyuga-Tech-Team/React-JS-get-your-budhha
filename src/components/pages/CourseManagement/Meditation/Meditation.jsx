@@ -19,7 +19,7 @@ import SearchComponent from "../../../../component/Search/Search"
 import { useLocation, useNavigate } from "react-router-dom"
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
-const numberPerPage = 10;
+const numberPerPage = 1000;
 
 function Meditation2() {
     const location = useLocation()
@@ -60,7 +60,7 @@ function Meditation2() {
             size: numberPerPage,
             search: searchText,
         }
-        const data = await getMeditationApi(paginateData, "course", stage._id, "index")
+        const data = await getMeditationApi(paginateData, "course", stage._id, "index","asc")
         if (data?.success) {
             let paginateData = data?.data?.updateResult
             // paginateData?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
@@ -83,7 +83,7 @@ function Meditation2() {
             size: numberPerPage,
             search: search
         }
-        const data = await getMeditationApi(paginateData, "course", stage._id, "index")
+        const data = await getMeditationApi(paginateData, "course", stage._id, "index",'asc')
         if (data?.success) {
             let paginateData = data?.data?.updateResult;
             setTotalPage(data?.data?.totalPages)
@@ -106,7 +106,7 @@ function Meditation2() {
                 size: numberPerPage,
                 search: searchText,
             }
-            const data = await getMeditationApi(paginateData, "course", stage._id, "index")
+            const data = await getMeditationApi(paginateData, "course", stage._id, "index",'asc')
             if (data?.success) {
                 let paginateData = data?.data?.updateResult;
                 setTotalPage(data?.data?.totalPages)
@@ -335,7 +335,7 @@ function Meditation2() {
                                                                         </tr>
                                                                     </thead>
                                                                     <tbody>
-                                                                        {loader ? <tr><td colSpan={9}>Loading ...</td></tr> : Meditation?.length > 0 ?
+                                                                        {loader ? <tr><td colSpan={9} className="text-center">Loading ...</td></tr> : Meditation?.length > 0 ?
                                                                             Meditation?.map((elem, index) => {
                                                                                 const isExpanded = expandedDescriptions[elem?._id];
                                                                                 const description = elem?.description?.length > 100

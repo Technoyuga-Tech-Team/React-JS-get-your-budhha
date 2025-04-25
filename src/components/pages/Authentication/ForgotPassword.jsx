@@ -40,6 +40,7 @@ const ForgotPassword = () => {
             }).then((response) => {
                 if (response?.data?.success) {
                     setEmail('');
+                    navigate('/');
                     toast.success(response?.data?.message, { style: { background: '#333', color: '#fff' } })
                 } else {
                     toast.error(response?.data?.message, { style: { background: '#333', color: '#fff' } })
@@ -65,7 +66,7 @@ const ForgotPassword = () => {
                                             {/* <b><p>Ease</p></b> */}
                                         </div>
                                         <h4 className="font-size-18 text-muted mt-2 text-center">Forgot Password</h4>
-                                        <form className="form-horizontal" style={{ marginTop: '35px' }} onSubmit={handleSubmit}>
+                                        <form className="form-horizontal" style={{ marginTop: '35px' }} onSubmit={handleSubmit} >
                                             <div className="row">
                                                 <div className="col-md-12">
                                                     <div className="alert alert-warning alert-dismissible">

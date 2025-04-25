@@ -119,8 +119,8 @@ function AddCourse({ closeWrapper, appendDataInAdd, data }) {
         }
 
         if (data.description) {
-            if (data.description.length > 500) {
-                newErrors.description = "Description should be less than 500 characters";
+            if (data.description.length > 300) {
+                newErrors.description = "Description should be less than 300 characters";
                 isValid = false;
             }
         }
@@ -335,17 +335,12 @@ function AddCourse({ closeWrapper, appendDataInAdd, data }) {
                                                 }
                                                 style={{ display: "none" }}
                                             />
-                                            <button
-                                                type="button"
-                                                className="btn btn-primary waves-effect waves-light"
-                                            >
-                                                <label
-                                                    style={{ marginBottom: "0px" }}
+                                             <label
+                                                      style={{ marginBottom: "0px",padding: '10px', background: '#1F1F1F', color: '#fff', borderRadius: '5px', cursor: 'pointer' }}
                                                     htmlFor="photo"
-                                                >
+                                            >
                                                     Upload Image
-                                                </label>
-                                            </button>
+                                            </label>
                                             {errors?.image && (
                                                 <div className="error-message">
                                                     {errors?.image}
