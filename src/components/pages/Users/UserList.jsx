@@ -307,19 +307,18 @@ function UserList() {
                             </select>
                           </div>
                           <div style={{ marginRight: "10px" }}>
-                            <select
+                            {/* <select
                               className="form-select"
                               value={plan}
                               onChange={(e) => handlePlanChange(e.target.value)}
                               style={{ height: "40px" }}
                             >
-                              {/* <option value="All">Select Plan</option> */}
                               <option value="Ease Free Trial">
                                 Ease Free Trial
                               </option>
                               <option value="Ease Silver">Ease Silver</option>
                               <option value="Ease Golden">Ease Golden</option>
-                            </select>
+                            </select> */}
                           </div>
                           <SearchComponent
                             data={searchText}
