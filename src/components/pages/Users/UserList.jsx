@@ -208,6 +208,13 @@ function UserList() {
       return new Date(freeTrialExpiryAt) > now ? plan : "";
     }
 
+    if (plan === "ease_monthly") {
+      return new Date(expiresAt) > now ? plan : "";
+    }
+    if (plan === "ease_yearly") {
+      return new Date(expiresAt) > now ? plan : "";
+    }
+
     return new Date(expiresAt) > now ? plan : "";
   }
 
