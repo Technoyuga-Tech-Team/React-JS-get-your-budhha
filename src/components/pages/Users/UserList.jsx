@@ -194,6 +194,23 @@ function UserList() {
     setUrl(img);
   };
 
+  function getActiveSubscriptionPlan(
+    plan,
+    isFreeTrial,
+    freeTrialExpiryAt,
+    expiresAt
+  ) {
+    if (!plan) return "-";
+
+    const now = new Date();
+
+    if (plan === "ease_free_trial") {
+      return new Date(freeTrialExpiryAt) > now ? plan : "";
+    }
+
+    return new Date(expiresAt) > now ? plan : "";
+  }
+
   const updateUserStatus = async (id, status) => {
     const finalObject = {
       userId: id,
@@ -461,8 +478,14 @@ function UserList() {
                                     </td>
                                     <td>{elem?.email ? elem?.email : "-"}</td>
                                     <td>
-                                      {elem?.planName ? elem?.planName : "-"}
+                                      {getActiveSubscriptionPlan(
+                                        elem?.subscriptionPlan,
+                                        elem?.isFreeTrial,
+                                        elem?.freeTrialExpiryAt,
+                                        elem?.expiresAt
+                                      )}
                                     </td>
+
                                     <td>
                                       {moment(elem?.createdAt).format(
                                         "MMMM Do YYYY"
