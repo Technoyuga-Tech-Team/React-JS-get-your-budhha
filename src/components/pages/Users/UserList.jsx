@@ -115,11 +115,9 @@ function UserList() {
   useEffect(() => {
     if (location?.state?.activePage) {
       setSelectedPage(location?.state?.activePage);
-      clearAllStateData();
       getUserList(location?.state?.activePage, recordsPerPage, "");
     } else {
       getUserList2(1, recordsPerPage, "");
-      clearAllStateData();
     }
   }, [
     location.pathname,
