@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Header from "../../layout/Header";
 import Sidebar from "../../layout/Sidebar";
 import { MdDelete } from "react-icons/md";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import {
   displayErrorToast,
   displaySuccessToast,
@@ -39,6 +39,7 @@ function UserList() {
   const [sortOrder, setSortOrder] = useState(-1); // Default sort order: 1 for ascending, -1 for descending
   const [plan, setPlan] = useState("All");
   const location = useLocation();
+
   const navigate = useNavigate();
   const [recordsPerPage, setRecordsPerPage] = useState(10);
 
@@ -52,6 +53,7 @@ function UserList() {
         sortOrder,
         sortBy: sortField,
         planName: plan,
+        type: location?.state?.type || "all",
       };
       const response = await getUserApi(paginateData);
       if (response?.success) {
@@ -205,14 +207,18 @@ function UserList() {
     const now = new Date();
 
     if (plan === "ease_free_trial") {
-      return new Date(freeTrialExpiryAt) > now ? plan : "";
+      return new Date(freeTrialExpiryAt) > now
+        ? "Free Trial"
+        : "Free Trial Expired";
     }
 
     if (plan === "ease_monthly") {
-      return new Date(expiresAt) > now ? plan : "";
+      return new Date(expiresAt) > now
+        ? "Monthly Plan"
+        : "Monthly Plan Expired";
     }
     if (plan === "ease_yearly") {
-      return new Date(expiresAt) > now ? plan : "";
+      return new Date(expiresAt) > now ? "Yearly Plan" : "Yearly Plan Expired";
     }
 
     return new Date(expiresAt) > now ? plan : "";
@@ -331,18 +337,19 @@ function UserList() {
                             </select>
                           </div>
                           <div style={{ marginRight: "10px" }}>
-                            {/* <select
+                            <select
                               className="form-select"
                               value={plan}
                               onChange={(e) => handlePlanChange(e.target.value)}
                               style={{ height: "40px" }}
                             >
-                              <option value="Ease Free Trial">
-                                Ease Free Trial
+                              <option value="">All</option>
+                              <option value="ease_free_trial">
+                                Free Trial Plan
                               </option>
-                              <option value="Ease Silver">Ease Silver</option>
-                              <option value="Ease Golden">Ease Golden</option>
-                            </select> */}
+                              <option value="ease_monthly">Monthly Plan</option>
+                              <option value="ease_yearly">Yearly Plan</option>
+                            </select>
                           </div>
                           <SearchComponent
                             data={searchText}
