@@ -98,7 +98,6 @@ function UserList() {
       setUserList(response?.data?.users);
       setTotalPage(response?.data?.totalPages);
       const mergeData = {
-        ...mainArrayUser,
         [page || selectedPage]: response?.data?.users,
       };
       setmainArrayUser(mergeData);
@@ -119,8 +118,7 @@ function UserList() {
       clearAllStateData();
       getUserList(location?.state?.activePage, recordsPerPage, "");
     } else {
-      getUserList(1, recordsPerPage, "");
-      clearAllStateData();
+      getUserList2(1, recordsPerPage, "");
       clearAllStateData();
     }
   }, [
