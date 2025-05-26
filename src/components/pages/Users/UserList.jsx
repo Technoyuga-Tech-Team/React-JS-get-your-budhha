@@ -90,6 +90,7 @@ function UserList() {
       sortOrder: order || sortOrder,
       sortBy: field || sortField,
       planName: subscription || plan,
+      type: location?.state?.type || "all",
     };
     const response = await getUserApi(paginateData);
     // console.log(response?.data)
@@ -115,12 +116,20 @@ function UserList() {
   useEffect(() => {
     if (location?.state?.activePage) {
       setSelectedPage(location?.state?.activePage);
+      clearAllStateData();
       getUserList(location?.state?.activePage, recordsPerPage, "");
     } else {
       getUserList(1, recordsPerPage, "");
       clearAllStateData();
+      clearAllStateData();
     }
-  }, [location.pathname]);
+  }, [
+    location.pathname,
+    recordsPerPage,
+    plan,
+    searchText,
+    location?.state?.type,
+  ]);
 
   const handlePageClick = async (data) => {
     const pageNo = data.selected + 1;
